@@ -1,0 +1,273 @@
+/* Skills Page - Orb Design */
+.skills-page-orb {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #000000;
+  position: relative;
+}
+
+.skills-container-orb {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.skills-header-orb {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.glow-line-orb {
+  height: 4px;
+  width: 100px;
+  background: linear-gradient(90deg, #22D3EE, #3B82F6);
+  border-radius: 2px;
+  margin: 0 auto 2rem;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.8),
+              0 0 40px rgba(34, 211, 238, 0.4);
+  animation: lineExpand 2s ease-in-out infinite;
+}
+
+@keyframes lineExpand {
+  0%, 100% {
+    width: 100px;
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.8),
+                0 0 40px rgba(34, 211, 238, 0.4);
+  }
+  50% {
+    width: 120px;
+    box-shadow: 0 0 30px rgba(34, 211, 238, 1),
+                0 0 60px rgba(34, 211, 238, 0.6);
+  }
+}
+
+.skills-title-orb {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+  position: relative;
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.6)) 
+            drop-shadow(0 0 60px rgba(34, 211, 238, 0.3));
+  }
+}
+
+.skills-subtitle-orb {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+}
+
+.skills-orbs-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.skill-orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 30%, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.15));
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  animation: float 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(10px);
+}
+
+.skill-orb:hover {
+  transform: scale(1.15) translateY(-10px);
+  border-color: #22D3EE;
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.4),
+              0 0 60px rgba(34, 211, 238, 0.2),
+              inset 0 0 20px rgba(34, 211, 238, 0.1);
+  background: radial-gradient(circle at 30% 30%, rgba(34, 211, 238, 0.3), rgba(59, 130, 246, 0.25));
+}
+
+.orbit-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22D3EE;
+  animation: orbitDot 3s linear infinite;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+}
+
+.skill-orb-name {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes orbitDot {
+  from {
+    transform: rotate(0deg) translateX(50px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  opacity: 0;
+  animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.skills-orbs-grid.animate-in {
+  animation-delay: 0.3s;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .skills-title-orb {
+    font-size: 2rem;
+  }
+
+  .skill-orb {
+    width: 100px;
+    height: 100px;
+  }
+
+  .skill-orb-name {
+    font-size: 0.65rem;
+  }
+
+  .skills-orbs-grid {
+    gap: 1.5rem;
+  }
+
+  @keyframes orbitDot {
+    from {
+      transform: rotate(0deg) translateX(40px) rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg) translateX(40px) rotate(-360deg);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .skill-orb {
+    width: 90px;
+    height: 90px;
+  }
+
+  .skills-orbs-grid {
+    gap: 1rem;
+  }
+}
+
+
+/* Glitch effect for Tech Universe title */
+.glitch-skills {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-skills::before,
+.glitch-skills::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #ffffff;
+}
+
+.glitch-skills::before {
+  left: 2px;
+  text-shadow: -2px 0 #22D3EE;
+  clip: rect(44px, 9999px, 56px, 0);
+  animation: glitch-anim-skills 5s infinite linear alternate-reverse;
+  z-index: -1;
+}
+
+.glitch-skills::after {
+  left: -2px;
+  text-shadow: 2px 0 #3B82F6;
+  clip: rect(44px, 9999px, 56px, 0);
+  animation: glitch-anim2-skills 5s infinite linear alternate-reverse;
+  z-index: -2;
+}
+
+@keyframes glitch-anim-skills {
+  0% { clip: rect(31px, 9999px, 94px, 0); transform: skew(0.3deg); }
+  10% { clip: rect(65px, 9999px, 75px, 0); transform: skew(0.2deg); }
+  20% { clip: rect(85px, 9999px, 40px, 0); transform: skew(0.1deg); }
+  30% { clip: rect(50px, 9999px, 55px, 0); transform: skew(0.3deg); }
+  40% { clip: rect(75px, 9999px, 30px, 0); transform: skew(0.5deg); }
+  50% { clip: rect(60px, 9999px, 45px, 0); transform: skew(0.4deg); }
+  60% { clip: rect(80px, 9999px, 35px, 0); transform: skew(0.2deg); }
+  70% { clip: rect(55px, 9999px, 50px, 0); transform: skew(0.1deg); }
+  80% { clip: rect(30px, 9999px, 75px, 0); transform: skew(0.3deg); }
+  90% { clip: rect(45px, 9999px, 60px, 0); transform: skew(0.2deg); }
+  100% { clip: rect(20px, 9999px, 80px, 0); transform: skew(0.5deg); }
+}
+
+@keyframes glitch-anim2-skills {
+  0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(0.5deg); }
+  10% { clip: rect(95px, 9999px, 15px, 0); transform: skew(0.6deg); }
+  20% { clip: rect(10px, 9999px, 70px, 0); transform: skew(0.4deg); }
+  30% { clip: rect(30px, 9999px, 90px, 0); transform: skew(0.5deg); }
+  40% { clip: rect(40px, 9999px, 65px, 0); transform: skew(0.6deg); }
+  50% { clip: rect(20px, 9999px, 85px, 0); transform: skew(0.4deg); }
+  60% { clip: rect(35px, 9999px, 75px, 0); transform: skew(0.5deg); }
+  70% { clip: rect(15px, 9999px, 95px, 0); transform: skew(0.2deg); }
+  80% { clip: rect(50px, 9999px, 60px, 0); transform: skew(0.4deg); }
+  90% { clip: rect(65px, 9999px, 45px, 0); transform: skew(0.5deg); }
+  100% { clip: rect(100px, 9999px, 10px, 0); transform: skew(0.2deg); }
+}

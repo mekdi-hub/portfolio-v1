@@ -1,0 +1,270 @@
+/* ═══════════════════════════════════════════════════════════
+   ROTATING TECH STACK — HOLOGRAPHIC TERMINAL AESTHETIC
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Root container ─────────────────────────────────────── */
+.rbt-root {
+  position: relative;
+  width: 480px;
+  height: 480px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at 40% 35%, rgba(0,229,255,0.06) 0%, transparent 65%),
+              radial-gradient(ellipse at 70% 70%, rgba(124,77,255,0.08) 0%, transparent 60%),
+              #06070f;
+  box-shadow:
+    0 0 0 1px rgba(0, 229, 255, 0.12),
+    0 0 40px rgba(0, 229, 255, 0.06),
+    0 20px 60px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  overflow: hidden;
+  cursor: default;
+}
+
+/* ── Scanlines ──────────────────────────────────────────── */
+.rbt-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  pointer-events: none;
+  z-index: 30;
+  border-radius: inherit;
+}
+
+/* ── Corner bracket decorations ────────────────────────── */
+.rbt-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  z-index: 40;
+  pointer-events: none;
+}
+.rbt-corner--tl {
+  top: 14px; left: 14px;
+  border-top: 1.5px solid rgba(0, 229, 255, 0.55);
+  border-left: 1.5px solid rgba(0, 229, 255, 0.55);
+}
+.rbt-corner--tr {
+  top: 14px; right: 14px;
+  border-top: 1.5px solid rgba(0, 229, 255, 0.55);
+  border-right: 1.5px solid rgba(0, 229, 255, 0.55);
+}
+.rbt-corner--bl {
+  bottom: 14px; left: 14px;
+  border-bottom: 1.5px solid rgba(0, 229, 255, 0.55);
+  border-left: 1.5px solid rgba(0, 229, 255, 0.55);
+}
+.rbt-corner--br {
+  bottom: 14px; right: 14px;
+  border-bottom: 1.5px solid rgba(0, 229, 255, 0.55);
+  border-right: 1.5px solid rgba(0, 229, 255, 0.55);
+}
+
+/* ── HUD labels ─────────────────────────────────────────── */
+.rbt-hud {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 40;
+  pointer-events: none;
+}
+.rbt-hud--top  { top: 16px; }
+.rbt-hud--bottom { bottom: 16px; }
+
+.rbt-hud-label {
+  font-family: 'Courier New', 'Lucida Console', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+  color: rgba(0, 229, 255, 0.5);
+  text-transform: uppercase;
+}
+
+.rbt-hud-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #00e5ff;
+  opacity: 0.6;
+  animation: rbt-blink 1.8s ease-in-out infinite;
+}
+
+.rbt-hud-bar {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0,229,255,0.5) 0%, transparent 100%);
+  border-radius: 2px;
+}
+
+@keyframes rbt-blink {
+  0%, 100% { opacity: 0.2; }
+  50%       { opacity: 0.9; }
+}
+
+/* ── Canvas ─────────────────────────────────────────────── */
+.rbt-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.rbt-canvas {
+  width: 480px;
+  height: 480px;
+}
+
+.rbt-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: all;
+  cursor: grab;
+}
+
+.rbt-canvas canvas:active {
+  cursor: grabbing;
+}
+
+/* ── Orbit layer ─────────────────────────────────────────── */
+.rbt-orbit-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Tech badge ──────────────────────────────────────────── */
+.rbt-badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 8px 12px;
+  border-radius: 100px;
+  border: 2px solid rgba(var(--tech-color, 0,229,255), 0.6);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%),
+    rgba(6, 7, 15, 0.95);
+  pointer-events: all;
+  cursor: pointer;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+  will-change: transform;
+  box-shadow: 
+    0 0 20px rgba(var(--tech-color, 0,229,255), 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.rbt-badge:hover,
+.rbt-badge--hovered {
+  border-color: var(--tech-color, rgba(0,229,255,1));
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%),
+    rgba(6, 7, 15, 0.95);
+  box-shadow:
+    0 0 30px var(--tech-color, rgba(0,229,255,0.8)),
+    0 0 15px var(--tech-color, rgba(0,229,255,0.6)),
+    0 6px 20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: scale(1.05);
+}
+
+.rbt-badge--active {
+  border-color: var(--tech-color, rgba(0,229,255,1));
+  box-shadow:
+    0 0 40px var(--tech-color, rgba(0,229,255,1)),
+    0 0 20px var(--tech-color, rgba(0,229,255,0.8)),
+    0 8px 24px rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.rbt-badge-icon {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--tech-color, #00e5ff);
+  filter: drop-shadow(0 0 8px var(--tech-color, rgba(0,229,255,1)));
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+}
+
+.rbt-badge-name {
+  font-family: 'Courier New', 'SF Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.6),
+               0 0 6px rgba(0, 229, 255, 0.4);
+}
+
+/* Hidden glow element for pulse on hover */
+.rbt-badge-glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 50%, var(--tech-color, rgba(0,229,255,0.15)) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.rbt-badge--hovered .rbt-badge-glow,
+.rbt-badge--active .rbt-badge-glow {
+  opacity: 1;
+}
+
+/* ── Tooltip (active badge info) ─────────────────────────── */
+.rbt-tooltip {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  background: rgba(6, 7, 15, 0.95);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 8px;
+  z-index: 50;
+  pointer-events: none;
+  animation: rbt-fadein 0.2s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(0,229,255,0.08);
+}
+
+.rbt-tooltip-icon {
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+.rbt-tooltip-name {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #e0f0ff;
+  text-transform: uppercase;
+}
+
+@keyframes rbt-fadein {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
