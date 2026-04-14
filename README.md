@@ -12,11 +12,11 @@ A modern, full-stack portfolio website built with React (frontend) and Laravel (
 - 📊 Skills showcase with animations
 - 💼 Projects gallery
 - 📧 Contact form
-- 🔄 Rotating triangle animations
+
 
 ### Backend
 - 🚀 Laravel REST API
-- 💾 SQLite database
+- 💾 My sql
 - 🔌 RESTful endpoints
 - ✅ Input validation
 - 🌐 CORS enabled
@@ -24,7 +24,6 @@ A modern, full-stack portfolio website built with React (frontend) and Laravel (
 ### Admin Panel
 - 📝 Projects CRUD operations
 - 📬 Message management
-- 📦 Demo orders management
 - 🎨 Beautiful, intuitive interface
 - ⚡ Real-time updates
 
@@ -40,7 +39,7 @@ A modern, full-stack portfolio website built with React (frontend) and Laravel (
 ### Backend
 - Laravel 11
 - PHP 8.2+
-- SQLite
+ -My sql
 - RESTful API
 
 ## Quick Start
@@ -94,11 +93,6 @@ cd frontend
 npm run dev
 ```
 
-### Access Points
-- **Main Site**: http://localhost:5173
-- **Admin Panel**: http://localhost:5173/admin
-- **API**: http://localhost:8000/api
-
 ## Project Structure
 
 ```
@@ -123,13 +117,13 @@ portfolio/
 │   │   │   ├── Controllers/Api/
 │   │   │   │   ├── ProjectController.php
 │   │   │   │   ├── MessageController.php
-│   │   │   │   └── DemoOrderController.php
+│   │   │   │   
 │   │   │   └── Middleware/
 │   │   │       └── Cors.php
 │   │   └── Models/
 │   │       ├── Project.php
 │   │       ├── Message.php
-│   │       └── DemoOrder.php
+│   │     
 │   ├── database/
 │   │   ├── migrations/
 │   │   └── seeders/
@@ -161,14 +155,6 @@ GET    /api/messages/{id}   # Get single message
 DELETE /api/messages/{id}   # Delete message
 ```
 
-### Demo Orders
-```
-GET    /api/demo-orders        # List all orders
-POST   /api/demo-orders        # Create order
-GET    /api/demo-orders/{id}   # Get single order
-PUT    /api/demo-orders/{id}   # Update order
-DELETE /api/demo-orders/{id}   # Delete order
-```
 
 ## Database Schema
 
@@ -190,12 +176,6 @@ DELETE /api/demo-orders/{id}   # Delete order
 - `created_at` - Timestamp
 - `updated_at` - Timestamp
 
-### Demo Orders Table
-- `id` - Primary key
-- `status` - Order status
-- `assigned_rider` - Assigned rider name
-- `created_at` - Timestamp
-- `updated_at` - Timestamp
 
 ## Development
 
@@ -331,4 +311,4 @@ For detailed admin panel documentation, see [ADMIN_GUIDE.md](ADMIN_GUIDE.md)
 
 ---
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by mekdi-hub
