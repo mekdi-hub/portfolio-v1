@@ -145,6 +145,60 @@ button:hover ~ .custom-cursor,
   box-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
 }
 
+/* Projects slide - scrollable */
+.projects-slide {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.projects-slide::-webkit-scrollbar {
+  width: 10px;
+}
+
+.projects-slide::-webkit-scrollbar-track {
+  background: rgba(17, 24, 39, 0.5);
+  border-radius: 10px;
+}
+
+.projects-slide::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-blue));
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
+.projects-slide::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--neon-blue), var(--neon-cyan));
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
+}
+
+/* Contact slide - scrollable */
+.contact-slide {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.contact-slide::-webkit-scrollbar {
+  width: 10px;
+}
+
+.contact-slide::-webkit-scrollbar-track {
+  background: rgba(17, 24, 39, 0.5);
+  border-radius: 10px;
+}
+
+.contact-slide::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-blue));
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
+.contact-slide::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--neon-blue), var(--neon-cyan));
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
+}
+
 .scroll-indicator-skills {
   position: fixed;
   bottom: 2rem;
@@ -388,8 +442,8 @@ button:hover ~ .custom-cursor,
 
 .glitch-text::before {
   left: 2px;
-  text-shadow: -2px 0 var(--neon-cyan);
-  color: var(--neon-cyan);
+  text-shadow: -3px 0 #000000;
+  color: #000000;
   clip: rect(44px, 9999px, 56px, 0);
   animation: glitch-anim 5s infinite linear alternate-reverse;
   z-index: -1;
@@ -397,8 +451,8 @@ button:hover ~ .custom-cursor,
 
 .glitch-text::after {
   left: -2px;
-  text-shadow: 2px 0 var(--neon-blue);
-  color: var(--neon-blue);
+  text-shadow: 3px 0 #000000;
+  color: #000000;
   clip: rect(44px, 9999px, 56px, 0);
   animation: glitch-anim2 5s infinite linear alternate-reverse;
   z-index: -2;
@@ -876,6 +930,14 @@ button:hover ~ .custom-cursor,
   overflow: hidden;
 }
 
+/* Contact section - allow scrolling */
+.contact-slide .section {
+  height: auto;
+  overflow: visible;
+  justify-content: flex-start;
+  padding: 0 5%;
+}
+
 /* Projects */
 .projects {
   width: 100%;
@@ -896,28 +958,7 @@ button:hover ~ .custom-cursor,
   gap: 2rem;
 }
 
-.project-card {
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.15s ease;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.project-card:hover {
-  border-color: var(--neon-blue);
-  transform: translateY(-5px);
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.5),
-              0 10px 40px rgba(34, 211, 238, 0.3);
-}
-
-.project-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
+/* Project card styles moved to Projects.css */
 
 .project-card h3 {
   font-family: 'Playfair Display', serif;
@@ -1040,33 +1081,38 @@ button[type="submit"]:disabled {
 /* Footer */
 .footer {
   background: transparent;
-  padding: 2rem;
+  padding: 3rem 2rem 2rem;
   text-align: center;
-  color: var(--text-secondary);
-  border-top: 1px solid rgba(59, 130, 246, 0.2);
-  position: absolute;
-  bottom: 0;
+  color: #94A3B8;
+  border-top: 1px solid rgba(34, 211, 238, 0.2);
+  position: relative;
   width: 100%;
+  margin-top: 4rem;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.9375rem;
 }
 
 .admin-link {
-  position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-  padding: 0.5rem 1rem;
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--accent-color);
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.625rem 1.25rem;
+  background: rgba(34, 211, 238, 0.1);
+  color: #22D3EE;
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(34, 211, 238, 0.3);
 }
 
 .admin-link:hover {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(34, 211, 238, 0.2);
+  border-color: #22D3EE;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
 }
 
 /* Responsive */

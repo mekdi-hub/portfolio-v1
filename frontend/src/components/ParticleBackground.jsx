@@ -9,11 +9,12 @@ function ParticleBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particleCount = 100;
+    // Optimized particle count
+    const particleCount = 50;
 
     class Particle {
       constructor() {
@@ -21,67 +22,52 @@ function ParticleBackground() {
         this.y = Math.random() * canvas.height;
         this.baseX = this.x;
         this.baseY = this.y;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = (Math.random() * 3 - 1.5) * 1.5;
-        this.speedY = (Math.random() * 3 - 1.5) * 1.5;
-        this.color = Math.random() > 0.5 ? 'rgba(34, 211, 238, 0.9)' : 'rgba(59, 130, 246, 0.9)';
-        this.density = (Math.random() * 30) + 1;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = (Math.random() * 2 - 1);
+        this.speedY = (Math.random() * 2 - 1);
+        this.color = Math.random() > 0.5 ? 'rgba(34, 211, 238, 0.7)' : 'rgba(59, 130, 246, 0.7)';
+        this.density = (Math.random() * 20) + 1;
       }
 
       update() {
-        // Base movement
         this.baseX += this.speedX;
         this.baseY += this.speedY;
 
-        // Wrap around screen
         if (this.baseX > canvas.width) this.baseX = 0;
         if (this.baseX < 0) this.baseX = canvas.width;
         if (this.baseY > canvas.height) this.baseY = 0;
         if (this.baseY < 0) this.baseY = canvas.height;
 
-        // Mouse interaction - attraction and repulsion
+        // Optimized mouse interaction
         const dx = mouseRef.current.x - this.baseX;
         const dy = mouseRef.current.y - this.baseY;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const maxDistance = 200;
+        const maxDistance = 150;
 
         if (distance < maxDistance) {
           const force = (maxDistance - distance) / maxDistance;
           const angle = Math.atan2(dy, dx);
           
-          // Repulsion effect - particles move away from cursor
-          const moveX = Math.cos(angle) * force * this.density * 0.8;
-          const moveY = Math.sin(angle) * force * this.density * 0.8;
+          // Repulsion effect
+          const moveX = Math.cos(angle) * force * this.density * 0.5;
+          const moveY = Math.sin(angle) * force * this.density * 0.5;
           
           this.x = this.baseX - moveX;
           this.y = this.baseY - moveY;
         } else {
-          // Smoothly return to base position
-          this.x += (this.baseX - this.x) * 0.15;
-          this.y += (this.baseY - this.y) * 0.15;
+          // Return to base position
+          this.x += (this.baseX - this.x) * 0.1;
+          this.y += (this.baseY - this.y) * 0.1;
         }
       }
 
       draw() {
         ctx.fillStyle = this.color;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 10;
         ctx.shadowColor = this.color;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
-        
-        // Add extra glow for particles near mouse
-        const dx = mouseRef.current.x - this.x;
-        const dy = mouseRef.current.y - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 150) {
-          const glowIntensity = (150 - distance) / 150;
-          ctx.shadowBlur = 30 * glowIntensity;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
       }
     }
 
@@ -91,15 +77,27 @@ function ParticleBackground() {
       particlesRef.current.push(new Particle());
     }
 
-    // Mouse move handler
+    // Mouse move handler with throttling
+    let mouseMoveTimeout;
     const handleMouseMove = (e) => {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
     };
 
-    // Animation loop
+    // Animation loop - optimized with FPS limit
     let animationFrameId;
-    function animate() {
+    let lastTime = 0;
+    const fps = 30;
+    const interval = 1000 / fps;
+
+    function animate(currentTime) {
+      animationFrameId = requestAnimationFrame(animate);
+      
+      const deltaTime = currentTime - lastTime;
+      if (deltaTime < interval) return;
+      
+      lastTime = currentTime - (deltaTime % interval);
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw connections between nearby particles
@@ -109,8 +107,8 @@ function ParticleBackground() {
           const dy = particlesRef.current[i].y - particlesRef.current[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 120) {
-            const opacity = 0.3 * (1 - distance / 120);
+          if (distance < 100) {
+            const opacity = 0.2 * (1 - distance / 100);
             ctx.strokeStyle = `rgba(34, 211, 238, ${opacity})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -120,15 +118,15 @@ function ParticleBackground() {
           }
         }
         
-        // Draw connections to mouse
+        // Draw connections to mouse (optimized)
         const dx = mouseRef.current.x - particlesRef.current[i].x;
         const dy = mouseRef.current.y - particlesRef.current[i].y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        if (distance < 150) {
-          const opacity = 0.5 * (1 - distance / 150);
+        if (distance < 120) {
+          const opacity = 0.3 * (1 - distance / 120);
           ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`;
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.moveTo(particlesRef.current[i].x, particlesRef.current[i].y);
           ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
@@ -141,16 +139,18 @@ function ParticleBackground() {
         particle.update();
         particle.draw();
       });
-
-      animationFrameId = requestAnimationFrame(animate);
     }
 
-    animate();
+    animate(0);
 
-    // Handle resize
+    // Handle resize with debounce
+    let resizeTimeout;
     const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }, 250);
     };
 
     window.addEventListener('resize', handleResize);
@@ -160,6 +160,8 @@ function ParticleBackground() {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
+      clearTimeout(resizeTimeout);
+      clearTimeout(mouseMoveTimeout);
     };
   }, []);
 

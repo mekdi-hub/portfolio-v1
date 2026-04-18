@@ -373,7 +373,7 @@
   height: 16px;
   background: radial-gradient(ellipse, rgba(34, 211, 238, 0.6), transparent);
   filter: blur(10px);
-  animation: loadProgress 4.5s ease-out forwards;
+  animation: loadProgress 2.2s ease-out forwards;
 }
 
 .percentage {

@@ -28,7 +28,7 @@ function Hero({ scrollToSection }) {
       <div className="animated-gradient"></div>
       <div className="hero-content">
         <h1 className="hero-title">
-          <span className="typing-text">{displayText}</span>
+          <span className="typing-text glitch-text" data-text={displayText}>{displayText}</span>
           <span className="cursor">|</span>
         </h1>
         <p className="hero-subtitle">

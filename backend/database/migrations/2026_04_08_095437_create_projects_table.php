@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('tech_stack');
             $table->string('image')->nullable();
             $table->string('demo_link')->nullable();
+            $table->string('github_link')->nullable();
             $table->timestamps();
         });
     }

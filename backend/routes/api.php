@@ -11,6 +11,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Public routes for portfolio
+Route::post('projects/upload-image', [ProjectController::class, 'uploadImage']);
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('messages', MessageController::class);
 Route::apiResource('demo-orders', DemoOrderController::class);

@@ -14,6 +14,10 @@ function App() {
   const [skillsKey, setSkillsKey] = useState(0);
   const [aboutKey, setAboutKey] = useState(0);
 
+  const handleLoadComplete = () => {
+    setLoading(false);
+  };
+
   const scrollToSection = (sectionIndex) => {
     setActiveSection(sectionIndex);
     
@@ -174,7 +178,7 @@ function App() {
         </div>
 
         {/* Contact Slide */}
-        <div className={`slide ${activeSection === 4 ? 'active' : ''}`}>
+        <div className={`slide contact-slide ${activeSection === 4 ? 'active' : ''}`}>
           <section id="contact" className="section">
             <ContactForm />
           </section>

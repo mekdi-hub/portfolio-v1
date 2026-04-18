@@ -9,6 +9,7 @@ Welcome to the Portfolio Project documentation! This index will help you find th
 | [README.md](README.md) | Complete project overview | First time setup, understanding architecture |
 | [QUICK_START.md](QUICK_START.md) | Quick reference guide | Daily usage, common commands |
 | [ADMIN_GUIDE.md](ADMIN_GUIDE.md) | Admin panel user guide | Learning to use admin features |
+| [IMAGE_UPLOAD_GUIDE.md](IMAGE_UPLOAD_GUIDE.md) | Image upload feature guide | Uploading project images |
 | [FEATURES.md](FEATURES.md) | Feature list & roadmap | Understanding what's built, planning enhancements |
 | [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) | High-level overview | Quick understanding of deliverables |
 | [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) | Production deployment guide | Preparing for launch |
@@ -47,6 +48,7 @@ Welcome to the Portfolio Project documentation! This index will help you find th
 ### Using Admin Panel
 - **Admin features**: [ADMIN_GUIDE.md](ADMIN_GUIDE.md) → Features
 - **Managing projects**: [ADMIN_GUIDE.md](ADMIN_GUIDE.md) → Projects Management
+- **Uploading images**: [IMAGE_UPLOAD_GUIDE.md](IMAGE_UPLOAD_GUIDE.md) → How to Use
 - **Viewing messages**: [ADMIN_GUIDE.md](ADMIN_GUIDE.md) → Messages Management
 - **Managing orders**: [ADMIN_GUIDE.md](ADMIN_GUIDE.md) → Demo Orders Management
 
@@ -221,8 +223,8 @@ Welcome to the Portfolio Project documentation! This index will help you find th
 
 ## 📊 Documentation Statistics
 
-- **Total Documents**: 7
-- **Total Pages**: ~2,500 lines
+- **Total Documents**: 8
+- **Total Pages**: ~2,700 lines
 - **Topics Covered**: 50+
 - **Code Examples**: 100+
 - **Checklists**: 10+

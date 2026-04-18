@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Admin.css';
 
 const API_URL = 'http://localhost:8000/api';
@@ -18,8 +18,17 @@ export default function Admin() {
     description: '',
     tech_stack: '',
     image: '',
-    demo_link: ''
+    demo_link: '',
+    github_link: ''
   });
+
+  const imageFileRef = useRef(null); // Use ref instead of state for File object
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [useFileUpload, setUseFileUpload] = useState(false); // Track which method user is using
+  const [selectedFileName, setSelectedFileName] = useState(''); // Track filename for display
 
   const [orderForm, setOrderForm] = useState({
     status: 'pending',
@@ -52,11 +61,122 @@ export default function Admin() {
     setLoading(false);
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log('File selected in handleImageChange:', file);
+    if (file) {
+      console.log('File details:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified
+      });
+      setUseFileUpload(true);
+      imageFileRef.current = file; // Store in ref
+      setSelectedFileName(file.name); // Store filename for display
+      setProjectForm({...projectForm, image: ''}); // Clear URL when file is selected
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.log('No file selected');
+    }
+  };
+
+  const uploadImage = async () => {
+    const imageFile = imageFileRef.current;
+    if (!imageFile) {
+      console.error('No image file in ref!');
+      return null;
+    }
+
+    setUploadingImage(true);
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      console.log('Uploading image:', imageFile.name, 'Size:', imageFile.size, 'Type:', imageFile.type);
+      
+      // Log FormData contents for debugging
+      for (let pair of formData.entries()) {
+        console.log('FormData entry:', pair[0], pair[1]);
+      }
+
+      const res = await fetch(`${API_URL}/projects/upload-image`, {
+        method: 'POST',
+        body: formData,
+        // Don't set Content-Type header - let browser set it with boundary
+      });
+
+      console.log('Upload response status:', res.status);
+      const data = await res.json();
+      console.log('Upload response data:', JSON.stringify(data, null, 2));
+
+      if (data.success) {
+        console.log('Upload successful, URL:', data.url);
+        return data.url;
+      }
+      
+      console.error('Upload failed:', JSON.stringify(data, null, 2));
+      // Show detailed error if available
+      if (data.errors) {
+        const errorMessages = Object.values(data.errors).flat().join(', ');
+        setError(`Image upload failed: ${errorMessages}`);
+      } else {
+        setError(`Image upload failed: ${data.message || 'Unknown error'}`);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setError(`Network error during upload: ${error.message}`);
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleProjectSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    setSuccess(null);
 
     try {
+      let imageUrl = projectForm.image;
+
+      console.log('Submit - useFileUpload:', useFileUpload);
+      console.log('Submit - imageFileRef.current:', imageFileRef.current);
+      console.log('Submit - projectForm.image:', projectForm.image);
+
+      // Only upload if a file was selected (not using URL method)
+      if (useFileUpload && imageFileRef.current) {
+        console.log('Image file selected, uploading...');
+        console.log('File object before upload:', {
+          name: imageFileRef.current.name,
+          size: imageFileRef.current.size,
+          type: imageFileRef.current.type
+        });
+        const uploadedUrl = await uploadImage();
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+          console.log('Image uploaded successfully:', imageUrl);
+        } else {
+          // If upload fails, show error and stop
+          setError('Image upload failed. Please try again or use an image URL instead.');
+          setLoading(false);
+          return;
+        }
+      }
+
+      const projectData = {
+        ...projectForm,
+        image: imageUrl
+      };
+
+      console.log('Saving project data:', projectData);
+
       const url = editingItem 
         ? `${API_URL}/projects/${editingItem.id}`
         : `${API_URL}/projects`;
@@ -66,15 +186,23 @@ export default function Admin() {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(projectForm)
+        body: JSON.stringify(projectData)
       });
 
       if (res.ok) {
+        const result = await res.json();
+        console.log('Project saved:', result);
+        setSuccess(editingItem ? 'Project updated successfully!' : 'Project created successfully!');
         resetForm();
         fetchData();
+      } else {
+        const errorData = await res.json();
+        console.error('Server error:', errorData);
+        setError(errorData.message || 'Failed to save project. Please check all fields.');
       }
     } catch (error) {
       console.error('Error saving project:', error);
+      setError('Network error. Please check if the backend is running.');
     }
     setLoading(false);
   };
@@ -82,6 +210,8 @@ export default function Admin() {
   const handleOrderSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    setSuccess(null);
 
     try {
       const url = editingItem 
@@ -97,11 +227,16 @@ export default function Admin() {
       });
 
       if (res.ok) {
+        setSuccess(editingItem ? 'Order updated successfully!' : 'Order created successfully!');
         resetForm();
         fetchData();
+      } else {
+        const errorData = await res.json();
+        setError(errorData.message || 'Failed to save order.');
       }
     } catch (error) {
       console.error('Error saving order:', error);
+      setError('Network error. Please check if the backend is running.');
     }
     setLoading(false);
   };
@@ -135,8 +270,10 @@ export default function Admin() {
         description: item.description,
         tech_stack: item.tech_stack,
         image: item.image || '',
-        demo_link: item.demo_link || ''
+        demo_link: item.demo_link || '',
+        github_link: item.github_link || ''
       });
+      setImagePreview(item.image || null);
     } else if (type === 'order') {
       setOrderForm({
         status: item.status,
@@ -153,12 +290,17 @@ export default function Admin() {
       description: '',
       tech_stack: '',
       image: '',
-      demo_link: ''
+      demo_link: '',
+      github_link: ''
     });
     setOrderForm({
       status: 'pending',
       assigned_rider: ''
     });
+    imageFileRef.current = null;
+    setImagePreview(null);
+    setUseFileUpload(false);
+    setSelectedFileName('');
   };
 
   return (
@@ -200,6 +342,20 @@ export default function Admin() {
       </div>
 
       <div className="admin-content">
+        {/* Success/Error Messages */}
+        {success && (
+          <div className="alert alert-success">
+            {success}
+            <button onClick={() => setSuccess(null)} className="alert-close">✕</button>
+          </div>
+        )}
+        {error && (
+          <div className="alert alert-error">
+            {error}
+            <button onClick={() => setError(null)} className="alert-close">✕</button>
+          </div>
+        )}
+
         {/* Projects Tab */}
         {activeTab === 'projects' && (
           <div className="tab-content">
@@ -254,17 +410,109 @@ export default function Admin() {
                   onChange={(e) => setProjectForm({...projectForm, tech_stack: e.target.value})}
                   required
                 />
-                <input
-                  type="text"
-                  placeholder="Image URL (optional)"
-                  value={projectForm.image}
-                  onChange={(e) => setProjectForm({...projectForm, image: e.target.value})}
-                />
+                <div className="image-upload-section">
+                  <label className="image-upload-label">
+                    Project Media (Image or Video)
+                  </label>
+                  
+                  <div className="image-input-tabs">
+                    <button
+                      type="button"
+                      className={`tab-btn ${!useFileUpload ? 'active' : ''}`}
+                      onClick={() => {
+                        setUseFileUpload(false);
+                        imageFileRef.current = null;
+                        setSelectedFileName('');
+                        setImagePreview(projectForm.image || null);
+                      }}
+                    >
+                      📎 Media URL (Recommended)
+                    </button>
+                    <button
+                      type="button"
+                      className={`tab-btn ${useFileUpload ? 'active' : ''}`}
+                      onClick={() => {
+                        setUseFileUpload(true);
+                        const fileInput = document.getElementById('file-input');
+                        if (fileInput) fileInput.click();
+                      }}
+                    >
+                      📁 Upload File
+                    </button>
+                  </div>
+
+                  {!useFileUpload ? (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Paste image, video, or YouTube URL here"
+                        value={projectForm.image}
+                        onChange={(e) => {
+                          setProjectForm({...projectForm, image: e.target.value});
+                          setImagePreview(e.target.value);
+                        }}
+                      />
+                      <small style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: '0.5rem', display: 'block' }}>
+                        💡 Supports: Image URLs, YouTube links, or direct video URLs (.mp4, .webm)
+                      </small>
+                    </>
+                  ) : (
+                    <div style={{ padding: '10px', background: '#f0f9ff', border: '1px solid #0ea5e9', borderRadius: '5px', marginBottom: '10px' }}>
+                      {selectedFileName ? (
+                        <>
+                          <strong>File selected:</strong> {selectedFileName}
+                        </>
+                      ) : (
+                        <span style={{ color: '#64748b' }}>Click "Upload File" button above to select media</span>
+                      )}
+                    </div>
+                  )}
+
+                  <input
+                    id="file-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="file-input"
+                    style={{ display: 'none' }}
+                  />
+                  <small style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: '0.5rem', display: 'block' }}>
+                    Maximum file size: 20MB
+                  </small>
+
+                  {imagePreview && (
+                    <div className="image-preview">
+                      <img src={imagePreview} alt="Preview" onError={(e) => {
+                        e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><text x="50%" y="50%" text-anchor="middle" fill="gray">Invalid Image</text></svg>';
+                      }} />
+                      <button 
+                        type="button" 
+                        className="remove-image"
+                        onClick={() => {
+                          imageFileRef.current = null;
+                          setImagePreview(null);
+                          setProjectForm({...projectForm, image: ''});
+                          setUseFileUpload(false);
+                          setSelectedFileName('');
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                  {uploadingImage && <p className="upload-status">Uploading image...</p>}
+                </div>
                 <input
                   type="url"
                   placeholder="Demo Link (optional)"
                   value={projectForm.demo_link}
                   onChange={(e) => setProjectForm({...projectForm, demo_link: e.target.value})}
+                />
+                <input
+                  type="url"
+                  placeholder="GitHub Repository URL (optional)"
+                  value={projectForm.github_link}
+                  onChange={(e) => setProjectForm({...projectForm, github_link: e.target.value})}
                 />
                 <div className="form-actions">
                   <button type="submit" className="btn-primary" disabled={loading}>
