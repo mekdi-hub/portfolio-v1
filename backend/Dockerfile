@@ -11,7 +11,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# 🔥 IMPORTANT FIX: point Apache to public folder
+# 🔥 CRITICAL FIX (THIS IS THE REAL ISSUE)
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
