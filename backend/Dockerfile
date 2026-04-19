@@ -1,82 +1,67 @@
-# ======================================
-# 1. Base Image (PHP 8.3 + Apache)
-# ======================================
 FROM php:8.3-apache
 
-# ======================================
-# 2. System dependencies
-# ======================================
+# =========================
+# Install system dependencies
+# =========================
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+    git \
+    curl \
+    zip \
+    unzip \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip gd
 
-# ======================================
-# 3. Enable Apache rewrite
-# ======================================
+# =========================
+# Enable Apache rewrite
+# =========================
 RUN a2enmod rewrite
 
-# ======================================
-# 4. Set working directory
-# ======================================
+# =========================
+# Set working directory
+# =========================
 WORKDIR /var/www/html
 
-# ======================================
-# 5. Copy project
-# ======================================
+# =========================
+# Copy project files
+# =========================
 COPY . .
 
-# ======================================
-# 6. Apache fix (Laravel public folder)
-# ======================================
+# =========================
+# Install Composer
+# =========================
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# =========================
+# Install Laravel dependencies
+# =========================
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# =========================
+# Fix Laravel permissions
+# =========================
+RUN mkdir -p storage/logs bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
+
+# =========================
+# Set Apache document root to /public
+# =========================
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
-    /etc/apache2/sites-available/*.conf
+    /etc/apache2/sites-available/*.conf \
+    /etc/apache2/apache2.conf \
+    /etc/apache2/conf-available/*.conf
 
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
-    /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# =========================
+# Final permissions
+# =========================
+RUN chown -R www-data:www-data /var/www/html
 
-# ======================================
-# 7. TEMP DIRECTORY FIX (IMPORTANT)
-# ======================================
-ENV TMPDIR=/tmp
-ENV TEMP=/tmp
-ENV TMP=/tmp
-
-RUN mkdir -p /tmp/laravel && chmod -R 777 /tmp
-
-# ======================================
-# 8. SESSION + CACHE FIX
-# ======================================
-RUN echo "session.save_path=/tmp" > /usr/local/etc/php/conf.d/sessions.ini
-
-# ======================================
-# 9. STORAGE PERMISSION FIX (YOUR ERROR)
-# ======================================
-RUN chown -R www-data:www-data storage bootstrap/cache || true
-RUN chmod -R 775 storage bootstrap/cache
-
-# ======================================
-# 10. Install Composer
-# ======================================
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# ======================================
-# 11. Install Laravel dependencies
-# ======================================
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# ======================================
-# 12. Clear Laravel cache (IMPORTANT)
-# ======================================
-RUN php artisan optimize:clear || true
-
-# ======================================
-# 13. Expose port
-# ======================================
 EXPOSE 80
 
-# ======================================
-# 14. Start Apache
-# ======================================
 CMD ["apache2-foreground"]
