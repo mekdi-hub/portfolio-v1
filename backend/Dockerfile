@@ -1,17 +1,17 @@
 # ======================================
-# 1. Base image (PHP 8.3 + Apache)
+# 1. Base Image (PHP 8.3 + Apache)
 # ======================================
 FROM php:8.3-apache
 
 # ======================================
-# 2. Install system dependencies
+# 2. System dependencies
 # ======================================
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # ======================================
-# 3. Enable Apache rewrite module
+# 3. Enable Apache rewrite
 # ======================================
 RUN a2enmod rewrite
 
@@ -21,12 +21,12 @@ RUN a2enmod rewrite
 WORKDIR /var/www/html
 
 # ======================================
-# 5. Copy project files
+# 5. Copy project
 # ======================================
 COPY . .
 
 # ======================================
-# 6. Fix Apache to use Laravel /public
+# 6. Apache fix (Laravel public folder)
 # ======================================
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
@@ -37,7 +37,7 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # ======================================
-# 7. TEMP FIX (CRITICAL FOR YOUR ERROR)
+# 7. TEMP DIRECTORY FIX (IMPORTANT)
 # ======================================
 ENV TMPDIR=/tmp
 ENV TEMP=/tmp
@@ -46,14 +46,15 @@ ENV TMP=/tmp
 RUN mkdir -p /tmp/laravel && chmod -R 777 /tmp
 
 # ======================================
-# 8. Session + cache fix
+# 8. SESSION + CACHE FIX
 # ======================================
-RUN echo "session.save_path=/tmp" >> /usr/local/etc/php/conf.d/sessions.ini
+RUN echo "session.save_path=/tmp" > /usr/local/etc/php/conf.d/sessions.ini
 
 # ======================================
-# 9. Permissions fix
+# 9. STORAGE PERMISSION FIX (YOUR ERROR)
 # ======================================
-RUN chmod -R 777 storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache || true
+RUN chmod -R 775 storage bootstrap/cache
 
 # ======================================
 # 10. Install Composer
@@ -66,7 +67,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # ======================================
-# 12. Clear Laravel caches (VERY IMPORTANT)
+# 12. Clear Laravel cache (IMPORTANT)
 # ======================================
 RUN php artisan optimize:clear || true
 
