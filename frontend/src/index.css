@@ -26,3 +26,200 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Hero Page Responsive Styles */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 2rem;
+}
+
+.hero-content {
+  text-align: center;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: #94A3B8;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-skills {
+  display: flex;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.hero-skill {
+  padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2.5vw, 1.5rem);
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 50px;
+  color: #22D3EE;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-weight: 600;
+}
+
+.hero-actions {
+  display: flex;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-button,
+.secondary-button {
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2.5rem);
+  font-size: clamp(0.9375rem, 2vw, 1.125rem);
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 150px;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
+  color: #ffffff;
+}
+
+.secondary-button {
+  background: rgba(30, 41, 59, 0.8);
+  color: #ffffff;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  animation: bounce 2s infinite;
+}
+
+/* Responsive Breakpoints */
+
+/* Tablets and smaller laptops */
+@media (max-width: 1024px) {
+  .hero {
+    padding: 1.5rem;
+  }
+}
+
+/* Tablets portrait */
+@media (max-width: 768px) {
+  .hero {
+    padding: 1.5rem 1rem;
+  }
+
+  .hero-subtitle br {
+    display: none;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-button,
+  .secondary-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Mobile landscape and small tablets */
+@media (max-width: 640px) {
+  .hero {
+    padding: 1rem;
+  }
+
+  .hero-skills {
+    gap: 0.5rem;
+  }
+
+  .scroll-indicator {
+    bottom: 1rem;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .hero {
+    padding: 1rem 0.75rem;
+  }
+
+  .hero-content {
+    padding: 0 0.5rem;
+  }
+
+  .hero-skills {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero-skill {
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 360px) {
+  .hero-actions {
+    gap: 0.5rem;
+  }
+
+  .cta-button,
+  .secondary-button {
+    min-width: 120px;
+    padding: 0.625rem 1.25rem;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero {
+    min-height: auto;
+    padding: 2rem 1rem;
+  }
+
+  .hero-title {
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    margin-bottom: 1rem;
+  }
+
+  .hero-skills {
+    margin-bottom: 1.5rem;
+  }
+
+  .scroll-indicator {
+    display: none;
+  }
+}

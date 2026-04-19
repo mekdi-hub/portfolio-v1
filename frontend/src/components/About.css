@@ -1009,3 +1009,523 @@
     padding-left: 2.5rem;
   }
 }
+
+
+/* Comprehensive Responsive Design for About Page */
+
+/* Tablets and smaller laptops */
+@media (max-width: 1024px) {
+  .about-page-new {
+    padding: 2rem 1.5rem;
+  }
+
+  .about-title {
+    font-size: 3rem;
+  }
+
+  .about-name {
+    font-size: 2.25rem;
+  }
+
+  .about-role {
+    font-size: 1.125rem;
+  }
+
+  .about-info-full {
+    padding: 2.5rem;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+  }
+
+  .education-card-main {
+    padding: 3rem;
+  }
+
+  .education-degree {
+    font-size: 2rem;
+  }
+
+  .education-university {
+    font-size: 1.5rem;
+  }
+
+  .journey-title {
+    font-size: 2.75rem;
+  }
+}
+
+/* Tablets portrait */
+@media (max-width: 768px) {
+  .about-page-new {
+    padding: 2rem 1rem;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .about-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .about-badge {
+    font-size: 0.6875rem;
+    padding: 0.375rem 1.25rem;
+    letter-spacing: 1.5px;
+  }
+
+  .about-title {
+    font-size: 2.5rem;
+  }
+
+  .about-tabs {
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 0.875rem 2rem;
+    font-size: 0.875rem;
+  }
+
+  .about-name {
+    font-size: 2rem;
+  }
+
+  .about-role {
+    font-size: 1.0625rem;
+    padding-left: 1.25rem;
+  }
+
+  .about-description p {
+    font-size: 1rem;
+  }
+
+  .about-info-full {
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding-top: 2rem;
+  }
+
+  .stat-item {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .stat-number {
+    font-size: 2.75rem;
+  }
+
+  .education-card-main {
+    padding: 2.5rem;
+  }
+
+  .education-degree {
+    font-size: 1.875rem;
+  }
+
+  .education-university {
+    font-size: 1.375rem;
+  }
+
+  .education-years {
+    font-size: 1rem;
+  }
+
+  .education-grid {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  .journey-title {
+    font-size: 2.5rem;
+  }
+
+  .journey-description {
+    font-size: 1rem;
+  }
+
+  .timeline-vertical {
+    padding-left: 3rem;
+  }
+
+  .timeline-dot-vertical {
+    left: -2.2rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .timeline-content-vertical {
+    padding: 2rem;
+  }
+
+  .timeline-title-vertical {
+    font-size: 1.5rem;
+  }
+
+  .timeline-desc-vertical {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile landscape and small tablets */
+@media (max-width: 640px) {
+  .about-page-new {
+    padding: 1.5rem 1rem;
+  }
+
+  .about-title {
+    font-size: 2.25rem;
+  }
+
+  .about-tabs {
+    gap: 0.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .about-name {
+    font-size: 1.75rem;
+  }
+
+  .about-role {
+    font-size: 1rem;
+  }
+
+  .about-description p {
+    font-size: 0.9375rem;
+  }
+
+  .about-info-full {
+    padding: 1.75rem;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+  }
+
+  .education-card-main {
+    padding: 2rem;
+  }
+
+  .education-icon {
+    font-size: 3.5rem;
+  }
+
+  .education-degree {
+    font-size: 1.625rem;
+  }
+
+  .education-university {
+    font-size: 1.25rem;
+  }
+
+  .details-title {
+    font-size: 1.125rem;
+  }
+
+  .journey-title {
+    font-size: 2.25rem;
+  }
+
+  .timeline-vertical {
+    padding-left: 2.75rem;
+  }
+
+  .timeline-dot-vertical {
+    left: -2rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .timeline-content-vertical {
+    padding: 1.75rem;
+  }
+
+  .timeline-title-vertical {
+    font-size: 1.375rem;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .about-page-new {
+    padding: 1.25rem 0.875rem;
+  }
+
+  .about-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .about-badge {
+    font-size: 0.625rem;
+    padding: 0.3125rem 1rem;
+  }
+
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .about-tabs {
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.75rem;
+  }
+
+  .about-content-single,
+  .education-content,
+  .journey-content {
+    padding-bottom: 1rem;
+  }
+
+  .about-name {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .about-role {
+    font-size: 0.9375rem;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+  }
+
+  .about-description {
+    margin-bottom: 2rem;
+  }
+
+  .about-description p {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .about-info-full {
+    padding: 1.5rem;
+    gap: 1.75rem;
+  }
+
+  .stat-item {
+    padding: 1.5rem 1rem;
+  }
+
+  .stat-number {
+    font-size: 2.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  .education-card-main {
+    padding: 1.75rem;
+  }
+
+  .education-icon {
+    font-size: 3rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .education-degree {
+    font-size: 1.5rem;
+  }
+
+  .education-university {
+    font-size: 1.125rem;
+  }
+
+  .education-years {
+    font-size: 0.9375rem;
+    margin-bottom: 2rem;
+  }
+
+  .details-title {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .education-item {
+    padding: 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  .item-icon {
+    font-size: 1.25rem;
+  }
+
+  .skill-tag {
+    padding: 0.375rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .journey-intro {
+    margin-bottom: 3rem;
+  }
+
+  .journey-title {
+    font-size: 2rem;
+  }
+
+  .journey-description {
+    font-size: 0.9375rem;
+  }
+
+  .timeline-vertical {
+    padding-left: 2.5rem;
+  }
+
+  .timeline-line-vertical {
+    left: 1.25rem;
+    width: 2px;
+  }
+
+  .timeline-item-vertical {
+    margin-bottom: 2.5rem;
+  }
+
+  .timeline-dot-vertical {
+    left: -1.85rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-width: 2px;
+  }
+
+  .timeline-icon {
+    font-size: 1rem;
+  }
+
+  .timeline-content-vertical {
+    padding: 1.5rem;
+  }
+
+  .timeline-year-vertical {
+    padding: 0.375rem 1rem;
+    font-size: 0.8125rem;
+    margin-bottom: 1rem;
+  }
+
+  .timeline-title-vertical {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .timeline-desc-vertical {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 360px) {
+  .about-page-new {
+    padding: 1rem 0.75rem;
+  }
+
+  .about-title {
+    font-size: 1.75rem;
+  }
+
+  .tab-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.6875rem;
+  }
+
+  .about-name {
+    font-size: 1.375rem;
+  }
+
+  .about-role {
+    font-size: 0.875rem;
+  }
+
+  .about-description p {
+    font-size: 0.8125rem;
+  }
+
+  .about-info-full {
+    padding: 1.25rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .education-card-main {
+    padding: 1.5rem;
+  }
+
+  .education-degree {
+    font-size: 1.375rem;
+  }
+
+  .journey-title {
+    font-size: 1.75rem;
+  }
+
+  .timeline-vertical {
+    padding-left: 2.25rem;
+  }
+
+  .timeline-dot-vertical {
+    left: -1.75rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .timeline-content-vertical {
+    padding: 1.25rem;
+  }
+
+  .timeline-title-vertical {
+    font-size: 1.125rem;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .about-page-new {
+    height: auto;
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+  }
+
+  .about-header {
+    margin-bottom: 1rem;
+  }
+
+  .about-tabs {
+    margin-bottom: 1.5rem;
+  }
+
+  .about-info-full {
+    padding: 1.5rem;
+  }
+
+  .education-card-main {
+    padding: 1.5rem;
+  }
+
+  .journey-intro {
+    margin-bottom: 2rem;
+  }
+
+  .timeline-item-vertical {
+    margin-bottom: 2rem;
+  }
+}
