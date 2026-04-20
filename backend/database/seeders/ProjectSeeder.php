@@ -13,27 +13,19 @@ class ProjectSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Project::create([
-            'title' => 'E-Commerce Platform',
-            'description' => 'A full-featured e-commerce platform with payment integration',
-            'tech_stack' => 'Laravel, Vue.js, MySQL, Stripe',
+            'title' => 'unibite',
+            'description' => 'fast delivery with delicious foods',
+            'tech_stack' => 'React, Laravel, MySQL',
             'image' => 'https://via.placeholder.com/400x300',
-            'demo_link' => 'https://example.com/demo1'
+            'demo_link' => ''
         ]);
 
         \App\Models\Project::create([
-            'title' => 'Task Management App',
-            'description' => 'Real-time task management application with team collaboration',
-            'tech_stack' => 'React, Node.js, MongoDB, Socket.io',
+            'title' => 'inventory management system',
+            'description' => 'reliable and really workable system',
+            'tech_stack' => 'Laravel, MySQL',
             'image' => 'https://via.placeholder.com/400x300',
-            'demo_link' => 'https://example.com/demo2'
-        ]);
-
-        \App\Models\Project::create([
-            'title' => 'Portfolio Website',
-            'description' => 'Modern portfolio website with admin dashboard',
-            'tech_stack' => 'Laravel, React, Tailwind CSS',
-            'image' => 'https://via.placeholder.com/400x300',
-            'demo_link' => 'https://example.com/demo3'
+            'demo_link' => ''
         ]);
     }
 }
