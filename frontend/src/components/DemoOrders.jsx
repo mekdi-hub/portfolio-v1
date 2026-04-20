@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-v1-2uu3.onrender.com/api';
+
 function DemoOrders() {
   const [orderData, setOrderData] = useState({
     status: 'pending',
@@ -12,7 +14,7 @@ function DemoOrders() {
     setStatus('creating');
 
     try {
-      const response = await fetch('http://localhost:8000/api/demo-orders', {
+      const response = await fetch(`${API_URL}/demo-orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
