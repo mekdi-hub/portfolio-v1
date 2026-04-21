@@ -1,6 +1,6 @@
 .contact-page {
   height: 100vh;
-  padding: 0;
+  padding: 2rem;
   background: var(--background);
   position: relative;
   overflow: hidden;
@@ -10,20 +10,7 @@
 }
 
 .contact-background-card {
-  position: absolute;
-  inset: 0;
-  background: 
-    linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.05) 0%, 
-      rgba(255, 255, 255, 0.02) 100%
-    );
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  z-index: 0;
+  display: none;
 }
 
 .mouse-glow {
@@ -103,7 +90,6 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 3rem 4rem;
 }
 
 /* Hero Section with Large Title */
@@ -431,8 +417,8 @@
 
 /* Large tablets and smaller laptops */
 @media (max-width: 1200px) {
-  .contact-container {
-    padding: 2.5rem 3rem;
+  .contact-page {
+    padding: 2rem 1.5rem;
   }
 
   .contact-main-title {
@@ -446,8 +432,8 @@
 
 /* Tablets and smaller laptops */
 @media (max-width: 1024px) {
-  .contact-container {
-    padding: 2rem 2.5rem;
+  .contact-page {
+    padding: 1.5rem;
   }
 
   .contact-main-title {
@@ -474,8 +460,10 @@
 
 /* Tablets portrait */
 @media (max-width: 968px) {
-  .contact-container {
-    padding: 2rem 2rem;
+  .contact-page {
+    height: auto;
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
   }
 
   .contact-hero {
@@ -511,7 +499,6 @@
   .social-icon-link {
     width: 50px;
     height: 50px;
-    /* Ensure touch targets are at least 44x44px */
   }
 
   .social-icon-link svg {
@@ -522,8 +509,8 @@
 
 /* Mobile landscape and small tablets */
 @media (max-width: 768px) {
-  .contact-container {
-    padding: 1.5rem 1.5rem;
+  .contact-page {
+    padding: 1.5rem 1.25rem;
   }
 
   .contact-hero {
@@ -599,8 +586,8 @@
 
 /* Mobile portrait */
 @media (max-width: 480px) {
-  .contact-container {
-    padding: 1.5rem 1.25rem;
+  .contact-page {
+    padding: 1.5rem 1rem;
   }
 
   .contact-hero {
@@ -642,7 +629,6 @@
     width: 48px;
     height: 48px;
     border-radius: 11px;
-    /* Maintain 48px for better touch targets on mobile */
   }
 
   .social-icon-link svg {
@@ -703,8 +689,8 @@
 
 /* Extra small mobile devices */
 @media (max-width: 360px) {
-  .contact-container {
-    padding: 1.25rem 1rem;
+  .contact-page {
+    padding: 1.25rem 0.875rem;
   }
 
   .contact-hero {
@@ -734,7 +720,6 @@
     width: 44px;
     height: 44px;
     border-radius: 10px;
-    /* Minimum 44px for accessibility */
   }
 
   .social-icon-link svg {
@@ -784,8 +769,10 @@
 
 /* Landscape orientation for mobile */
 @media (max-height: 600px) and (orientation: landscape) {
-  .contact-container {
-    padding: 1.5rem 1.5rem;
+  .contact-page {
+    height: auto;
+    min-height: 100vh;
+    padding: 1.5rem 1.25rem;
   }
 
   .contact-hero {
@@ -813,8 +800,8 @@
 
 /* Very short screens in landscape */
 @media (max-height: 450px) and (orientation: landscape) {
-  .contact-container {
-    padding: 1rem 1.25rem;
+  .contact-page {
+    padding: 1rem;
   }
 
   .contact-hero {
