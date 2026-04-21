@@ -406,6 +406,21 @@
 
 /* Responsive Design for All Devices */
 
+/* Large tablets and smaller laptops */
+@media (max-width: 1200px) {
+  .contact-page {
+    padding: 2rem 1.5rem;
+  }
+
+  .contact-main-title {
+    font-size: clamp(4rem, 9vw, 7rem);
+  }
+
+  .contact-bottom {
+    gap: 2.5rem;
+  }
+}
+
 /* Tablets and smaller laptops */
 @media (max-width: 1024px) {
   .contact-page {
@@ -413,7 +428,7 @@
   }
 
   .contact-main-title {
-    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-size: clamp(3.5rem, 8.5vw, 6rem);
   }
 
   .contact-bottom {
@@ -427,6 +442,11 @@
   .contact-info-text {
     font-size: 0.9375rem;
   }
+
+  .social-icon-link {
+    width: 52px;
+    height: 52px;
+  }
 }
 
 /* Tablets portrait */
@@ -438,18 +458,18 @@
   }
 
   .contact-hero {
-    padding: 3rem 0;
+    padding: 3rem 0 2rem;
   }
 
   .contact-main-title {
-    font-size: clamp(3rem, 9vw, 6rem);
+    font-size: clamp(3rem, 8vw, 5.5rem);
   }
 
   .contact-bottom {
     flex-direction: column;
     align-items: flex-start;
-    gap: 2rem;
-    padding: 1.5rem 0;
+    gap: 2.5rem;
+    padding: 2rem 0 1.5rem;
   }
 
   .contact-info-minimal {
@@ -460,6 +480,7 @@
   .contact-info-card {
     width: 100%;
     justify-content: flex-start;
+    min-height: 60px;
   }
 
   .social-links-horizontal {
@@ -467,8 +488,9 @@
   }
 
   .social-icon-link {
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
+    /* Ensure touch targets are at least 44x44px */
   }
 
   .social-icon-link svg {
@@ -480,21 +502,21 @@
 /* Mobile landscape and small tablets */
 @media (max-width: 768px) {
   .contact-page {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1.25rem;
   }
 
   .contact-hero {
-    padding: 2rem 0;
+    padding: 2.5rem 0 1.5rem;
   }
 
   .contact-main-title {
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-size: clamp(2.5rem, 7.5vw, 4.5rem);
     letter-spacing: -0.01em;
   }
 
   .contact-bottom {
-    gap: 1.75rem;
-    padding: 1.25rem 0;
+    gap: 2rem;
+    padding: 1.5rem 0 1rem;
   }
 
   .socials-label {
@@ -503,61 +525,69 @@
   }
 
   .social-links-horizontal {
-    gap: 1rem;
+    gap: 1.125rem;
   }
 
   .social-icon-link {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
+    border-radius: 11px;
   }
 
   .social-icon-link svg {
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
+  }
+
+  .contact-info-minimal {
+    gap: 1rem;
   }
 
   .contact-info-card {
-    padding: 0.875rem 1rem;
+    padding: 1rem 1.125rem;
+    min-height: 58px;
   }
 
   .contact-info-icon {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
   }
 
   .contact-info-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
   }
 
   .contact-info-text {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
   }
 
   .contact-hero::before,
   .contact-hero::after {
-    width: 200px;
-    height: 200px;
+    width: 220px;
+    height: 220px;
+    filter: blur(70px);
   }
 
   .mouse-glow {
-    width: 400px;
-    height: 400px;
+    width: 450px;
+    height: 450px;
+    filter: blur(35px);
   }
 }
 
 /* Mobile portrait */
 @media (max-width: 480px) {
   .contact-page {
-    padding: 1.25rem 0.875rem;
+    padding: 1.5rem 1rem;
   }
 
   .contact-hero {
-    padding: 1.5rem 0;
+    padding: 2rem 0 1.5rem;
   }
 
   .contact-main-title {
-    font-size: clamp(2rem, 12vw, 3.5rem);
+    font-size: clamp(2.25rem, 11vw, 3.75rem);
     line-height: 1.15;
   }
 
@@ -567,68 +597,77 @@
   }
 
   .contact-bottom {
-    gap: 1.5rem;
-    padding: 1rem 0;
+    gap: 2rem;
+    padding: 1.5rem 0 1rem;
   }
 
   .socials-label {
     font-size: 0.75rem;
-    letter-spacing: 1.5px;
-    padding-left: 0.75rem;
+    letter-spacing: 2px;
+    padding-left: 0.875rem;
+  }
+
+  .socials-label::before {
+    width: 5px;
+    height: 5px;
   }
 
   .social-links-horizontal {
-    gap: 0.875rem;
+    gap: 1rem;
     justify-content: flex-start;
   }
 
   .social-icon-link {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: 11px;
+    /* Maintain 48px for better touch targets on mobile */
   }
 
   .social-icon-link svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
 
   .contact-info-minimal {
-    gap: 0.875rem;
+    gap: 1rem;
   }
 
   .contact-info-card {
-    padding: 0.75rem 0.875rem;
-    border-radius: 12px;
-    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 14px;
+    gap: 0.875rem;
+    min-height: 56px;
   }
 
   .contact-info-icon {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
   }
 
   .contact-info-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
 
   .contact-info-text {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     word-break: break-word;
+    line-height: 1.4;
   }
 
   .contact-hero::before,
   .contact-hero::after {
-    width: 150px;
-    height: 150px;
-    filter: blur(60px);
+    width: 180px;
+    height: 180px;
+    filter: blur(65px);
   }
 
   .mouse-glow {
-    width: 300px;
-    height: 300px;
-    filter: blur(30px);
+    width: 350px;
+    height: 350px;
+    filter: blur(35px);
   }
 
   .contact-page::before {
@@ -644,39 +683,81 @@
 /* Extra small mobile devices */
 @media (max-width: 360px) {
   .contact-page {
-    padding: 1rem 0.75rem;
+    padding: 1.25rem 0.875rem;
+  }
+
+  .contact-hero {
+    padding: 1.75rem 0 1.25rem;
   }
 
   .contact-main-title {
-    font-size: clamp(1.75rem, 11vw, 3rem);
+    font-size: clamp(2rem, 10vw, 3.25rem);
+    line-height: 1.2;
+  }
+
+  .contact-bottom {
+    gap: 1.75rem;
+    padding: 1.25rem 0 0.875rem;
+  }
+
+  .socials-label {
+    font-size: 0.6875rem;
+    letter-spacing: 1.5px;
+  }
+
+  .social-links-horizontal {
+    gap: 0.875rem;
   }
 
   .social-icon-link {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    /* Minimum 44px for accessibility */
   }
 
   .social-icon-link svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .contact-info-minimal {
+    gap: 0.875rem;
   }
 
   .contact-info-card {
-    padding: 0.625rem 0.75rem;
+    padding: 0.75rem 0.875rem;
+    border-radius: 12px;
+    gap: 0.75rem;
+    min-height: 52px;
   }
 
   .contact-info-icon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
   }
 
   .contact-info-icon svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   .contact-info-text {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .contact-hero::before,
+  .contact-hero::after {
+    width: 140px;
+    height: 140px;
+    filter: blur(55px);
+  }
+
+  .mouse-glow {
+    width: 280px;
+    height: 280px;
+    filter: blur(30px);
   }
 }
 
@@ -685,23 +766,128 @@
   .contact-page {
     height: auto;
     min-height: 100vh;
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1.25rem;
   }
 
   .contact-hero {
-    padding: 1.5rem 0;
+    padding: 1.5rem 0 1rem;
   }
 
   .contact-main-title {
-    font-size: clamp(2rem, 8vh, 3.5rem);
+    font-size: clamp(2rem, 7vh, 3.5rem);
   }
 
   .contact-bottom {
-    padding: 1rem 0;
+    padding: 1.25rem 0 1rem;
+    gap: 1.5rem;
   }
 
   .contact-hero::before,
   .contact-hero::after {
     display: none;
+  }
+
+  .mouse-glow {
+    display: none;
+  }
+}
+
+/* Very short screens in landscape */
+@media (max-height: 450px) and (orientation: landscape) {
+  .contact-page {
+    padding: 1rem;
+  }
+
+  .contact-hero {
+    padding: 1rem 0 0.75rem;
+  }
+
+  .contact-main-title {
+    font-size: clamp(1.75rem, 6vh, 2.75rem);
+  }
+
+  .contact-bottom {
+    padding: 1rem 0 0.75rem;
+    gap: 1.25rem;
+  }
+
+  .social-icon-link {
+    width: 44px;
+    height: 44px;
+  }
+
+  .contact-info-card {
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .social-icon-link,
+  .contact-info-card {
+    /* Ensure minimum touch target size of 44x44px */
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .social-icon-link:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  .contact-info-card:active {
+    transform: translateY(-2px) scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* Disable hover effects on touch devices */
+  .mouse-glow {
+    display: none;
+  }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .contact-main-title {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .contact-info-text {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .contact-page::before,
+  .contact-page::after,
+  .contact-hero::before,
+  .contact-hero::after,
+  .mouse-glow {
+    animation: none;
+  }
+
+  .title-line {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .contact-bottom::before {
+    animation: none;
+    width: 100%;
+  }
+
+  .contact-bottom {
+    animation: none;
+    opacity: 1;
+  }
+
+  .social-icon-link,
+  .contact-info-card {
+    transition: none;
   }
 }

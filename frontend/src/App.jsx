@@ -152,7 +152,7 @@ function App() {
       <div className="slides-container">
         {/* Hero Slide */}
         <div className={`slide ${activeSection === 0 ? 'active' : ''}`}>
-          <Hero scrollToSection={() => scrollToSection(1)} />
+          <Hero scrollToSection={scrollToSection} />
         </div>
 
         {/* About Slide */}

@@ -38,7 +38,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #0B0F19;
+  background-color: var(--background);
+  color: var(--text);
   overflow-x: hidden;
   overflow-y: auto;
 }

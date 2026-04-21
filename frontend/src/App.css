@@ -17,8 +17,8 @@
 
 body {
   font-family: 'Lora', serif;
-  background-color: var(--bg-primary);
-  color: var(--text-main);
+  background-color: var(--background);
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -27,12 +27,12 @@ body {
   position: fixed;
   width: 24px;
   height: 24px;
-  border: 2px solid var(--neon-cyan);
+  border: 2px solid var(--primary);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transition: width 0.15s ease, height 0.15s ease, border-color 0.15s ease;
-  box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 15px var(--glow);
   will-change: transform;
 }
 
@@ -40,11 +40,11 @@ body {
   position: fixed;
   width: 4px;
   height: 4px;
-  background: var(--neon-cyan);
+  background: var(--primary);
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
-  box-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
+  box-shadow: 0 0 8px var(--glow);
   will-change: transform;
 }
 
@@ -103,19 +103,19 @@ button:hover ~ .custom-cursor,
 }
 
 .about-slide::-webkit-scrollbar-track {
-  background: rgba(17, 24, 39, 0.5);
+  background: var(--card-bg);
   border-radius: 10px;
 }
 
 .about-slide::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-blue));
+  background: var(--gradient);
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 10px var(--glow);
 }
 
 .about-slide::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--neon-blue), var(--neon-cyan));
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
+  background: var(--gradient);
+  box-shadow: 0 0 20px var(--glow);
 }
 
 /* Skills slide - scrollable */

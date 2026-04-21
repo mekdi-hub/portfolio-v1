@@ -44,10 +44,10 @@ function Hero({ scrollToSection }) {
         </div>
 
         <div className="hero-actions">
-          <button className="cta-button" onClick={scrollToSection}>
+          <button className="cta-button" onClick={() => scrollToSection(3)}>
             See My Work
           </button>
-          <button className="secondary-button" onClick={() => window.location.href = '#contact'}>
+          <button className="secondary-button" onClick={() => scrollToSection(4)}>
             Get in Touch
           </button>
         </div>
