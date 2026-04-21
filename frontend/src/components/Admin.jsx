@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import Login from './Login';
+import { themes, applyTheme } from '../themes';
 import './Admin.css';
 
 const API_URL = 'https://portfolio-v1-2uu3.onrender.com/api';
 
 export default function Admin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('projects');
   const [projects, setProjects] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -28,14 +31,32 @@ export default function Admin() {
   const [useFileUpload, setUseFileUpload] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState('');
 
-  const [orderForm, setOrderForm] = useState({
-    status: 'pending',
-    assigned_rider: ''
+  const [settings, setSettings] = useState({
+    hero_title: 'Hi, I\'m',
+    hero_name: 'Your Name',
+    hero_subtitle: 'Full Stack Developer',
+    about_title: 'About Me',
+    about_description: 'Your about description',
+    skills_title: 'My Skills',
+    projects_title: 'My Projects',
+    contact_title: 'Get In Touch',
+    theme: 'cyan'
   });
 
   useEffect(() => {
-    fetchData();
-  }, [activeTab]);
+    // Check if user is authenticated
+    const auth = localStorage.getItem('adminAuth');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchData();
+      fetchSettings();
+    }
+  }, [activeTab, isAuthenticated]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -57,6 +78,53 @@ export default function Admin() {
       console.error(error);
     }
     setLoading(false);
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch(`${API_URL}/settings`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data) {
+          setSettings(data);
+        }
+      }
+    } catch (error) {
+      console.error('Settings fetch error:', error);
+    }
+  };
+
+  const handleSettingsSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      // Apply theme immediately
+      applyTheme(settings.theme);
+      
+      const res = await fetch(`${API_URL}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+
+      if (res.ok) {
+        setSuccess('Settings saved successfully!');
+      } else {
+        throw new Error('Failed to save settings');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminAuth');
+    setIsAuthenticated(false);
   };
 
   const handleImageChange = (e) => {
@@ -174,6 +242,10 @@ export default function Admin() {
     fetchData();
   };
 
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className="admin-container">
       {/* Header */}
@@ -183,9 +255,14 @@ export default function Admin() {
             <h1>Admin Panel</h1>
             <p>Manage your portfolio content</p>
           </div>
-          <a href="/" className="back-to-site">
-            ← Back to Site
-          </a>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <a href="/" className="back-to-site">
+              ← Back to Site
+            </a>
+            <button onClick={handleLogout} className="logout-btn">
+              Logout
+            </button>
+          </div>
         </div>
       </div>
 
@@ -196,6 +273,12 @@ export default function Admin() {
           onClick={() => setActiveTab('projects')}
         >
           Projects
+        </button>
+        <button 
+          className={activeTab === 'settings' ? 'active' : ''}
+          onClick={() => setActiveTab('settings')}
+        >
+          Settings
         </button>
         <button 
           className={activeTab === 'messages' ? 'active' : ''}
@@ -371,6 +454,99 @@ export default function Admin() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* SETTINGS */}
+        {activeTab === 'settings' && (
+          <div className="tab-content">
+            <div className="tab-header">
+              <h2>Portfolio Settings</h2>
+            </div>
+
+            <form className="admin-form" onSubmit={handleSettingsSubmit}>
+              <h3>Hero Section</h3>
+              {error && <div className="error-message">{error}</div>}
+              {success && <div className="success-message">{success}</div>}
+
+              <input
+                placeholder="Hero Title (e.g., Hi, I'm)"
+                value={settings.hero_title}
+                onChange={(e) => setSettings({ ...settings, hero_title: e.target.value })}
+              />
+
+              <input
+                placeholder="Your Name"
+                value={settings.hero_name}
+                onChange={(e) => setSettings({ ...settings, hero_name: e.target.value })}
+              />
+
+              <input
+                placeholder="Subtitle (e.g., Full Stack Developer)"
+                value={settings.hero_subtitle}
+                onChange={(e) => setSettings({ ...settings, hero_subtitle: e.target.value })}
+              />
+
+              <h3>About Section</h3>
+              <input
+                placeholder="About Title"
+                value={settings.about_title}
+                onChange={(e) => setSettings({ ...settings, about_title: e.target.value })}
+              />
+
+              <textarea
+                placeholder="About Description"
+                value={settings.about_description}
+                onChange={(e) => setSettings({ ...settings, about_description: e.target.value })}
+                rows="5"
+              />
+
+              <h3>Other Sections</h3>
+              <input
+                placeholder="Skills Title"
+                value={settings.skills_title}
+                onChange={(e) => setSettings({ ...settings, skills_title: e.target.value })}
+              />
+
+              <input
+                placeholder="Projects Title"
+                value={settings.projects_title}
+                onChange={(e) => setSettings({ ...settings, projects_title: e.target.value })}
+              />
+
+              <input
+                placeholder="Contact Title"
+                value={settings.contact_title}
+                onChange={(e) => setSettings({ ...settings, contact_title: e.target.value })}
+              />
+
+              <h3>Theme Selection</h3>
+              <div className="theme-selector">
+                {Object.keys(themes).map((themeKey) => (
+                  <div
+                    key={themeKey}
+                    className={`theme-option ${settings.theme === themeKey ? 'active' : ''}`}
+                    onClick={() => {
+                      setSettings({ ...settings, theme: themeKey });
+                      applyTheme(themeKey);
+                    }}
+                  >
+                    <div 
+                      className="theme-preview" 
+                      style={{
+                        background: themes[themeKey].gradient,
+                        boxShadow: `0 0 20px ${themes[themeKey].glow}`
+                      }}
+                    ></div>
+                    <span className="theme-name">{themes[themeKey].name}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button type="submit" className="btn-primary" disabled={loading}>
+                {loading ? 'Saving...' : 'Save Settings'}
+              </button>
+            </form>
           </div>
         )}
       </div>

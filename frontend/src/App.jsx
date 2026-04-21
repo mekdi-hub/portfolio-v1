@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Hero from './components/Hero';
 import About from './components/About';
 import Skills from './components/Skills';
@@ -6,13 +6,21 @@ import Projects from './components/Projects';
 import ContactForm from './components/ContactForm';
 import CustomCursor from './components/CustomCursor';
 import Loader from './components/Loader';
+import { applyTheme, getStoredTheme } from './themes';
 import './App.css';
 import './rotation.css';
+
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed to false to skip loading
   const [activeSection, setActiveSection] = useState(0);
   const [skillsKey, setSkillsKey] = useState(0);
   const [aboutKey, setAboutKey] = useState(0);
+
+  // Apply theme on mount
+  useEffect(() => {
+    const storedTheme = getStoredTheme();
+    applyTheme(storedTheme);
+  }, []);
 
   const handleLoadComplete = () => {
     setLoading(false);
@@ -120,9 +128,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Loading Screen */}
-      {loading && <Loader onLoadComplete={() => setLoading(false)} />}
-      
       {/* Custom Cursor */}
       <CustomCursor />
 
@@ -170,11 +175,6 @@ function App() {
         {/* Projects Slide */}
         <div className={`slide projects-slide ${activeSection === 3 ? 'active' : ''}`}>
           <Projects />
-          <div className="scroll-indicator" onClick={() => scrollToSection(4)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
         </div>
 
         {/* Contact Slide */}
@@ -185,7 +185,6 @@ function App() {
           {/* Footer */}
           <footer className="footer">
             <p>&copy; 2026 Portfolio. All rights reserved.</p>
-            <a href="/admin" className="admin-link">Admin Panel</a>
           </footer>
         </div>
       </div>

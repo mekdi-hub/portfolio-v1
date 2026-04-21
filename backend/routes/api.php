@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\DemoOrderController;
 use App\Http\Controllers\Api\UploadController;
+use App\Http\Controllers\Api\SettingController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,3 +21,7 @@ Route::apiResource('demo-orders', DemoOrderController::class);
 // Image upload routes (Cloudinary)
 Route::post('upload/image', [UploadController::class, 'uploadImage']);
 Route::post('upload/delete', [UploadController::class, 'deleteImage']);
+
+// Settings routes
+Route::get('settings', [SettingController::class, 'index']);
+Route::post('settings', [SettingController::class, 'store']);
