@@ -69,12 +69,13 @@ code {
   font-size: clamp(2.5rem, 8vw, 6rem);
   font-weight: 900;
   margin-bottom: 1.5rem;
-  color: #ffffff;
+  color: var(--text);
+  text-shadow: 0 0 30px var(--glow);
 }
 
 .hero-subtitle {
   font-size: clamp(1rem, 2.5vw, 1.5rem);
-  color: #94A3B8;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.6;
   max-width: 800px;
@@ -92,12 +93,21 @@ code {
 
 .hero-skill {
   padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2.5vw, 1.5rem);
-  background: rgba(34, 211, 238, 0.1);
-  border: 1px solid rgba(34, 211, 238, 0.3);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 50px;
-  color: #22D3EE;
+  color: var(--primary);
   font-size: clamp(0.875rem, 2vw, 1rem);
   font-weight: 600;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.hero-skill:hover {
+  background: var(--primary);
+  color: var(--background);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px var(--glow);
 }
 
 .hero-actions {
@@ -120,14 +130,28 @@ code {
 }
 
 .cta-button {
-  background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
-  color: #ffffff;
+  background: var(--gradient);
+  color: var(--text);
+  box-shadow: 0 6px 20px var(--glow);
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px var(--glow);
 }
 
 .secondary-button {
-  background: rgba(30, 41, 59, 0.8);
-  color: #ffffff;
-  border: 1px solid rgba(71, 85, 105, 0.5);
+  background: var(--card-bg);
+  color: var(--text);
+  border: 2px solid var(--border-color);
+  backdrop-filter: blur(10px);
+}
+
+.secondary-button:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px var(--glow);
 }
 
 .scroll-indicator {
@@ -137,6 +161,17 @@ code {
   transform: translateX(-50%);
   cursor: pointer;
   animation: bounce 2s infinite;
+  color: var(--primary);
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  transform: translateX(-50%) scale(1.2);
+  filter: drop-shadow(0 0 10px var(--glow));
+}
+
+.scroll-indicator svg path {
+  stroke: var(--primary);
 }
 
 /* Responsive Breakpoints */

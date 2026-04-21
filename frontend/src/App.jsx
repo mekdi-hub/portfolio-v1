@@ -11,7 +11,7 @@ import './App.css';
 import './rotation.css';
 
 function App() {
-  const [loading, setLoading] = useState(true); // Changed back to true to show loader
+  const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState(0);
   const [skillsKey, setSkillsKey] = useState(0);
   const [aboutKey, setAboutKey] = useState(0);
@@ -20,6 +20,9 @@ function App() {
   useEffect(() => {
     const storedTheme = getStoredTheme();
     applyTheme(storedTheme);
+    
+    // Force loader to show on every page load
+    setLoading(true);
   }, []);
 
   const handleLoadComplete = () => {
