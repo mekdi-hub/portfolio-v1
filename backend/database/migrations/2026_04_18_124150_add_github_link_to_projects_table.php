@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->string('github_link')->nullable()->after('demo_link');
+            if (!Schema::hasColumn('projects', 'github_link')) {
+                $table->string('github_link')->nullable()->after('demo_link');
+            }
         });
     }
 
