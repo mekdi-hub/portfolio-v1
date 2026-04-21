@@ -54,6 +54,7 @@
   opacity: 0.4;
   pointer-events: none;
   animation: gridMove 20s linear infinite;
+  z-index: 1;
 }
 
 @keyframes gridMove {
@@ -80,6 +81,7 @@
   animation: particleFloat 30s linear infinite;
   pointer-events: none;
   opacity: 0.3;
+  z-index: 2;
 }
 
 @keyframes particleFloat {
