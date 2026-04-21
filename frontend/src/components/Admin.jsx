@@ -89,48 +89,72 @@ export default function Admin() {
     const imageFile = imageFileRef.current;
     if (!imageFile) {
       console.error('No image file in ref!');
+      setError('No image file selected');
+      return null;
+    }
+
+    // Validate file size (20MB max)
+    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+    if (imageFile.size > maxSize) {
+      setError(`File too large. Maximum size is 20MB. Your file is ${(imageFile.size / 1024 / 1024).toFixed(2)}MB`);
+      return null;
+    }
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp'];
+    if (!validTypes.includes(imageFile.type)) {
+      setError(`Invalid file type. Supported types: JPEG, PNG, GIF, SVG, WebP. Your file type: ${imageFile.type}`);
       return null;
     }
 
     setUploadingImage(true);
+    setError(null);
+    
     const formData = new FormData();
     formData.append('image', imageFile);
 
     try {
       console.log('Uploading image:', imageFile.name, 'Size:', imageFile.size, 'Type:', imageFile.type);
-      
-      // Log FormData contents for debugging
-      for (let pair of formData.entries()) {
-        console.log('FormData entry:', pair[0], pair[1]);
-      }
 
       const res = await fetch(`${API_URL}/projects/upload-image`, {
         method: 'POST',
         body: formData,
-        // Don't set Content-Type header - let browser set it with boundary
       });
 
       console.log('Upload response status:', res.status);
-      const data = await res.json();
+      
+      // Try to parse JSON response
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', parseError);
+        const textResponse = await res.text();
+        console.error('Response text:', textResponse);
+        setError('Server returned invalid response. Check backend logs.');
+        return null;
+      }
+
       console.log('Upload response data:', JSON.stringify(data, null, 2));
 
-      if (data.success) {
+      if (res.ok && data.success) {
         console.log('Upload successful, URL:', data.url);
+        setSuccess('Image uploaded successfully!');
         return data.url;
       }
       
+      // Handle error response
       console.error('Upload failed:', JSON.stringify(data, null, 2));
-      // Show detailed error if available
       if (data.errors) {
         const errorMessages = Object.values(data.errors).flat().join(', ');
-        setError(`Image upload failed: ${errorMessages}`);
+        setError(`Upload failed: ${errorMessages}`);
       } else {
-        setError(`Image upload failed: ${data.message || 'Unknown error'}`);
+        setError(`Upload failed: ${data.message || 'Unknown error. Check backend logs.'}`);
       }
       return null;
     } catch (error) {
       console.error('Error uploading image:', error);
-      setError(`Network error during upload: ${error.message}`);
+      setError(`Network error: ${error.message}. Make sure backend is running.`);
       return null;
     } finally {
       setUploadingImage(false);
@@ -153,18 +177,12 @@ export default function Admin() {
       // Only upload if a file was selected (not using URL method)
       if (useFileUpload && imageFileRef.current) {
         console.log('Image file selected, uploading...');
-        console.log('File object before upload:', {
-          name: imageFileRef.current.name,
-          size: imageFileRef.current.size,
-          type: imageFileRef.current.type
-        });
         const uploadedUrl = await uploadImage();
         if (uploadedUrl) {
           imageUrl = uploadedUrl;
           console.log('Image uploaded successfully:', imageUrl);
         } else {
-          // If upload fails, show error and stop
-          setError('Image upload failed. Please try again or use an image URL instead.');
+          // Upload failed - error already set by uploadImage()
           setLoading(false);
           return;
         }

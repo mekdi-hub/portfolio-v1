@@ -46,22 +46,7 @@ function Projects() {
       setProjects(data);
     } catch (error) {
       console.error('Error fetching projects:', error);
-      setProjects([
-        {
-          id: 1,
-          title: 'E-Commerce Platform',
-          description: 'A full-stack e-commerce solution with payment integration',
-          tech_stack: 'React, Laravel, MySQL, Stripe',
-          image: 'https://via.placeholder.com/400x250/22D3EE/ffffff?text=E-Commerce'
-        },
-        {
-          id: 2,
-          title: 'Task Management App',
-          description: 'Collaborative task management with real-time updates',
-          tech_stack: 'React, Node.js, MongoDB, Socket.io',
-          image: 'https://via.placeholder.com/400x250/3B82F6/ffffff?text=Task+Manager'
-        }
-      ]);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
