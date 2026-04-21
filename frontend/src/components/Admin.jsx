@@ -161,68 +161,100 @@ export default function Admin() {
 
   return (
     <div className="admin-container">
+      {/* Header */}
+      <div className="admin-header">
+        <div className="admin-header-content">
+          <div>
+            <h1>Admin Panel</h1>
+            <p>Manage your portfolio content</p>
+          </div>
+          <a href="/" className="back-to-site">
+            ← Back to Site
+          </a>
+        </div>
+      </div>
 
       {/* Tabs */}
       <div className="admin-tabs">
-        <button onClick={() => setActiveTab('projects')}>Projects</button>
-        <button onClick={() => setActiveTab('messages')}>Messages</button>
-        <button onClick={() => setActiveTab('orders')}>Orders</button>
+        <button 
+          className={activeTab === 'projects' ? 'active' : ''}
+          onClick={() => setActiveTab('projects')}
+        >
+          Projects
+        </button>
+        <button 
+          className={activeTab === 'messages' ? 'active' : ''}
+          onClick={() => setActiveTab('messages')}
+        >
+          Messages
+        </button>
+        <button 
+          className={activeTab === 'orders' ? 'active' : ''}
+          onClick={() => setActiveTab('orders')}
+        >
+          Orders
+        </button>
       </div>
 
-      {/* PROJECTS */}
-      {activeTab === 'projects' && (
-        <>
-          <button onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancel' : '+ Add Project'}
-          </button>
+      {/* Content */}
+      <div className="admin-content">
+        {/* PROJECTS */}
+        {activeTab === 'projects' && (
+          <div className="tab-content">
+            <div className="tab-header">
+              <h2>Projects</h2>
+              <button className="btn-primary" onClick={() => setShowForm(!showForm)}>
+                {showForm ? 'Cancel' : '+ Add Project'}
+              </button>
+            </div>
 
-          {showForm && (
-            <form onSubmit={handleProjectSubmit}>
-              {error && <div className="error-message">{error}</div>}
-              {success && <div className="success-message">{success}</div>}
+            {showForm && (
+              <form className="admin-form" onSubmit={handleProjectSubmit}>
+                {error && <div className="error-message">{error}</div>}
+                {success && <div className="success-message">{success}</div>}
 
-              <input
-                placeholder="Title"
-                value={projectForm.title}
-                onChange={(e) =>
-                  setProjectForm({ ...projectForm, title: e.target.value })
-                }
-                required
-              />
+                <input
+                  placeholder="Title"
+                  value={projectForm.title}
+                  onChange={(e) =>
+                    setProjectForm({ ...projectForm, title: e.target.value })
+                  }
+                  required
+                />
 
-              <textarea
-                placeholder="Description"
-                value={projectForm.description}
-                onChange={(e) =>
-                  setProjectForm({ ...projectForm, description: e.target.value })
-                }
-                required
-              />
+                <textarea
+                  placeholder="Description"
+                  value={projectForm.description}
+                  onChange={(e) =>
+                    setProjectForm({ ...projectForm, description: e.target.value })
+                  }
+                  required
+                />
 
-              <input
-                placeholder="Tech Stack (e.g., React, Node.js, MongoDB)"
-                value={projectForm.tech_stack}
-                onChange={(e) =>
-                  setProjectForm({ ...projectForm, tech_stack: e.target.value })
-                }
-                required
-              />
+                <input
+                  placeholder="Tech Stack (e.g., React, Node.js, MongoDB)"
+                  value={projectForm.tech_stack}
+                  onChange={(e) =>
+                    setProjectForm({ ...projectForm, tech_stack: e.target.value })
+                  }
+                  required
+                />
 
-              <input
-                placeholder="Demo Link (optional)"
-                value={projectForm.demo_link}
-                onChange={(e) =>
-                  setProjectForm({ ...projectForm, demo_link: e.target.value })
-                }
-              />
+                <input
+                  placeholder="Demo Link (optional)"
+                  value={projectForm.demo_link}
+                  onChange={(e) =>
+                    setProjectForm({ ...projectForm, demo_link: e.target.value })
+                  }
+                />
 
-              <input
-                placeholder="GitHub Link (optional)"
-                value={projectForm.github_link}
-                onChange={(e) =>
-                  setProjectForm({ ...projectForm, github_link: e.target.value })
-                }
-              />
+                <input
+                  placeholder="GitHub Link (optional)"
+                  value={projectForm.github_link}
+                  onChange={(e) =>
+                    setProjectForm({ ...projectForm, github_link: e.target.value })
+                  }
+                />
 
               <div className="image-upload-section">
                 <label>Project Image:</label>
@@ -270,55 +302,59 @@ export default function Admin() {
                 {loading ? 'Saving...' : 'Save Project'}
               </button>
             </form>
-          )}
+            )}
 
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Tech</th>
-                <th>Image</th> {/* ✅ FIX */}
-                <th>Actions</th>
-              </tr>
-            </thead>
+            <div className="data-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Tech</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
 
-            <tbody>
-              {projects.map((p) => (
-                <tr key={p.id}>
-                  <td>{p.title}</td>
-                  <td>{p.description}</td>
-                  <td>{p.tech_stack}</td>
+                <tbody>
+                  {projects.map((p) => (
+                    <tr key={p.id}>
+                      <td>{p.title}</td>
+                      <td className="truncate">{p.description}</td>
+                      <td>{p.tech_stack}</td>
 
-                  {/* ✅ IMAGE FIX */}
-                  <td>
-                    <img
-                      src={p.image}
-                      alt={p.title}
-                      style={{
-                        width: '80px',
-                        height: '50px',
-                        objectFit: 'cover',
-                        borderRadius: '6px'
-                      }}
-                      onError={(e) => {
-                        e.target.src =
-                          'https://via.placeholder.com/80x50?text=No+Image';
-                      }}
-                    />
-                  </td>
+                      <td>
+                        <img
+                          src={p.image}
+                          alt={p.title}
+                          style={{
+                            width: '80px',
+                            height: '50px',
+                            objectFit: 'cover',
+                            borderRadius: '6px'
+                          }}
+                          onError={(e) => {
+                            e.target.src =
+                              'https://via.placeholder.com/80x50?text=No+Image';
+                          }}
+                        />
+                      </td>
 
-                  <td>
-                    <button onClick={() => handleDelete(p.id, 'projects')}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
+                      <td>
+                        <div className="actions">
+                          <button className="btn-delete" onClick={() => handleDelete(p.id, 'projects')}>
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
