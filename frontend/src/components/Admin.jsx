@@ -90,6 +90,21 @@ export default function Admin() {
     setSelectedFileName('');
   };
 
+  const handleEdit = (project) => {
+    setEditingItem(project);
+    setProjectForm({
+      title: project.title,
+      description: project.description,
+      tech_stack: project.tech_stack,
+      image: project.image || '',
+      demo_link: project.demo_link || '',
+      github_link: project.github_link || ''
+    });
+    setImagePreview(project.image);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleProjectSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -210,6 +225,7 @@ export default function Admin() {
 
             {showForm && (
               <form className="admin-form" onSubmit={handleProjectSubmit}>
+                <h3>{editingItem ? 'Edit Project' : 'Add New Project'}</h3>
                 {error && <div className="error-message">{error}</div>}
                 {success && <div className="success-message">{success}</div>}
 
@@ -299,7 +315,7 @@ export default function Admin() {
               </div>
 
               <button type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Save Project'}
+                {loading ? 'Saving...' : editingItem ? 'Update Project' : 'Save Project'}
               </button>
             </form>
             )}
@@ -342,6 +358,9 @@ export default function Admin() {
 
                       <td>
                         <div className="actions">
+                          <button className="btn-edit" onClick={() => handleEdit(p)}>
+                            Edit
+                          </button>
                           <button className="btn-delete" onClick={() => handleDelete(p.id, 'projects')}>
                             Delete
                           </button>
