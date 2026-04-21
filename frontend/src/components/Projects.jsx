@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import './Projects.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-v1-2uu3.onrender.com/api';
+// const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-v1-2uu3.onrender.com/api';
+const API_URL = 'https://portfolio-v1-2uu3.onrender.com/api';
 
 function Projects() {
   const [projects, setProjects] = useState([]);
