@@ -23,7 +23,6 @@ export default function Admin() {
 
   const imageFileRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [useFileUpload, setUseFileUpload] = useState(false);
@@ -94,35 +93,63 @@ export default function Admin() {
   const handleProjectSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    setSuccess(null);
 
-    let imageUrl = projectForm.image;
+    try {
+      const formData = new FormData();
+      
+      // Add all project fields
+      formData.append('title', projectForm.title);
+      formData.append('description', projectForm.description);
+      formData.append('tech_stack', projectForm.tech_stack);
+      
+      if (projectForm.demo_link) {
+        formData.append('demo_link', projectForm.demo_link);
+      }
+      
+      if (projectForm.github_link) {
+        formData.append('github_link', projectForm.github_link);
+      }
 
-    const projectData = {
-      ...projectForm,
-      image: imageUrl
-    };
+      // Add image - either file or URL
+      if (useFileUpload && imageFileRef.current) {
+        formData.append('image', imageFileRef.current);
+      } else if (projectForm.image) {
+        formData.append('image_url', projectForm.image);
+      }
 
-    const url = editingItem
-      ? `${API_URL}/projects/${editingItem.id}`
-      : `${API_URL}/projects`;
+      const url = editingItem
+        ? `${API_URL}/projects/${editingItem.id}`
+        : `${API_URL}/projects`;
 
-    const method = editingItem ? 'PUT' : 'POST';
+      const method = editingItem ? 'PUT' : 'POST';
 
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(projectData)
-    });
+      // For PUT requests, we need to use POST with _method override
+      if (editingItem) {
+        formData.append('_method', 'PUT');
+      }
 
-    if (res.ok) {
-      setSuccess('Saved successfully');
-      resetForm();
-      fetchData();
-    } else {
-      setError('Failed to save');
+      const res = await fetch(url, {
+        method: editingItem ? 'POST' : 'POST', // Always use POST, Laravel will handle _method
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSuccess('Project saved successfully!');
+        resetForm();
+        fetchData();
+      } else {
+        throw new Error(data.message || data.error || 'Failed to save project');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Submit error:', err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleDelete = async (id, type) => {
@@ -151,12 +178,16 @@ export default function Admin() {
 
           {showForm && (
             <form onSubmit={handleProjectSubmit}>
+              {error && <div className="error-message">{error}</div>}
+              {success && <div className="success-message">{success}</div>}
+
               <input
                 placeholder="Title"
                 value={projectForm.title}
                 onChange={(e) =>
                   setProjectForm({ ...projectForm, title: e.target.value })
                 }
+                required
               />
 
               <textarea
@@ -165,25 +196,79 @@ export default function Admin() {
                 onChange={(e) =>
                   setProjectForm({ ...projectForm, description: e.target.value })
                 }
+                required
               />
 
               <input
-                placeholder="Tech Stack"
+                placeholder="Tech Stack (e.g., React, Node.js, MongoDB)"
                 value={projectForm.tech_stack}
                 onChange={(e) =>
                   setProjectForm({ ...projectForm, tech_stack: e.target.value })
                 }
+                required
               />
 
               <input
-                placeholder="Image URL"
-                value={projectForm.image}
+                placeholder="Demo Link (optional)"
+                value={projectForm.demo_link}
                 onChange={(e) =>
-                  setProjectForm({ ...projectForm, image: e.target.value })
+                  setProjectForm({ ...projectForm, demo_link: e.target.value })
                 }
               />
 
-              <button type="submit">Save</button>
+              <input
+                placeholder="GitHub Link (optional)"
+                value={projectForm.github_link}
+                onChange={(e) =>
+                  setProjectForm({ ...projectForm, github_link: e.target.value })
+                }
+              />
+
+              <div className="image-upload-section">
+                <label>Project Image:</label>
+                
+                <div className="upload-options">
+                  <div className="file-upload">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      id="imageFile"
+                      style={{ display: 'none' }}
+                    />
+                    <label htmlFor="imageFile" className="file-upload-btn">
+                      📁 Choose Image File
+                    </label>
+                    {selectedFileName && (
+                      <span className="file-name">{selectedFileName}</span>
+                    )}
+                  </div>
+
+                  <div className="url-divider">OR</div>
+
+                  <input
+                    type="url"
+                    placeholder="Enter Image URL"
+                    value={projectForm.image}
+                    onChange={(e) => {
+                      setProjectForm({ ...projectForm, image: e.target.value });
+                      setUseFileUpload(false);
+                      setImagePreview(e.target.value);
+                      setSelectedFileName('');
+                    }}
+                  />
+                </div>
+
+                {imagePreview && (
+                  <div className="image-preview">
+                    <img src={imagePreview} alt="Preview" />
+                  </div>
+                )}
+              </div>
+
+              <button type="submit" disabled={loading}>
+                {loading ? 'Saving...' : 'Save Project'}
+              </button>
             </form>
           )}
 

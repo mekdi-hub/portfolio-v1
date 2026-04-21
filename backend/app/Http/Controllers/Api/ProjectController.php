@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -22,17 +24,91 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'tech_stack' => 'required|string',
-            'image' => 'nullable|string',
-            'demo_link' => 'nullable|url',
-            'github_link' => 'nullable|url'
-        ]);
+        try {
+            Log::info('Project store request received', [
+                'has_file' => $request->hasFile('image'),
+                'all_files' => array_keys($request->allFiles()),
+                'all_inputs' => array_keys($request->all())
+            ]);
 
-        $project = Project::create($validated);
-        return response()->json($project, 201);
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'tech_stack' => 'required|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+                'image_url' => 'nullable|url',
+                'demo_link' => 'nullable|url',
+                'github_link' => 'nullable|url'
+            ]);
+
+            $imageUrl = $validated['image_url'] ?? null;
+
+            // If image file is uploaded, upload to Cloudinary
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                
+                $cloudName = env('CLOUDINARY_CLOUD_NAME', 'dvwzujlid');
+                $uploadPreset = env('CLOUDINARY_UPLOAD_PRESET', 'projects_upload');
+
+                Log::info('Uploading to Cloudinary', [
+                    'cloud_name' => $cloudName,
+                    'upload_preset' => $uploadPreset,
+                    'file_name' => $file->getClientOriginalName()
+                ]);
+
+                // Upload to Cloudinary
+                $response = Http::attach(
+                    'file',
+                    file_get_contents($file->getRealPath()),
+                    $file->getClientOriginalName()
+                )->post("https://api.cloudinary.com/v1_1/{$cloudName}/image/upload", [
+                    'upload_preset' => $uploadPreset,
+                    'folder' => 'portfolio/projects'
+                ]);
+
+                $data = $response->json();
+
+                if (isset($data['secure_url'])) {
+                    $imageUrl = $data['secure_url'];
+                    Log::info('Cloudinary upload successful', ['url' => $imageUrl]);
+                } else {
+                    Log::error('Cloudinary upload failed', ['response' => $data]);
+                    return response()->json([
+                        'error' => 'Image upload failed',
+                        'details' => $data
+                    ], 500);
+                }
+            }
+
+            $project = Project::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'tech_stack' => $validated['tech_stack'],
+                'image' => $imageUrl,
+                'demo_link' => $validated['demo_link'] ?? null,
+                'github_link' => $validated['github_link'] ?? null
+            ]);
+
+            Log::info('Project created successfully', ['id' => $project->id]);
+
+            return response()->json($project, 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed', ['errors' => $e->errors()]);
+            return response()->json([
+                'error' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Project creation error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'error' => 'Failed to create project',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -49,19 +125,58 @@ class ProjectController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $project = Project::findOrFail($id);
-        
-        $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'tech_stack' => 'sometimes|string',
-            'image' => 'nullable|string',
-            'demo_link' => 'nullable|url',
-            'github_link' => 'nullable|url'
-        ]);
+        try {
+            $project = Project::findOrFail($id);
+            
+            $validated = $request->validate([
+                'title' => 'sometimes|string|max:255',
+                'description' => 'sometimes|string',
+                'tech_stack' => 'sometimes|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+                'image_url' => 'nullable|url',
+                'demo_link' => 'nullable|url',
+                'github_link' => 'nullable|url'
+            ]);
 
-        $project->update($validated);
-        return response()->json($project);
+            // If image file is uploaded, upload to Cloudinary
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                
+                $cloudName = env('CLOUDINARY_CLOUD_NAME', 'dvwzujlid');
+                $uploadPreset = env('CLOUDINARY_UPLOAD_PRESET', 'projects_upload');
+
+                $response = Http::attach(
+                    'file',
+                    file_get_contents($file->getRealPath()),
+                    $file->getClientOriginalName()
+                )->post("https://api.cloudinary.com/v1_1/{$cloudName}/image/upload", [
+                    'upload_preset' => $uploadPreset,
+                    'folder' => 'portfolio/projects'
+                ]);
+
+                $data = $response->json();
+
+                if (isset($data['secure_url'])) {
+                    $validated['image'] = $data['secure_url'];
+                }
+            } elseif (isset($validated['image_url'])) {
+                $validated['image'] = $validated['image_url'];
+            }
+
+            unset($validated['image_url']);
+            $project->update($validated);
+            
+            return response()->json($project);
+
+        } catch (\Exception $e) {
+            Log::error('Project update error', [
+                'message' => $e->getMessage()
+            ]);
+            return response()->json([
+                'error' => 'Failed to update project',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
