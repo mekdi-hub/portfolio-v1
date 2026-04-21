@@ -11,7 +11,7 @@ import './App.css';
 import './rotation.css';
 
 function App() {
-  const [loading, setLoading] = useState(false); // Changed to false to skip loading
+  const [loading, setLoading] = useState(true); // Changed back to true to show loader
   const [activeSection, setActiveSection] = useState(0);
   const [skillsKey, setSkillsKey] = useState(0);
   const [aboutKey, setAboutKey] = useState(0);
@@ -21,6 +21,10 @@ function App() {
     const storedTheme = getStoredTheme();
     applyTheme(storedTheme);
   }, []);
+
+  const handleLoadComplete = () => {
+    setLoading(false);
+  };
 
   const handleLoadComplete = () => {
     setLoading(false);
@@ -128,6 +132,9 @@ function App() {
 
   return (
     <div className="app">
+      {/* Loading Screen */}
+      {loading && <Loader onLoadComplete={handleLoadComplete} />}
+      
       {/* Custom Cursor */}
       <CustomCursor />
 
