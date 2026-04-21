@@ -20,14 +20,7 @@ function App() {
   useEffect(() => {
     const storedTheme = getStoredTheme();
     applyTheme(storedTheme);
-    
-    // Force loader to show on every page load
-    setLoading(true);
   }, []);
-
-  const handleLoadComplete = () => {
-    setLoading(false);
-  };
 
   const handleLoadComplete = () => {
     setLoading(false);
