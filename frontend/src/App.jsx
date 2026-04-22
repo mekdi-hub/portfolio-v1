@@ -182,9 +182,7 @@ function App() {
 
         {/* Contact Slide */}
         <div className={`slide contact-slide ${activeSection === 4 ? 'active' : ''}`}>
-          <section id="contact" className="section">
-            <ContactForm />
-          </section>
+          <ContactForm />
           {/* Footer */}
           <footer className="footer">
             <p>&copy; 2026 Portfolio. All rights reserved.</p>
