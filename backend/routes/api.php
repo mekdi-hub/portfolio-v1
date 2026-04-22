@@ -25,3 +25,7 @@ Route::post('upload/delete', [UploadController::class, 'deleteImage']);
 // Settings routes
 Route::get('settings', [SettingController::class, 'index']);
 Route::post('settings', [SettingController::class, 'store']);
+
+Route::get('/ping', function () {
+    return response()->json(['status' => 'ok']);
+});
