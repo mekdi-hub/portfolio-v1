@@ -1,20 +1,38 @@
 /* Theme Override Styles - Apply theme variables to all components */
 
+/* Global Text Color Enforcement */
+* {
+  color: inherit;
+}
+
+body,
+.app,
+.slide {
+  color: var(--text);
+}
+
 /* About Page Text Colors */
+.about-page-new,
 .about-main-title,
 .about-name,
 .education-title,
 .timeline-year,
-.stat-value {
+.stat-value,
+.about-title,
+.section-title,
+.education-section-title {
   color: var(--text) !important;
 }
 
 .about-role,
+.about-description,
 .about-description p,
 .stat-label,
 .education-years,
 .journey-description,
-.timeline-desc-vertical {
+.timeline-desc-vertical,
+.about-text,
+.education-item {
   color: var(--text-secondary) !important;
 }
 
@@ -36,28 +54,46 @@
 }
 
 /* Skills Page */
-.skills-title-text,
-.skill-name {
+.skills-page,
+.skills-container {
   color: var(--text) !important;
 }
 
+.skills-title-text,
+.skill-name,
+.category-btn {
+  color: var(--text) !important;
+}
+
+.skill-card {
+  color: var(--text-secondary) !important;
+}
+
 /* Projects Page */
+.projects-page,
+.projects-container,
 .projects-header-title,
-.project-card h3 {
+.project-card h3,
+.project-title {
   color: var(--text) !important;
 }
 
 .projects-header-subtitle,
-.project-card p {
+.project-card p,
+.project-description {
   color: var(--text-secondary) !important;
 }
 
 /* Contact Page */
-.contact-main-title {
+.contact-page,
+.contact-container,
+.contact-main-title,
+.contact-title {
   color: var(--text) !important;
 }
 
-.contact-info-text {
+.contact-info-text,
+.socials-label {
   color: var(--text-secondary) !important;
 }
 
@@ -66,11 +102,25 @@
 }
 
 /* Hero Page */
+.hero-content,
+.hero-title,
+.typing-text {
+  color: var(--text) !important;
+}
+
 .hero-subtitle {
   color: var(--text-secondary) !important;
 }
 
-/* Glitch Text Colors for Light Theme */
+.hero-skill {
+  color: var(--text) !important;
+}
+
+/* Glitch Text Colors */
+.glitch-text {
+  color: var(--primary) !important;
+}
+
 .glitch-text::before,
 .glitch-text::after {
   color: var(--primary) !important;
@@ -79,17 +129,23 @@
 
 /* Ensure all headings use theme text color */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--text);
+  color: var(--text) !important;
 }
 
 /* Ensure all paragraphs use theme text color */
 p {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
+}
+
+/* Ensure all spans use inherited color */
+span {
+  color: inherit;
 }
 
 /* Stats and Numbers */
 .stat-number,
-.count-number {
+.count-number,
+.stat-value-number {
   color: var(--primary) !important;
 }
 
@@ -103,8 +159,18 @@ p {
   border-left-color: var(--primary) !important;
 }
 
+.education-degree,
+.education-field {
+  color: var(--text) !important;
+}
+
 /* Timeline */
-.timeline-content-vertical {
+.timeline-content-vertical,
+.timeline-item-title {
+  color: var(--text) !important;
+}
+
+.timeline-item-description {
   color: var(--text-secondary) !important;
 }
 
@@ -118,8 +184,70 @@ p {
   border-color: var(--primary) !important;
 }
 
-/* Section Titles */
-.section-title,
-.education-section-title {
+/* Navigation */
+.dot-label {
   color: var(--text) !important;
+}
+
+/* Buttons */
+.cta-button {
+  color: var(--background) !important;
+}
+
+.secondary-button {
+  color: var(--primary) !important;
+}
+
+/* Footer */
+.footer,
+.footer p {
+  color: var(--text-secondary) !important;
+}
+
+/* Cards */
+.card,
+.skill-card,
+.project-card,
+.stat-item {
+  color: var(--text-secondary) !important;
+}
+
+/* Cursor */
+.cursor {
+  color: var(--primary) !important;
+}
+
+/* Theme Selector */
+.theme-toggle-btn,
+.theme-option {
+  color: var(--text) !important;
+}
+
+/* Scroll Indicators */
+.scroll-indicator svg path {
+  stroke: var(--primary) !important;
+}
+
+/* All text elements */
+.text,
+.description,
+.label,
+.title,
+.subtitle {
+  color: var(--text) !important;
+}
+
+/* Ensure divs inherit color */
+div {
+  color: inherit;
+}
+
+/* Section backgrounds */
+.section,
+.about-section,
+.skills-section,
+.projects-section,
+.contact-section {
+  background: var(--background);
+  color: var(--text);
 }
