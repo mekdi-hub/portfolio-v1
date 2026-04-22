@@ -3508,7 +3508,7 @@ body.light-theme .hero-subtitle {
 body.light-theme .hero-skill {
   color: #000000 !important;
   background: #e2e8f0 !important;
-  border: 2px solid #000000 !important;
+  border: 2px solid #22D3EE !important;
 }
 
 /* Skills Page - Light Theme */
@@ -3526,32 +3526,52 @@ body.light-theme .skill-name-orb {
 
 body.light-theme .skill-orb {
   background: #e2e8f0 !important;
-  border: 2px solid #000000 !important;
+  border: 2px solid #22D3EE !important;
 }
 
-/* Projects Page - Light Theme */
+/* Projects Page - Light Theme - COMPLETE FIX */
+body.light-theme .projects-page,
 body.light-theme .projects-header-fixed,
-body.light-theme .projects-content-section {
+body.light-theme .projects-content-section,
+body.light-theme .projects-scroll-section {
   background: #ffffff !important;
 }
 
 body.light-theme .projects-header-title,
 body.light-theme .projects-header-subtitle,
 body.light-theme .project-title,
-body.light-theme .project-description {
+body.light-theme .project-description,
+body.light-theme .project-card h3,
+body.light-theme .project-card p {
   color: #000000 !important;
   text-shadow: none !important;
 }
 
-body.light-theme .project-image-wrapper {
+body.light-theme .project-image-wrapper,
+body.light-theme .project-image {
   background: #e2e8f0 !important;
-  border: 2px solid #000000 !important;
+  border: 2px solid #22D3EE !important;
 }
 
 body.light-theme .tech-tag {
   background: #e2e8f0 !important;
-  border: 2px solid #000000 !important;
+  border: 2px solid #22D3EE !important;
   color: #000000 !important;
+}
+
+body.light-theme .project-btn.secondary {
+  background: #e2e8f0 !important;
+  border: 2px solid #22D3EE !important;
+  color: #000000 !important;
+}
+
+body.light-theme .project-card {
+  background: #ffffff !important;
+  border: 2px solid #22D3EE !important;
+}
+
+body.light-theme .project-card-content {
+  background: #ffffff !important;
 }
 
 /* About Page - Light Theme */
@@ -3570,22 +3590,30 @@ body.light-theme .about-description p {
 
 body.light-theme .tab-btn {
   color: #000000 !important;
-  background: #e2e8f0 !important;
-  border: 2px solid #000000 !important;
-  backdrop-filter: none !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid #22D3EE !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
 body.light-theme .tab-btn.active {
-  background: #000000 !important;
-  color: #ffffff !important;
+  background: rgba(34, 211, 238, 0.2) !important;
+  color: #000000 !important;
+  border: 2px solid #22D3EE !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
 }
 
 body.light-theme .stat-item,
 body.light-theme .education-item,
 body.light-theme .timeline-content-vertical {
-  background: #e2e8f0 !important;
-  border: 2px solid #000000 !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid #22D3EE !important;
   color: #000000 !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Contact Page - Light Theme */
@@ -3602,7 +3630,7 @@ body.light-theme .socials-label {
 body.light-theme .contact-info-card,
 body.light-theme .social-icon-link {
   background: #e2e8f0 !important;
-  border: 2px solid #000000 !important;
+  border: 2px solid #22D3EE !important;
   color: #000000 !important;
 }
 
@@ -3611,8 +3639,69 @@ body.light-theme .slide {
   background: #ffffff !important;
 }
 
-/* Remove all glass effects in light theme */
-body.light-theme * {
+/* Theme Selector - Light Theme */
+body.light-theme .theme-toggle-btn {
+  background: #e2e8f0 !important;
+  border: 2px solid #22D3EE !important;
+  color: #000000 !important;
+}
+
+body.light-theme .theme-dropdown {
+  background: #e2e8f0 !important;
+  border: 2px solid #22D3EE !important;
+}
+
+body.light-theme .theme-option {
+  color: #000000 !important;
+}
+
+body.light-theme .theme-option:hover {
+  background: #22D3EE !important;
+  color: #ffffff !important;
+}
+
+/* Navigation - Light Theme */
+body.light-theme .dot-label {
+  background: #e2e8f0 !important;
+  border: 2px solid #22D3EE !important;
+  color: #000000 !important;
+}
+
+/* Buttons - Light Theme */
+body.light-theme .secondary-button {
+  background: #e2e8f0 !important;
+  border: 2px solid #22D3EE !important;
+  color: #000000 !important;
+}
+
+body.light-theme .secondary-button:hover {
+  background: #22D3EE !important;
+  color: #ffffff !important;
+}
+
+/* Footer - Light Theme */
+body.light-theme .footer {
+  border-top: 2px solid #22D3EE !important;
+  color: #000000 !important;
+}
+
+/* Remove all glass effects in light theme EXCEPT About page cards */
+body.light-theme .hero *,
+body.light-theme .skills-page-orb *,
+body.light-theme .projects-page *,
+body.light-theme .contact-page * {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* Ensure Projects Page Elements */
+body.light-theme .projects-badge {
+  background: #e2e8f0 !important;
+  border: 2px solid #22D3EE !important;
+  color: #000000 !important;
+}
+
+body.light-theme .glow-line {
+  background: linear-gradient(90deg, transparent, #22D3EE, transparent) !important;
+}
+
