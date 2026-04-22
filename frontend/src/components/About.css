@@ -1505,3 +1505,76 @@
     margin-bottom: 2rem;
   }
 }
+
+
+/* ========================================
+   LIGHT THEME OVERRIDES FOR ABOUT PAGE
+   ======================================== */
+
+body.light-theme .stat-item {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid #22D3EE !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+body.light-theme .stat-item::before {
+  background: rgba(34, 211, 238, 0.1) !important;
+}
+
+body.light-theme .stat-item:hover {
+  background: rgba(34, 211, 238, 0.15) !important;
+}
+
+body.light-theme .education-item {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid #22D3EE !important;
+  border-left: 3px solid #22D3EE !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+body.light-theme .education-item:hover {
+  background: rgba(34, 211, 238, 0.15) !important;
+}
+
+body.light-theme .timeline-content-vertical {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid #22D3EE !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+body.light-theme .timeline-content-vertical::before {
+  background: rgba(34, 211, 238, 0.1) !important;
+}
+
+body.light-theme .timeline-item-vertical:hover .timeline-content-vertical {
+  background: rgba(34, 211, 238, 0.15) !important;
+}
+
+body.light-theme .tab-btn {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid #22D3EE !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+body.light-theme .tab-btn.active {
+  background: rgba(34, 211, 238, 0.2) !important;
+}
+
+body.light-theme .tab-btn:hover {
+  background: rgba(34, 211, 238, 0.15) !important;
+}
+
+
+/* Remove dark gradient overlay in light theme */
+body.light-theme .about-page-new::before {
+  display: none !important;
+}
+
+/* Ensure white background */
+body.light-theme .about-page-new {
+  background: #ffffff !important;
+}
