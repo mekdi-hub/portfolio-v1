@@ -11,8 +11,91 @@ body,
   color: var(--text);
 }
 
+/* Skills Page - Apply Theme */
+.skills-page-orb {
+  background: var(--background) !important;
+  color: var(--text) !important;
+}
+
+.skills-title-orb,
+.glitch-skills {
+  color: var(--text) !important;
+}
+
+.skills-subtitle-orb {
+  color: var(--text-secondary) !important;
+}
+
+.skill-orb {
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+.skill-orb:hover {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 40px var(--glow) !important;
+}
+
+.skill-name-orb {
+  color: var(--text) !important;
+}
+
+/* Projects Page - Apply Theme */
+.projects-header-fixed,
+.projects-content-section {
+  background: var(--background) !important;
+}
+
+.projects-header-title {
+  color: var(--text) !important;
+}
+
+.projects-header-subtitle {
+  color: var(--text-secondary) !important;
+}
+
+.project-image-wrapper {
+  background: var(--background-alt) !important;
+}
+
+.project-title {
+  color: var(--text) !important;
+}
+
+.project-description {
+  color: var(--text-secondary) !important;
+}
+
+.tech-tag {
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.tech-tag:hover {
+  background: var(--background-alt) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+.project-btn.secondary {
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  border-color: var(--border-color) !important;
+}
+
+.project-btn.secondary:hover {
+  background: var(--background-alt) !important;
+  border-color: var(--primary) !important;
+}
+
 /* About Page Text Colors */
-.about-page-new,
+.about-page-new {
+  background: var(--background) !important;
+  color: var(--text) !important;
+}
+
 .about-main-title,
 .about-name,
 .education-title,
@@ -43,45 +126,24 @@ body,
   border-color: var(--primary) !important;
 }
 
-/* Tab Buttons */
+/* Tab Buttons - Better Glass Effect */
 .tab-btn {
   color: var(--text-secondary) !important;
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
-.tab-btn:hover,
+.tab-btn:hover {
+  color: var(--text) !important;
+  background: var(--background-alt) !important;
+  border-color: var(--primary) !important;
+}
+
 .tab-btn.active {
-  color: var(--text) !important;
-}
-
-/* Skills Page */
-.skills-page,
-.skills-container {
-  color: var(--text) !important;
-}
-
-.skills-title-text,
-.skill-name,
-.category-btn {
-  color: var(--text) !important;
-}
-
-.skill-card {
-  color: var(--text-secondary) !important;
-}
-
-/* Projects Page */
-.projects-page,
-.projects-container,
-.projects-header-title,
-.project-card h3,
-.project-title {
-  color: var(--text) !important;
-}
-
-.projects-header-subtitle,
-.project-card p,
-.project-description {
-  color: var(--text-secondary) !important;
+  color: var(--primary) !important;
+  background: var(--background-alt) !important;
+  border-color: var(--primary) !important;
 }
 
 /* Contact Page */
@@ -97,7 +159,29 @@ body,
   color: var(--text-secondary) !important;
 }
 
+.contact-info-card {
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.contact-info-card:hover {
+  background: var(--background-alt) !important;
+  border-color: var(--primary) !important;
+}
+
 .contact-info-card:hover .contact-info-text {
+  color: var(--primary) !important;
+}
+
+.social-icon-link {
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.social-icon-link:hover {
+  background: var(--background-alt) !important;
+  border-color: var(--primary) !important;
   color: var(--primary) !important;
 }
 
@@ -114,6 +198,13 @@ body,
 
 .hero-skill {
   color: var(--text) !important;
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.hero-skill:hover {
+  background: var(--background-alt) !important;
+  border-color: var(--primary) !important;
 }
 
 /* Glitch Text Colors */
@@ -153,10 +244,12 @@ span {
 .education-item {
   color: var(--text-secondary) !important;
   background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
 }
 
 .education-item:hover {
   border-left-color: var(--primary) !important;
+  background: var(--background-alt) !important;
 }
 
 .education-degree,
@@ -178,38 +271,56 @@ span {
   border-color: var(--primary) !important;
 }
 
-/* Skill Tags */
-.skill-tag:hover {
+/* Stat Items */
+.stat-item {
   background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.stat-item:hover {
+  background: var(--background-alt) !important;
   border-color: var(--primary) !important;
 }
 
 /* Navigation */
 .dot-label {
   color: var(--text) !important;
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
 }
 
 /* Buttons */
 .cta-button {
+  background: var(--primary) !important;
   color: var(--background) !important;
 }
 
 .secondary-button {
   color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  background: transparent !important;
+}
+
+.secondary-button:hover {
+  background: var(--card-bg) !important;
 }
 
 /* Footer */
 .footer,
 .footer p {
   color: var(--text-secondary) !important;
+  border-color: var(--border-color) !important;
 }
 
-/* Cards */
+/* Cards - Better Glass Effect */
 .card,
 .skill-card,
 .project-card,
 .stat-item {
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
   color: var(--text-secondary) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Cursor */
@@ -218,28 +329,24 @@ span {
 }
 
 /* Theme Selector */
-.theme-toggle-btn,
+.theme-toggle-btn {
+  color: var(--text) !important;
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
 .theme-option {
   color: var(--text) !important;
+}
+
+.theme-dropdown {
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
 }
 
 /* Scroll Indicators */
 .scroll-indicator svg path {
   stroke: var(--primary) !important;
-}
-
-/* All text elements */
-.text,
-.description,
-.label,
-.title,
-.subtitle {
-  color: var(--text) !important;
-}
-
-/* Ensure divs inherit color */
-div {
-  color: inherit;
 }
 
 /* Section backgrounds */
@@ -250,4 +357,19 @@ div {
 .contact-section {
   background: var(--background);
   color: var(--text);
+}
+
+/* Content Cards with Better Contrast */
+.about-content-card,
+.tab-content-card {
+  background: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Glow Lines */
+.glow-line,
+.glow-line-orb {
+  background: var(--gradient) !important;
+  box-shadow: 0 0 20px var(--glow) !important;
 }
