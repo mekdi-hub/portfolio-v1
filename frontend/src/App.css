@@ -1122,7 +1122,32 @@ button[type="submit"]:disabled {
   }
   
   .hero-subtitle {
-    font-size: 1.2rem;
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  
+  .hero-skills {
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .hero-skill {
+    font-size: 0.9rem;
+    padding: 0.7rem 1.4rem;
+  }
+  
+  .hero-actions {
+    gap: 1rem;
+    padding: 0 1rem;
+    width: 100%;
+  }
+  
+  .cta-button,
+  .secondary-button {
+    padding: 1rem 2rem;
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 280px;
   }
   
   .nav-links {
@@ -1135,6 +1160,117 @@ button[type="submit"]:disabled {
   
   .projects-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Additional responsive breakpoints for better button visibility */
+@media (max-width: 480px) {
+  .hero {
+    padding: 0 3%;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  
+  .hero-skills {
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+  }
+  
+  .hero-skill {
+    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
+  }
+  
+  .hero-actions {
+    gap: 0.875rem;
+    margin-top: 1.5rem;
+  }
+  
+  .cta-button,
+  .secondary-button {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .scroll-indicator {
+    bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .hero-skills {
+    gap: 0.5rem;
+  }
+  
+  .hero-skill {
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .cta-button,
+  .secondary-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero {
+    min-height: auto;
+    padding: 2rem 5%;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-skills {
+    margin: 1rem 0;
+    gap: 0.75rem;
+  }
+  
+  .hero-skill {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .hero-actions {
+    gap: 0.75rem;
+    flex-direction: row;
+  }
+  
+  .cta-button,
+  .secondary-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    width: auto;
+  }
+  
+  .scroll-indicator {
+    display: none;
   }
 }
 
