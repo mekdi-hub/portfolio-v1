@@ -11,7 +11,38 @@ body,
   color: var(--text);
 }
 
-/* Skills Page - Apply Theme */
+/* Hero Page - Force Black Text in Light Mode */
+.hero-content,
+.hero-title,
+.typing-text,
+.glitch-text {
+  color: var(--text) !important;
+  text-shadow: none !important;
+}
+
+.hero-subtitle {
+  color: var(--text) !important;
+}
+
+.hero-skill {
+  color: var(--text) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+}
+
+.hero-skill:hover {
+  background: var(--text) !important;
+  color: var(--background) !important;
+  border-color: var(--text) !important;
+}
+
+/* Remove Glitch Effect Text Shadow */
+.glitch-text::before,
+.glitch-text::after {
+  display: none !important;
+}
+
+/* Skills Page - Apply Theme Completely */
 .skills-page-orb {
   background: var(--background) !important;
   color: var(--text) !important;
@@ -20,15 +51,16 @@ body,
 .skills-title-orb,
 .glitch-skills {
   color: var(--text) !important;
+  text-shadow: none !important;
 }
 
 .skills-subtitle-orb {
-  color: var(--text-secondary) !important;
+  color: var(--text) !important;
 }
 
 .skill-orb {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -41,7 +73,11 @@ body,
   color: var(--text) !important;
 }
 
-/* Projects Page - Apply Theme */
+.orbit-dot {
+  background: var(--primary) !important;
+}
+
+/* Projects Page - Apply Theme Completely */
 .projects-header-fixed,
 .projects-content-section {
   background: var(--background) !important;
@@ -49,14 +85,16 @@ body,
 
 .projects-header-title {
   color: var(--text) !important;
+  text-shadow: none !important;
 }
 
 .projects-header-subtitle {
-  color: var(--text-secondary) !important;
+  color: var(--text) !important;
 }
 
 .project-image-wrapper {
   background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
 }
 
 .project-title {
@@ -64,33 +102,34 @@ body,
 }
 
 .project-description {
-  color: var(--text-secondary) !important;
+  color: var(--text) !important;
 }
 
 .tech-tag {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-secondary) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  color: var(--text) !important;
 }
 
 .tech-tag:hover {
-  background: var(--background-alt) !important;
-  border-color: var(--primary) !important;
-  color: var(--primary) !important;
+  background: var(--text) !important;
+  border-color: var(--text) !important;
+  color: var(--background) !important;
 }
 
 .project-btn.secondary {
-  background: var(--card-bg) !important;
+  background: var(--background-alt) !important;
   color: var(--text) !important;
-  border-color: var(--border-color) !important;
+  border: 2px solid var(--text) !important;
 }
 
 .project-btn.secondary:hover {
-  background: var(--background-alt) !important;
-  border-color: var(--primary) !important;
+  background: var(--text) !important;
+  color: var(--background) !important;
+  border-color: var(--text) !important;
 }
 
-/* About Page Text Colors */
+/* About Page - Remove Glass Effect, Solid Backgrounds */
 .about-page-new {
   background: var(--background) !important;
   color: var(--text) !important;
@@ -105,6 +144,7 @@ body,
 .section-title,
 .education-section-title {
   color: var(--text) !important;
+  text-shadow: none !important;
 }
 
 .about-role,
@@ -114,36 +154,96 @@ body,
 .education-years,
 .journey-description,
 .timeline-desc-vertical,
-.about-text,
-.education-item {
-  color: var(--text-secondary) !important;
+.about-text {
+  color: var(--text) !important;
 }
 
 .about-badge,
 .skill-tag,
 .timeline-year-badge {
-  color: var(--primary) !important;
-  border-color: var(--primary) !important;
+  color: var(--text) !important;
+  border: 2px solid var(--text) !important;
+  background: var(--background-alt) !important;
 }
 
-/* Tab Buttons - Better Glass Effect */
+/* Tab Buttons - Solid, No Glass */
 .tab-btn {
-  color: var(--text-secondary) !important;
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  color: var(--text) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .tab-btn:hover {
-  color: var(--text) !important;
-  background: var(--background-alt) !important;
-  border-color: var(--primary) !important;
+  color: var(--background) !important;
+  background: var(--text) !important;
+  border-color: var(--text) !important;
 }
 
 .tab-btn.active {
-  color: var(--primary) !important;
+  color: var(--background) !important;
+  background: var(--text) !important;
+  border-color: var(--text) !important;
+}
+
+/* Education Items - Solid Background */
+.education-item {
+  color: var(--text) !important;
   background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+}
+
+.education-item:hover {
   border-color: var(--primary) !important;
+  background: var(--text) !important;
+  color: var(--background) !important;
+}
+
+.education-degree,
+.education-field {
+  color: inherit !important;
+}
+
+/* Timeline - Solid Background */
+.timeline-content-vertical {
+  color: var(--text) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+}
+
+.timeline-item-title {
+  color: var(--text) !important;
+}
+
+.timeline-item-description {
+  color: var(--text) !important;
+}
+
+.timeline-item-vertical:hover .timeline-content-vertical {
+  border-color: var(--primary) !important;
+  background: var(--text) !important;
+  color: var(--background) !important;
+}
+
+/* Stat Items - Solid Background */
+.stat-item {
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  color: var(--text) !important;
+}
+
+.stat-item:hover {
+  background: var(--text) !important;
+  color: var(--background) !important;
+  border-color: var(--text) !important;
+}
+
+.stat-number,
+.count-number,
+.stat-value-number {
+  color: inherit !important;
 }
 
 /* Contact Page */
@@ -156,137 +256,58 @@ body,
 
 .contact-info-text,
 .socials-label {
-  color: var(--text-secondary) !important;
+  color: var(--text) !important;
 }
 
 .contact-info-card {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .contact-info-card:hover {
-  background: var(--background-alt) !important;
-  border-color: var(--primary) !important;
+  background: var(--text) !important;
+  border-color: var(--text) !important;
 }
 
 .contact-info-card:hover .contact-info-text {
-  color: var(--primary) !important;
+  color: var(--background) !important;
 }
 
 .social-icon-link {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-secondary) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  color: var(--text) !important;
 }
 
 .social-icon-link:hover {
-  background: var(--background-alt) !important;
-  border-color: var(--primary) !important;
-  color: var(--primary) !important;
-}
-
-/* Hero Page */
-.hero-content,
-.hero-title,
-.typing-text {
-  color: var(--text) !important;
-}
-
-.hero-subtitle {
-  color: var(--text-secondary) !important;
-}
-
-.hero-skill {
-  color: var(--text) !important;
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-}
-
-.hero-skill:hover {
-  background: var(--background-alt) !important;
-  border-color: var(--primary) !important;
-}
-
-/* Glitch Text Colors */
-.glitch-text {
-  color: var(--primary) !important;
-}
-
-.glitch-text::before,
-.glitch-text::after {
-  color: var(--primary) !important;
-  opacity: 0.3;
+  background: var(--text) !important;
+  border-color: var(--text) !important;
+  color: var(--background) !important;
 }
 
 /* Ensure all headings use theme text color */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text) !important;
+  text-shadow: none !important;
 }
 
 /* Ensure all paragraphs use theme text color */
 p {
-  color: var(--text-secondary) !important;
+  color: var(--text) !important;
 }
 
 /* Ensure all spans use inherited color */
 span {
-  color: inherit;
-}
-
-/* Stats and Numbers */
-.stat-number,
-.count-number,
-.stat-value-number {
-  color: var(--primary) !important;
-}
-
-/* Education Items */
-.education-item {
-  color: var(--text-secondary) !important;
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-}
-
-.education-item:hover {
-  border-left-color: var(--primary) !important;
-  background: var(--background-alt) !important;
-}
-
-.education-degree,
-.education-field {
-  color: var(--text) !important;
-}
-
-/* Timeline */
-.timeline-content-vertical,
-.timeline-item-title {
-  color: var(--text) !important;
-}
-
-.timeline-item-description {
-  color: var(--text-secondary) !important;
-}
-
-.timeline-item-vertical:hover .timeline-content-vertical {
-  border-color: var(--primary) !important;
-}
-
-/* Stat Items */
-.stat-item {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-}
-
-.stat-item:hover {
-  background: var(--background-alt) !important;
-  border-color: var(--primary) !important;
+  color: inherit !important;
 }
 
 /* Navigation */
 .dot-label {
   color: var(--text) !important;
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
 }
 
 /* Buttons */
@@ -296,31 +317,33 @@ span {
 }
 
 .secondary-button {
-  color: var(--primary) !important;
-  border-color: var(--primary) !important;
-  background: transparent !important;
+  color: var(--text) !important;
+  border: 2px solid var(--text) !important;
+  background: var(--background-alt) !important;
 }
 
 .secondary-button:hover {
-  background: var(--card-bg) !important;
+  background: var(--text) !important;
+  color: var(--background) !important;
 }
 
 /* Footer */
 .footer,
 .footer p {
-  color: var(--text-secondary) !important;
-  border-color: var(--border-color) !important;
+  color: var(--text) !important;
+  border-color: var(--text) !important;
 }
 
-/* Cards - Better Glass Effect */
+/* Cards - Solid, No Glass */
 .card,
 .skill-card,
-.project-card,
-.stat-item {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-secondary) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+.project-card {
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Cursor */
@@ -331,8 +354,10 @@ span {
 /* Theme Selector */
 .theme-toggle-btn {
   color: var(--text) !important;
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .theme-option {
@@ -340,8 +365,10 @@ span {
 }
 
 .theme-dropdown {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Scroll Indicators */
@@ -355,16 +382,18 @@ span {
 .skills-section,
 .projects-section,
 .contact-section {
-  background: var(--background);
-  color: var(--text);
+  background: var(--background) !important;
+  color: var(--text) !important;
 }
 
-/* Content Cards with Better Contrast */
+/* Content Cards - Solid Backgrounds */
 .about-content-card,
 .tab-content-card {
-  background: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  background: var(--background-alt) !important;
+  border: 2px solid var(--text) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Glow Lines */
@@ -372,4 +401,25 @@ span {
 .glow-line-orb {
   background: var(--gradient) !important;
   box-shadow: 0 0 20px var(--glow) !important;
+}
+
+/* Remove all backdrop filters and glass effects */
+* {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Force all text elements to be black in light theme */
+.about-page-new *,
+.skills-page-orb *,
+.projects-header-fixed *,
+.projects-content-section *,
+.hero-content * {
+  color: var(--text) !important;
+}
+
+/* Override any remaining cyan/blue text */
+.glitch-skills::before,
+.glitch-skills::after {
+  display: none !important;
 }
