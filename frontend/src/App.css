@@ -3616,6 +3616,19 @@ body.light-theme .timeline-content-vertical {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
+body.light-theme .stat-item::before,
+body.light-theme .education-item::before,
+body.light-theme .timeline-content-vertical::before {
+  background: rgba(34, 211, 238, 0.1) !important;
+}
+
+body.light-theme .stat-item:hover,
+body.light-theme .education-item:hover,
+body.light-theme .timeline-item-vertical:hover .timeline-content-vertical {
+  background: rgba(34, 211, 238, 0.15) !important;
+  border-color: #22D3EE !important;
+}
+
 /* Contact Page - Light Theme */
 body.light-theme .contact-page {
   background: #ffffff !important;
