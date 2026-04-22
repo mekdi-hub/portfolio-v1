@@ -23,6 +23,15 @@ function Hero({ scrollToSection }) {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    // Add or remove light-theme class on body
+    if (currentTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+  }, [currentTheme]);
+
   const handleThemeChange = (themeName) => {
     setCurrentTheme(themeName);
     applyTheme(themeName);

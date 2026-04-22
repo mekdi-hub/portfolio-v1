@@ -3472,3 +3472,147 @@ button[type="submit"]:disabled {
     height: 20px;
   }
 }
+
+
+/* ========================================
+   THEME OVERRIDES - MAXIMUM SPECIFICITY
+   ======================================== */
+
+/* Light Theme Text Color Overrides */
+body.light-theme,
+body.light-theme * {
+  color: #000000 !important;
+}
+
+/* Hero Page - Light Theme */
+body.light-theme .hero {
+  background: #ffffff !important;
+}
+
+body.light-theme .hero-title,
+body.light-theme .glitch-text,
+body.light-theme .typing-text {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .glitch-text::before,
+body.light-theme .glitch-text::after {
+  display: none !important;
+}
+
+body.light-theme .hero-subtitle {
+  color: #000000 !important;
+}
+
+body.light-theme .hero-skill {
+  color: #000000 !important;
+  background: #e2e8f0 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Skills Page - Light Theme */
+body.light-theme .skills-page-orb {
+  background: #ffffff !important;
+}
+
+body.light-theme .skills-title-orb,
+body.light-theme .glitch-skills,
+body.light-theme .skills-subtitle-orb,
+body.light-theme .skill-name-orb {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .skill-orb {
+  background: #e2e8f0 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Projects Page - Light Theme */
+body.light-theme .projects-header-fixed,
+body.light-theme .projects-content-section {
+  background: #ffffff !important;
+}
+
+body.light-theme .projects-header-title,
+body.light-theme .projects-header-subtitle,
+body.light-theme .project-title,
+body.light-theme .project-description {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .project-image-wrapper {
+  background: #e2e8f0 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light-theme .tech-tag {
+  background: #e2e8f0 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* About Page - Light Theme */
+body.light-theme .about-page-new {
+  background: #ffffff !important;
+}
+
+body.light-theme .about-main-title,
+body.light-theme .about-name,
+body.light-theme .about-role,
+body.light-theme .about-description,
+body.light-theme .about-description p {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .tab-btn {
+  color: #000000 !important;
+  background: #e2e8f0 !important;
+  border: 2px solid #000000 !important;
+  backdrop-filter: none !important;
+}
+
+body.light-theme .tab-btn.active {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.light-theme .stat-item,
+body.light-theme .education-item,
+body.light-theme .timeline-content-vertical {
+  background: #e2e8f0 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* Contact Page - Light Theme */
+body.light-theme .contact-page {
+  background: #ffffff !important;
+}
+
+body.light-theme .contact-main-title,
+body.light-theme .contact-info-text,
+body.light-theme .socials-label {
+  color: #000000 !important;
+}
+
+body.light-theme .contact-info-card,
+body.light-theme .social-icon-link {
+  background: #e2e8f0 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* All Slides - Light Theme */
+body.light-theme .slide {
+  background: #ffffff !important;
+}
+
+/* Remove all glass effects in light theme */
+body.light-theme * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
