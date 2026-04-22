@@ -2,10 +2,12 @@
   min-height: 100vh;
   height: 100vh;
   padding: 2.5rem 2rem;
-  background: #000000;
+  background: var(--background);
+  color: var(--text);
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .about-page-new::before {

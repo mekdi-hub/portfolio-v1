@@ -20,13 +20,13 @@ export const themes = {
     secondary: '#0EA5E9',
     accent: '#06B6D4',
     background: '#ffffff',
-    backgroundAlt: '#f8fafc',
+    backgroundAlt: '#f1f5f9',
     text: '#0f172a',
-    textSecondary: '#475569',
+    textSecondary: '#334155',
     gradient: 'linear-gradient(135deg, #22D3EE 0%, #0EA5E9 100%)',
-    glow: 'rgba(34, 211, 238, 0.3)',
-    cardBg: 'rgba(248, 250, 252, 0.8)',
-    borderColor: 'rgba(34, 211, 238, 0.2)'
+    glow: 'rgba(34, 211, 238, 0.4)',
+    cardBg: 'rgba(241, 245, 249, 0.8)',
+    borderColor: 'rgba(34, 211, 238, 0.3)'
   }
 };
 

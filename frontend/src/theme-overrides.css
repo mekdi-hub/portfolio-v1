@@ -1,0 +1,125 @@
+/* Theme Override Styles - Apply theme variables to all components */
+
+/* About Page Text Colors */
+.about-main-title,
+.about-name,
+.education-title,
+.timeline-year,
+.stat-value {
+  color: var(--text) !important;
+}
+
+.about-role,
+.about-description p,
+.stat-label,
+.education-years,
+.journey-description,
+.timeline-desc-vertical {
+  color: var(--text-secondary) !important;
+}
+
+.about-badge,
+.skill-tag,
+.timeline-year-badge {
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+/* Tab Buttons */
+.tab-btn {
+  color: var(--text-secondary) !important;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+  color: var(--text) !important;
+}
+
+/* Skills Page */
+.skills-title-text,
+.skill-name {
+  color: var(--text) !important;
+}
+
+/* Projects Page */
+.projects-header-title,
+.project-card h3 {
+  color: var(--text) !important;
+}
+
+.projects-header-subtitle,
+.project-card p {
+  color: var(--text-secondary) !important;
+}
+
+/* Contact Page */
+.contact-main-title {
+  color: var(--text) !important;
+}
+
+.contact-info-text {
+  color: var(--text-secondary) !important;
+}
+
+.contact-info-card:hover .contact-info-text {
+  color: var(--primary) !important;
+}
+
+/* Hero Page */
+.hero-subtitle {
+  color: var(--text-secondary) !important;
+}
+
+/* Glitch Text Colors for Light Theme */
+.glitch-text::before,
+.glitch-text::after {
+  color: var(--primary) !important;
+  opacity: 0.3;
+}
+
+/* Ensure all headings use theme text color */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text);
+}
+
+/* Ensure all paragraphs use theme text color */
+p {
+  color: var(--text-secondary);
+}
+
+/* Stats and Numbers */
+.stat-number,
+.count-number {
+  color: var(--primary) !important;
+}
+
+/* Education Items */
+.education-item {
+  color: var(--text-secondary) !important;
+  background: var(--card-bg) !important;
+}
+
+.education-item:hover {
+  border-left-color: var(--primary) !important;
+}
+
+/* Timeline */
+.timeline-content-vertical {
+  color: var(--text-secondary) !important;
+}
+
+.timeline-item-vertical:hover .timeline-content-vertical {
+  border-color: var(--primary) !important;
+}
+
+/* Skill Tags */
+.skill-tag:hover {
+  background: var(--card-bg) !important;
+  border-color: var(--primary) !important;
+}
+
+/* Section Titles */
+.section-title,
+.education-section-title {
+  color: var(--text) !important;
+}
