@@ -390,10 +390,115 @@ button:hover ~ .custom-cursor,
   text-align: center;
   padding: 0 5%;
   position: relative;
-  background: 
-    radial-gradient(ellipse at 50% 20%, rgba(34, 211, 238, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-    #000000;
+  background: var(--background);
+  transition: background 0.3s ease;
+}
+
+/* Theme Selector */
+.theme-selector {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 100;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Lora', serif;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-btn:hover {
+  background: var(--background-alt);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px var(--glow);
+}
+
+.theme-toggle-btn svg {
+  color: var(--primary);
+  filter: drop-shadow(0 0 5px var(--glow));
+}
+
+.theme-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 200px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: dropdownFadeIn 0.3s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Lora', serif;
+  text-align: left;
+}
+
+.theme-option:hover {
+  background: var(--background-alt);
+  transform: translateX(5px);
+}
+
+.theme-option.active {
+  background: var(--background-alt);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.theme-color-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.theme-option svg {
+  margin-left: auto;
+  color: var(--primary);
 }
 
 .hero-content {
@@ -425,8 +530,8 @@ button:hover ~ .custom-cursor,
 .glitch-text {
   position: relative;
   display: inline-block;
-  color: #ffffff;
-  text-shadow: 0 0 30px rgba(34, 211, 238, 0.8);
+  color: var(--primary);
+  text-shadow: 0 0 30px var(--glow);
   animation: glitch-skew 3s infinite;
 }
 
@@ -442,8 +547,8 @@ button:hover ~ .custom-cursor,
 
 .glitch-text::before {
   left: 2px;
-  text-shadow: -3px 0 #000000;
-  color: #000000;
+  text-shadow: -3px 0 var(--background);
+  color: var(--background);
   clip: rect(44px, 9999px, 56px, 0);
   animation: glitch-anim 5s infinite linear alternate-reverse;
   z-index: -1;
@@ -451,8 +556,8 @@ button:hover ~ .custom-cursor,
 
 .glitch-text::after {
   left: -2px;
-  text-shadow: 3px 0 #000000;
-  color: #000000;
+  text-shadow: 3px 0 var(--background);
+  color: var(--background);
   clip: rect(44px, 9999px, 56px, 0);
   animation: glitch-anim2 5s infinite linear alternate-reverse;
   z-index: -2;
