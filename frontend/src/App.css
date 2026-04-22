@@ -3550,7 +3550,7 @@ body.light-theme .project-card p {
 body.light-theme .project-image-wrapper,
 body.light-theme .project-image {
   background: #e2e8f0 !important;
-  border: 2px solid #22D3EE !important;
+  border: none !important;
 }
 
 body.light-theme .tech-tag {
@@ -3567,7 +3567,7 @@ body.light-theme .project-btn.secondary {
 
 body.light-theme .project-card {
   background: #ffffff !important;
-  border: 2px solid #22D3EE !important;
+  border: none !important;
 }
 
 body.light-theme .project-card-content {

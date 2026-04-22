@@ -901,3 +901,28 @@
     transition: none;
   }
 }
+
+
+/* ========================================
+   LIGHT THEME OVERRIDES FOR CONTACT PAGE
+   ======================================== */
+
+/* Remove gradient decorative elements in light theme */
+body.light-theme .contact-hero::before,
+body.light-theme .contact-hero::after,
+body.light-theme .contact-page::before,
+body.light-theme .contact-page::after,
+body.light-theme .mouse-glow {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Ensure white background */
+body.light-theme .contact-page {
+  background: #ffffff !important;
+}
+
+/* Ensure all text is black */
+body.light-theme .contact-page * {
+  color: #000000 !important;
+}

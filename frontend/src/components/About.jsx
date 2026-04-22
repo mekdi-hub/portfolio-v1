@@ -36,7 +36,47 @@ function About() {
   const [visibleItems, setVisibleItems] = useState([]);
   const [counts, setCounts] = useState({ years: 0, projects: 0, technologies: 0 });
   const [hasCountedOnce, setHasCountedOnce] = useState(false);
+  const [isLightTheme, setIsLightTheme] = useState(false);
   const statsRef = useRef(null);
+  
+  // Monitor theme changes
+  useEffect(() => {
+    const checkTheme = () => {
+      const hasLightTheme = document.body.classList.contains('light-theme');
+      setIsLightTheme(hasLightTheme);
+    };
+    
+    // Check initially
+    checkTheme();
+    
+    // Check every 100ms to catch theme changes immediately
+    const interval = setInterval(checkTheme, 100);
+    
+    // Create observer to watch for class changes on body
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    
+    return () => {
+      clearInterval(interval);
+      observer.disconnect();
+    };
+  }, []);
+  
+  // Inline styles for light theme cards - using style attribute for maximum specificity
+  const lightCardStyle = isLightTheme ? {
+    background: '#ffffff',
+    backgroundImage: 'none',
+    border: '2px solid #22D3EE',
+    boxShadow: '0 8px 32px rgba(34, 211, 238, 0.15)',
+    color: '#000000'
+  } : {};
+  
+  const lightTextStyle = isLightTheme ? {
+    color: '#000000'
+  } : {};
 
   // Intersection Observer for counting animation when stats come into view
   useEffect(() => {
@@ -127,7 +167,7 @@ function About() {
   return (
     <div className="about-page-new">
       <AboutBackground />
-      <div className="about-container">
+      <div className={`about-container ${isLightTheme ? 'light-theme-cards' : ''}`}>
         {/* Header */}
         <div className="about-header">
           <h1 className="about-title" data-text="About Me">About Me</h1>
@@ -160,7 +200,7 @@ function About() {
           <div className={`tab-content ${isTransitioning ? 'transitioning' : ''} ${isTransitioning ? `exit-${prevTab}` : ''} ${!isTransitioning ? `enter-${activeTab}` : ''}`}>
             {activeTab === 'about' && (
               <div className="about-content-single">
-                <div className="about-info-full">
+                <div className="about-info-full" style={lightCardStyle}>
                   <h2 className="about-name">
                     Hello, I'm <span className="highlight glitch-text-about" data-text="Mekdelawit Habtamu">Mekdelawit Habtamu</span>
                   </h2>
@@ -185,15 +225,15 @@ function About() {
 
                   {/* Stats */}
                   <div className="about-stats" ref={statsRef}>
-                    <div className="stat-item">
+                    <div className="stat-item" style={lightCardStyle}>
                       <div className="stat-number">{counts.years}+</div>
                       <div className="stat-label">Years Experience</div>
                     </div>
-                    <div className="stat-item">
+                    <div className="stat-item" style={lightCardStyle}>
                       <div className="stat-number">{counts.projects}+</div>
                       <div className="stat-label">Projects Completed</div>
                     </div>
-                    <div className="stat-item">
+                    <div className="stat-item" style={lightCardStyle}>
                       <div className="stat-number">{counts.technologies}+</div>
                       <div className="stat-label">Technologies</div>
                     </div>
@@ -204,7 +244,7 @@ function About() {
 
             {activeTab === 'education' && (
               <div className="education-content">
-                <div className="education-card-main">
+                <div className="education-card-main" style={lightCardStyle}>
                   <div className="education-icon">🎓</div>
                   <h2 className="education-degree">Bachelor of Science in Software Engineering</h2>
                   <h3 className="education-university">Wollo University</h3>
@@ -225,8 +265,8 @@ function About() {
             {activeTab === 'journey' && (
               <div className="journey-content">
                 <div className="journey-intro">
-                  <h2 className="journey-title">My Journey</h2>
-                  <p className="journey-description">
+                  <h2 className="journey-title" style={lightTextStyle}>My Journey</h2>
+                  <p className="journey-description" style={lightTextStyle}>
                     From my first line of code to building complex systems, here's how my journey has evolved over the years.
                   </p>
                 </div>
@@ -241,10 +281,10 @@ function About() {
                       <div className="timeline-dot-vertical">
                         <span className="timeline-icon">{item.icon}</span>
                       </div>
-                      <div className="timeline-content-vertical">
-                        <div className="timeline-year-vertical">{item.year}</div>
-                        <h3 className="timeline-title-vertical">{item.title}</h3>
-                        <p className="timeline-desc-vertical">{item.description}</p>
+                      <div className="timeline-content-vertical" style={lightCardStyle}>
+                        <div className="timeline-year-vertical" style={lightTextStyle}>{item.year}</div>
+                        <h3 className="timeline-title-vertical" style={lightTextStyle}>{item.title}</h3>
+                        <p className="timeline-desc-vertical" style={lightTextStyle}>{item.description}</p>
                       </div>
                     </div>
                   ))}

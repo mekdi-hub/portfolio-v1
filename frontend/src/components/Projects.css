@@ -151,12 +151,23 @@
   filter: blur(12px);
 }
 
+/* Disable in light theme */
+body.light-theme .project-card-image::after {
+  content: none !important;
+}
+
 .project-card:hover .project-card-image::before {
   opacity: 1;
 }
 
 .project-card:hover .project-card-image::after {
   opacity: 0.7;
+}
+
+/* Disable hover effect in light theme */
+body.light-theme .project-card:hover .project-card-image::after {
+  opacity: 0 !important;
+  content: none !important;
 }
 
 .project-card:hover .project-card-image {
@@ -654,12 +665,23 @@
   filter: blur(12px);
 }
 
+/* Disable in light theme */
+body.light-theme .project-card-media::after {
+  content: none !important;
+}
+
 .project-card:hover .media-overlay {
   opacity: 1;
 }
 
 .project-card:hover .project-card-media::after {
   opacity: 0.7;
+}
+
+/* Disable hover effect in light theme */
+body.light-theme .project-card:hover .project-card-media::after {
+  opacity: 0 !important;
+  content: none !important;
 }
 
 .project-card:hover .project-card-media {
@@ -745,4 +767,96 @@
 .project-btn svg {
   width: 16px;
   height: 16px;
+}
+
+
+/* ========================================
+   LIGHT THEME OVERRIDES FOR PROJECTS PAGE
+   ======================================== */
+
+body.light-theme .projects-header-fixed {
+  background: #ffffff !important;
+}
+
+body.light-theme .projects-scrollable-content {
+  background: #ffffff !important;
+}
+
+body.light-theme .projects-title,
+body.light-theme .glitch {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .glitch::before,
+body.light-theme .glitch::after {
+  display: none !important;
+}
+
+body.light-theme .projects-scroll-text {
+  color: #000000 !important;
+}
+
+body.light-theme .project-card-content h3 {
+  color: #000000 !important;
+}
+
+body.light-theme .project-card:hover .project-card-content h3 {
+  color: #22D3EE !important;
+}
+
+body.light-theme .project-description {
+  color: #000000 !important;
+}
+
+body.light-theme .tech-tag {
+  background: #e2e8f0 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #000000 !important;
+}
+
+body.light-theme .tech-tag:hover {
+  background: #cbd5e1 !important;
+  color: #000000 !important;
+  border: 1px solid #94a3b8 !important;
+}
+
+body.light-theme .project-btn.secondary {
+  background: #e2e8f0 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #000000 !important;
+}
+
+body.light-theme .project-btn.secondary:hover {
+  background: #cbd5e1 !important;
+  color: #000000 !important;
+  border: 1px solid #94a3b8 !important;
+}
+
+
+/* Remove cyan glow borders from project images in light theme */
+body.light-theme .project-card-image::after,
+body.light-theme .project-card-media::after {
+  display: none !important;
+  opacity: 0 !important;
+  background: none !important;
+}
+
+body.light-theme .project-card:hover .project-card-image::after,
+body.light-theme .project-card:hover .project-card-media::after {
+  display: none !important;
+  opacity: 0 !important;
+  background: none !important;
+}
+
+body.light-theme .project-card-image,
+body.light-theme .project-card-media {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+}
+
+body.light-theme .project-card:hover .project-card-image,
+body.light-theme .project-card:hover .project-card-media {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  border: none !important;
 }

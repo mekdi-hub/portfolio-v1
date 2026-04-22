@@ -521,6 +521,7 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   position: relative;
   overflow: hidden;
+  transition: background 0.3s ease, border 0.3s ease;
 }
 
 .about-info-full::before {
@@ -1512,60 +1513,73 @@
    ======================================== */
 
 body.light-theme .stat-item {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
   border: 2px solid #22D3EE !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.1) !important;
 }
 
 body.light-theme .stat-item::before {
-  background: rgba(34, 211, 238, 0.1) !important;
+  background: rgba(34, 211, 238, 0.05) !important;
 }
 
 body.light-theme .stat-item:hover {
-  background: rgba(34, 211, 238, 0.15) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 24px rgba(34, 211, 238, 0.2) !important;
 }
 
 body.light-theme .education-item {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
   border: 2px solid #22D3EE !important;
   border-left: 3px solid #22D3EE !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 2px 8px rgba(34, 211, 238, 0.1) !important;
 }
 
 body.light-theme .education-item:hover {
-  background: rgba(34, 211, 238, 0.15) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2) !important;
 }
 
 body.light-theme .timeline-content-vertical {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
   border: 2px solid #22D3EE !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.1) !important;
 }
 
 body.light-theme .timeline-content-vertical::before {
-  background: rgba(34, 211, 238, 0.1) !important;
+  background: rgba(34, 211, 238, 0.05) !important;
 }
 
 body.light-theme .timeline-item-vertical:hover .timeline-content-vertical {
-  background: rgba(34, 211, 238, 0.15) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 24px rgba(34, 211, 238, 0.2) !important;
 }
 
 body.light-theme .tab-btn {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
   border: 2px solid #22D3EE !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  color: #000000 !important;
+  box-shadow: 0 2px 8px rgba(34, 211, 238, 0.1) !important;
 }
 
 body.light-theme .tab-btn.active {
-  background: rgba(34, 211, 238, 0.2) !important;
+  background: rgba(34, 211, 238, 0.25) !important;
+  color: #000000 !important;
+  border-color: #22D3EE !important;
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.3) !important;
 }
 
 body.light-theme .tab-btn:hover {
   background: rgba(34, 211, 238, 0.15) !important;
+  color: #000000 !important;
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2) !important;
 }
 
 
@@ -1577,4 +1591,203 @@ body.light-theme .about-page-new::before {
 /* Ensure white background */
 body.light-theme .about-page-new {
   background: #ffffff !important;
+}
+
+
+/* Override the main content card background */
+body.light-theme .about-info-full {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 2px solid #22D3EE !important;
+  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.15) !important;
+}
+
+body.light-theme .about-info-full::before {
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.03) 0%, transparent 70%) !important;
+}
+
+/* Ensure all text in About Me card is black */
+body.light-theme .about-info-full * {
+  color: #000000 !important;
+}
+
+body.light-theme .about-name,
+body.light-theme .about-role,
+body.light-theme .about-description p,
+body.light-theme .stat-number,
+body.light-theme .stat-label {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+
+/* Override Education content card */
+body.light-theme .education-card-main {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 2px solid #22D3EE !important;
+  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.15) !important;
+}
+
+body.light-theme .education-card-main::before {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.05), rgba(59, 130, 246, 0.05)) !important;
+  opacity: 0.5 !important;
+}
+
+body.light-theme .education-card-main:hover {
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 12px 40px rgba(34, 211, 238, 0.25) !important;
+}
+
+/* Override Journey content - find the journey card container */
+body.light-theme .journey-intro,
+body.light-theme .timeline-section {
+  background: transparent !important;
+}
+
+/* Ensure all text in Education and Journey is black */
+body.light-theme .education-card-main *,
+body.light-theme .timeline-content-vertical *,
+body.light-theme .education-item * {
+  color: #000000 !important;
+}
+
+body.light-theme .education-degree,
+body.light-theme .education-university,
+body.light-theme .education-years,
+body.light-theme .details-title,
+body.light-theme .timeline-title-vertical,
+body.light-theme .timeline-desc-vertical,
+body.light-theme .timeline-year-vertical {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+
+/* ========================================
+   COMPREHENSIVE LIGHT THEME FIX
+   Force white glass backgrounds
+   ======================================== */
+
+/* Remove ALL dark backgrounds in light theme */
+body.light-theme .about-info-full,
+body.light-theme .education-card-main,
+body.light-theme .stat-item,
+body.light-theme .education-item,
+body.light-theme .timeline-content-vertical {
+  background: rgba(255, 255, 255, 0.7) !important;
+  background-image: none !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 2px solid #22D3EE !important;
+  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.15) !important;
+}
+
+/* Hover states */
+body.light-theme .stat-item:hover,
+body.light-theme .education-item:hover,
+body.light-theme .timeline-item-vertical:hover .timeline-content-vertical {
+  background: rgba(255, 255, 255, 0.85) !important;
+  background-image: none !important;
+  box-shadow: 0 12px 40px rgba(34, 211, 238, 0.25) !important;
+}
+
+/* Remove pseudo-element backgrounds */
+body.light-theme .about-info-full::before,
+body.light-theme .education-card-main::before,
+body.light-theme .stat-item::before,
+body.light-theme .timeline-content-vertical::before {
+  opacity: 0 !important;
+}
+
+/* Journey intro section */
+body.light-theme .journey-intro {
+  background: transparent !important;
+}
+
+body.light-theme .journey-title {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .journey-description {
+  color: #000000 !important;
+}
+
+
+/* ========================================
+   DIRECT LIGHT THEME CLASS APPLICATION
+   Applied directly to container
+   ======================================== */
+
+.about-container.light-theme-cards .about-info-full,
+.about-container.light-theme-cards .education-card-main,
+.about-container.light-theme-cards .stat-item,
+.about-container.light-theme-cards .education-item,
+.about-container.light-theme-cards .timeline-content-vertical {
+  background: #ffffff !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 2px solid #22D3EE !important;
+  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.15) !important;
+}
+
+.about-container.light-theme-cards .stat-item:hover,
+.about-container.light-theme-cards .education-item:hover,
+.about-container.light-theme-cards .timeline-item-vertical:hover .timeline-content-vertical {
+  background: #ffffff !important;
+  background-image: none !important;
+  box-shadow: 0 12px 40px rgba(34, 211, 238, 0.25) !important;
+}
+
+.about-container.light-theme-cards .about-info-full::before,
+.about-container.light-theme-cards .education-card-main::before,
+.about-container.light-theme-cards .stat-item::before,
+.about-container.light-theme-cards .timeline-content-vertical::before {
+  opacity: 0 !important;
+  display: none !important;
+}
+
+.about-container.light-theme-cards * {
+  color: #000000 !important;
+}
+
+.about-container.light-theme-cards .about-name,
+.about-container.light-theme-cards .about-role,
+.about-container.light-theme-cards .about-description p,
+.about-container.light-theme-cards .stat-number,
+.about-container.light-theme-cards .stat-label,
+.about-container.light-theme-cards .education-degree,
+.about-container.light-theme-cards .education-university,
+.about-container.light-theme-cards .education-years,
+.about-container.light-theme-cards .timeline-title-vertical,
+.about-container.light-theme-cards .timeline-desc-vertical,
+.about-container.light-theme-cards .timeline-year-vertical {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+
+/* Disable all pseudo-element backgrounds in light theme */
+.about-container.light-theme-cards .journey-content::before,
+.about-container.light-theme-cards .journey-content::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+body.light-theme .journey-content::before,
+body.light-theme .journey-content::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+body.light-theme .journey-content {
+  background: transparent !important;
+}
+
+body.light-theme .journey-content:hover {
+  background: transparent !important;
 }

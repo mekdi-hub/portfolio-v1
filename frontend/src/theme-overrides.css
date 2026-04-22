@@ -97,6 +97,11 @@ body,
   border: 2px solid var(--text) !important;
 }
 
+/* Remove border in light theme */
+body.light-theme .project-image-wrapper {
+  border: none !important;
+}
+
 .project-title {
   color: var(--text) !important;
 }
@@ -206,6 +211,17 @@ body,
   color: inherit !important;
 }
 
+/* OVERRIDE FOR LIGHT THEME - Force white backgrounds */
+body.light-theme .education-item {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.light-theme .education-item:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
 /* Timeline - Solid Background */
 .timeline-content-vertical {
   color: var(--text) !important;
@@ -227,6 +243,17 @@ body,
   color: var(--background) !important;
 }
 
+/* OVERRIDE FOR LIGHT THEME - Force white backgrounds */
+body.light-theme .timeline-content-vertical {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.light-theme .timeline-item-vertical:hover .timeline-content-vertical {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
 /* Stat Items - Solid Background */
 .stat-item {
   background: var(--background-alt) !important;
@@ -244,6 +271,17 @@ body,
 .count-number,
 .stat-value-number {
   color: inherit !important;
+}
+
+/* OVERRIDE FOR LIGHT THEME - Force white backgrounds */
+body.light-theme .stat-item {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.light-theme .stat-item:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
 }
 
 /* Contact Page */
