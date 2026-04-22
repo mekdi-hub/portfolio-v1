@@ -409,100 +409,32 @@ button:hover ~ .custom-cursor,
 .theme-toggle-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  padding: 0;
   background: var(--card-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
-  border-radius: 50px;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
   color: var(--text);
-  font-size: 0.9rem;
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Lora', serif;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .theme-toggle-btn:hover {
   background: var(--background-alt);
   border-color: var(--primary);
-  transform: translateY(-2px);
+  transform: translateY(-2px) rotate(15deg);
   box-shadow: 0 0 20px var(--glow);
 }
 
 .theme-toggle-btn svg {
   color: var(--primary);
   filter: drop-shadow(0 0 5px var(--glow));
-}
-
-.theme-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  min-width: 200px;
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 0.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  animation: dropdownFadeIn 0.3s ease;
-}
-
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.theme-option {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  color: var(--text);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Lora', serif;
-  text-align: left;
-}
-
-.theme-option:hover {
-  background: var(--background-alt);
-  transform: translateX(5px);
-}
-
-.theme-option.active {
-  background: var(--background-alt);
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.theme-color-preview {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--border-color);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.theme-option svg {
-  margin-left: auto;
-  color: var(--primary);
+  transition: transform 0.3s ease;
 }
 
 .hero-content {
@@ -3659,18 +3591,9 @@ body.light-theme .theme-toggle-btn {
   color: #000000 !important;
 }
 
-body.light-theme .theme-dropdown {
-  background: #e2e8f0 !important;
-  border: 2px solid #22D3EE !important;
-}
-
-body.light-theme .theme-option {
-  color: #000000 !important;
-}
-
-body.light-theme .theme-option:hover {
-  background: #22D3EE !important;
-  color: #ffffff !important;
+body.light-theme .theme-toggle-btn svg {
+  color: #22D3EE !important;
+  filter: drop-shadow(0 0 5px rgba(34, 211, 238, 0.5)) !important;
 }
 
 /* Navigation - Light Theme */
