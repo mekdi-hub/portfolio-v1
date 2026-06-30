@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './Skills.css';
 import AboutBackground from './AboutBackground';
 
@@ -27,7 +26,7 @@ function Skills() {
         </div>
 
         <div className="skills-orbs-grid animate-in">
-          {SKILLS_DATA.map((skill, index) => (
+          {SKILLS_DATA.map((skill) => (
             <div
               key={skill.name}
               className="skill-orb"
