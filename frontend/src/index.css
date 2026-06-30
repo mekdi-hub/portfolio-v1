@@ -11,7 +11,7 @@
   --glow: rgba(34, 211, 238, 0.5);
   --card-bg: rgba(17, 24, 39, 0.4);
   --border-color: rgba(71, 85, 105, 0.2);
-  
+
   /* Neon colors for effects */
   --neon-cyan: #22D3EE;
   --neon-blue: #3B82F6;
@@ -108,7 +108,7 @@ code {
 
 .hero-skill:hover {
   background: var(--primary);
-  color: var(--background);
+  color: white;
   transform: translateY(-3px);
   box-shadow: 0 10px 30px var(--glow);
 }
