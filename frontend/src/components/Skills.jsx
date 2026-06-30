@@ -3,18 +3,16 @@ import './Skills.css';
 import AboutBackground from './AboutBackground';
 
 const SKILLS_DATA = [
+   { name: 'Vue.js', color: '#4FC08D', delay: 0.6 },
   { name: 'React', color: '#61DAFB', delay: 0 },
   { name: 'Laravel', color: '#FF2D20', delay: 0.5 },
   { name: 'JavaScript', color: '#F7DF1E', delay: 1 },
-  { name: 'Node.js', color: '#339933', delay: 1.5 },
-  { name: 'TypeScript', color: '#3178C6', delay: 0.3 },
   { name: 'MySQL', color: '#4479A1', delay: 0.7 },
   { name: 'Docker', color: '#2496ED', delay: 1.2 },
   { name: 'Git', color: '#F05032', delay: 0.9 },
   { name: 'PHP', color: '#777BB4', delay: 0.4 },
-  { name: 'Tailwind', color: '#06B6D4', delay: 0.8 },
-  { name: 'MongoDB', color: '#47A248', delay: 1.3 },
-  { name: 'Vue.js', color: '#4FC08D', delay: 0.6 },
+  { name: 'Postgres', color: '#06B6D4', delay: 0.8 },
+ 
 ];
 
 function Skills() {
