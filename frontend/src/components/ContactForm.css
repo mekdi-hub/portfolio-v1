@@ -780,10 +780,24 @@
 @media (max-width: 360px) {
   .contact-page {
     padding: 1.25rem 0.875rem;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .contact-hero {
-    padding: 1.75rem 0 1.25rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
   }
 
   .contact-main-title {
@@ -795,7 +809,8 @@
   .contact-bottom {
     gap: 1.75rem;
     padding: 1.25rem 0 0.875rem;
-    align-items: flex-start; /* Left align */
+    align-items: flex-start;
+    flex-shrink: 0;
   }
 
   .socials-label {

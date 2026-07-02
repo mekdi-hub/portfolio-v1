@@ -624,14 +624,8 @@
   transition: opacity 0.4s ease;
 }
 
-.stat-item:hover::before {
-  opacity: 1;
-}
-
 .stat-item:hover {
-  border-color: #22D3EE;
   transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 20px 40px rgba(34, 211, 238, 0.3);
 }
 
 .stat-number {
@@ -690,13 +684,8 @@
   z-index: -1;
 }
 
-.education-card-main:hover::before {
-  opacity: 0.3;
-}
-
 .education-card-main:hover {
   transform: translateY(-5px);
-  box-shadow: 0 30px 80px rgba(34, 211, 238, 0.3);
 }
 
 .education-icon {
@@ -770,8 +759,7 @@
 }
 
 .education-item:hover {
-  background: rgba(15, 23, 42, 0.8);
-  border-left-color: #22D3EE;
+  transform: translateY(-2px);
 }
 
 .item-icon {
@@ -796,8 +784,7 @@
 }
 
 .skill-tag:hover {
-  background: rgba(34, 211, 238, 0.2);
-  border-color: #22D3EE;
+  transform: translateY(-2px);
 }
 
 /* Journey Tab */
@@ -878,7 +865,6 @@
 
 .timeline-item-vertical:hover .timeline-dot-vertical {
   transform: scale(1.2);
-  box-shadow: 0 0 30px rgba(34, 211, 238, 0.8);
 }
 
 .timeline-icon {
@@ -909,15 +895,7 @@
 }
 
 .timeline-item-vertical:hover .timeline-content-vertical {
-  background: rgba(15, 23, 42, 0.6);
-  border-color: #22D3EE;
   transform: translateX(10px);
-  box-shadow: 0 20px 60px rgba(34, 211, 238, 0.3);
-}
-
-.timeline-item-vertical:hover .timeline-content-vertical::before {
-  width: 100%;
-  opacity: 0.1;
 }
 
 .timeline-year-vertical {
