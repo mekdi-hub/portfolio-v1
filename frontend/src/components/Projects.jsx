@@ -202,7 +202,7 @@ function Projects() {
                   />
                 ) : (
                   <img 
-                    src={selectedProject.image || `https://via.placeholder.com/800x450/22D3EE/ffffff?text=${encodeURIComponent(selectedProject.title)}`} 
+                    src={selectedProject.image || `https://via.placeholder.com/1200x600/22D3EE/ffffff?text=${encodeURIComponent(selectedProject.title)}`} 
                     alt={selectedProject.title} 
                   />
                 )}
@@ -211,13 +211,28 @@ function Projects() {
               <div className="modal-details">
                 <h2 className="modal-title">{selectedProject.title}</h2>
                 
+                <div className="modal-meta">
+                  <div className="modal-meta-item">
+                    <div className="modal-meta-label">ROLE</div>
+                    <div className="modal-meta-value">Full Stack Developer</div>
+                  </div>
+                  <div className="modal-meta-item">
+                    <div className="modal-meta-label">YEAR</div>
+                    <div className="modal-meta-value">{new Date().getFullYear()}</div>
+                  </div>
+                  <div className="modal-meta-item">
+                    <div className="modal-meta-label">TECHNOLOGIES</div>
+                    <div className="modal-meta-value">{selectedProject.tech_stack}</div>
+                  </div>
+                </div>
+
                 <div className="modal-section">
-                  <h3>About this project</h3>
+                  <h3>ABOUT THIS PROJECT</h3>
                   <p>{selectedProject.description}</p>
                 </div>
 
                 <div className="modal-section">
-                  <h3>Technologies Used</h3>
+                  <h3>TECH STACK</h3>
                   <div className="modal-tech-tags">
                     {selectedProject.tech_stack.split(',').map((tech, i) => (
                       <span key={i} className="modal-tech-tag">{tech.trim()}</span>

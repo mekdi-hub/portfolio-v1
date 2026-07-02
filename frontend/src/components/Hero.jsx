@@ -74,7 +74,7 @@ function Hero({ scrollToSection }) {
       <div className="hero-content">
         <h1 className="hero-title">
           <span className="typing-text glitch-text" data-text={displayText}>{displayText}</span>
-          <h3>Full Stack Web Developer</h3>
+          <p>Full Stack Web Developer<p>
           <span className="cursor">|</span>
         </h1>
         <p className="hero-subtitle">
