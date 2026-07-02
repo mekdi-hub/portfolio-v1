@@ -78,7 +78,7 @@ function Hero({ scrollToSection }) {
         </h1>
               <h3>Full Stack Web Developer</h3>    
         <p className="hero-subtitle">
-          I build modern, responsive web applications using React & Laravel.<br />
+          I build modern, responsive web applications using React & Laravel<br />
           I turn complex problems into clean, user-friendly solutions.
         </p>
         
