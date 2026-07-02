@@ -74,9 +74,9 @@ function Hero({ scrollToSection }) {
       <div className="hero-content">
         <h1 className="hero-title">
           <span className="typing-text glitch-text" data-text={displayText}>{displayText}</span>
-          <p>Full Stack Web Developer<p>
           <span className="cursor">|</span>
         </h1>
+              <p>Full Stack Web Developer</p>    
         <p className="hero-subtitle">
           I build modern, responsive web applications using React & Laravel.<br />
           I turn complex problems into clean, user-friendly solutions.
