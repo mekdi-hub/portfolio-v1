@@ -206,11 +206,12 @@ function Projects() {
                     alt={selectedProject.title} 
                   />
                 )}
+                <div className="modal-media-overlay">
+                  <h2 className="modal-media-title">{selectedProject.title}</h2>
+                </div>
               </div>
 
               <div className="modal-details">
-                <h2 className="modal-title">{selectedProject.title}</h2>
-                
                 <div className="modal-meta">
                   <div className="modal-meta-item">
                     <div className="modal-meta-label">ROLE</div>

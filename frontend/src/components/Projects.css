@@ -937,6 +937,18 @@ body.light-theme .project-card:hover .project-card-media {
   justify-content: center;
 }
 
+.modal-media::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 70%, rgba(0, 0, 0, 0.8) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .modal-media img,
 .modal-media video,
 .modal-media iframe {
@@ -944,6 +956,30 @@ body.light-theme .project-card:hover .project-card-media {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.modal-media-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4rem 8rem 3rem;
+  z-index: 2;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-media-title {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 5rem;
+  font-weight: 400;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .modal-details {
@@ -954,7 +990,7 @@ body.light-theme .project-card:hover .project-card-media {
 
 .modal-title {
   font-family: 'Playfair Display', 'Georgia', serif;
-  font-size: 5rem;
+  font-size: 3rem;
   font-weight: 400;
   color: #ffffff;
   margin-bottom: 3rem;
@@ -1154,12 +1190,20 @@ body.light-theme .project-card:hover .project-card-media {
     height: 40vh;
   }
 
+  .modal-media-overlay {
+    padding: 2rem 2rem 2rem;
+  }
+
+  .modal-media-title {
+    font-size: 3rem;
+  }
+
   .modal-details {
     padding: 3rem 2rem 4rem;
   }
 
   .modal-title {
-    font-size: 3rem;
+    font-size: 2rem;
   }
 
   .modal-meta {
