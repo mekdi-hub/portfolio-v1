@@ -9,6 +9,14 @@ function ParticleBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Detect mobile devices
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    
+    // Disable particle animation on mobile
+    if (isMobile) {
+      return; // Exit early - no particles on mobile
+    }
+
     const ctx = canvas.getContext('2d', { alpha: true });
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;

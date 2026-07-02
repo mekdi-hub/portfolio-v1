@@ -8,6 +8,29 @@ function StarBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Detect mobile devices
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    
+    // Skip animation on mobile for better performance
+    if (isMobile) {
+      const ctx = canvas.getContext('2d', { alpha: true });
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      // Draw static stars only on mobile
+      const starCount = 30;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < starCount; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 1.5 + 0.5;
+        const opacity = Math.random() * 0.5 + 0.3;
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.fillRect(x, y, size, size);
+      }
+      return; // Exit early - no animation
+    }
+
     const ctx = canvas.getContext('2d', { alpha: true });
     let width = window.innerWidth;
     let height = window.innerHeight;

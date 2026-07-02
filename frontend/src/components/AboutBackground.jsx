@@ -9,6 +9,14 @@ function AboutBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Detect mobile devices
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    
+    // Disable particle animation on mobile
+    if (isMobile) {
+      return; // Exit early - no particles on mobile
+    }
+
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -178,7 +186,8 @@ function AboutBackground() {
           borderRadius: '50%',
           border: '1px solid rgba(34, 211, 238, 0.15)',
           pointerEvents: 'none',
-          animation: 'orbit 20s linear infinite'
+          animation: 'orbit 20s linear infinite',
+          display: window.innerWidth < 768 ? 'none' : 'block'
         }}
       >
         <div
@@ -209,7 +218,8 @@ function AboutBackground() {
           borderRadius: '50%',
           border: '1px solid rgba(34, 211, 238, 0.08)',
           pointerEvents: 'none',
-          animation: 'orbitReverse 30s linear infinite'
+          animation: 'orbitReverse 30s linear infinite',
+          display: window.innerWidth < 768 ? 'none' : 'block'
         }}
       >
         <div
@@ -240,7 +250,8 @@ function AboutBackground() {
           borderRadius: '50%',
           border: '1px solid rgba(34, 211, 238, 0.05)',
           pointerEvents: 'none',
-          animation: 'orbit 40s linear infinite'
+          animation: 'orbit 40s linear infinite',
+          display: window.innerWidth < 768 ? 'none' : 'block'
         }}
       >
         <div

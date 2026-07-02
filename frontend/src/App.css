@@ -847,6 +847,10 @@ button:hover ~ .custom-cursor,
   overflow: hidden;
   text-transform: uppercase;
   letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
 }
 
 .cta-button::before {

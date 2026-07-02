@@ -15,11 +15,16 @@ function RotatingTriangle() {
   const frameRef = useRef(null);
   const [hovered, setHovered] = useState(null);
   const [active, setActive] = useState(null);
+  const [isMobile] = useState(() => 
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768
+  );
   const orbitAngles = useRef(TECH_STACK.map((_, i) => (i / TECH_STACK.length) * Math.PI * 2));
 
   /* ── Three.js scene ─────────────────────────────────────────────── */
   useEffect(() => {
-    if (!containerRef.current) return;
+    // Skip Three.js entirely on mobile for better performance
+    if (isMobile || !containerRef.current) return;
+    
     const W = 480, H = 480;
 
     const scene    = new THREE.Scene();
@@ -141,10 +146,13 @@ function RotatingTriangle() {
        ring2Geo, ring2Mat, pGeo, pMat].forEach(x => x.dispose());
       renderer.dispose();
     };
-  }, []);
+  }, [isMobile]);
 
   /* ── CSS orbit animation tick ───────────────────────────────────── */
   useEffect(() => {
+    // Skip orbit animation on mobile for performance
+    if (isMobile) return;
+    
     let raf;
     const tick = () => {
       raf = requestAnimationFrame(tick);
@@ -172,8 +180,51 @@ function RotatingTriangle() {
 
   return (
     <div className="rbt-root">
-      {/* Scan lines overlay */}
-      <div className="rbt-scanlines" aria-hidden="true" />
+      {/* Mobile: Simple static layout */}
+      {isMobile ? (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '480px',
+          gap: '1rem',
+          padding: '2rem'
+        }}>
+          <div style={{
+            fontSize: '1.5rem',
+            color: '#00e5ff',
+            marginBottom: '1rem',
+            textAlign: 'center'
+          }}>
+            Tech Stack
+          </div>
+          {TECH_STACK.map((tech) => (
+            <div
+              key={tech.name}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.75rem 1.5rem',
+                background: 'rgba(0, 229, 255, 0.1)',
+                border: `1px solid ${tech.color}`,
+                borderRadius: '8px',
+                color: tech.color,
+                fontSize: '1rem',
+                minWidth: '200px'
+              }}
+            >
+              <span style={{ fontSize: '1.5rem' }}>{tech.icon}</span>
+              <span>{tech.name}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <>
+          {/* Desktop: Full animated version */}
+          {/* Scan lines overlay */}
+          <div className="rbt-scanlines" aria-hidden="true" />
 
       {/* Corner brackets */}
       <div className="rbt-corner rbt-corner--tl" aria-hidden="true" />
@@ -216,6 +267,8 @@ function RotatingTriangle() {
           <span className="rbt-tooltip-name">{TECH_STACK[active].name}</span>
         </div>
       )}
+        </>
+      )}
     </div>
   );
 }
@@ -225,6 +278,10 @@ function OrbitLayer({ orbitAngles, getBadgePos, hovered, active, setHovered, set
   const [, tick] = useState(0);
 
   useEffect(() => {
+    // Skip animation updates on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    if (isMobile) return;
+    
     let raf;
     const loop = () => { raf = requestAnimationFrame(loop); tick(n => n + 1); };
     loop();
