@@ -8,7 +8,7 @@ const skills = [
     id: '01',
     name: 'VUE.JS',
     role: 'Frontend Framework',
-    description: 'Production-grade Vue 3 single page applications built with the Composition API, Vite, Pinia state management, dynamic reactive components, and seamless REST API integration.',
+    description: 'Building reactive, high-performance web applications using Vue 3 and Vite.',
     level: '92%',
     svg: `<svg viewBox="0 0 261.76 226.69" width="36" height="36"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="currentColor"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.846l78.026 135.145L208.897.001z" fill="#06b6d4"/></svg>`
   },
@@ -16,7 +16,7 @@ const skills = [
     id: '02',
     name: 'LARAVEL',
     role: 'Backend Framework',
-    description: 'Robust backend engineering with Laravel 11/12, featuring modular MVC architecture, Eloquent ORM, RESTful API design, Sanctum authentication, and scalable database migrations.',
+    description: 'Developing robust RESTful backend architectures, APIs, and database migrations.',
     level: '95%',
     svg: `<svg viewBox="0 0 50 50" width="36" height="36"><path fill="currentColor" d="M46.7 13.9L26.3 2.1c-.8-.5-1.8-.5-2.6 0L3.3 13.9c-.8.5-1.3 1.3-1.3 2.3v23.6c0 .9.5 1.8 1.3 2.3l20.4 11.8c.4.2.9.4 1.3.4s.9-.1 1.3-.4l20.4-11.8c.8-.5 1.3-1.3 1.3-2.3V16.2c0-1-.5-1.8-1.3-2.3zm-21.7-8l16.4 9.5-6.6 3.8-16.4-9.5 6.6-3.8zm-1.8 19.4L6.8 15.8l6.6-3.8 16.4 9.5-6.6 3.8zm-17.4-6.4l16.4 9.5v7.6l-16.4-9.5v-7.6zm18.2 27.2L7.6 36.6v-7.6l16.4 9.5v7.6zm1.8-9.4l16.4-9.5v7.6l-16.4 9.5v-7.6zm0-9.4l-6.6-3.8 16.4-9.5 6.6 3.8-16.4 9.5z"/></svg>`
   },
@@ -24,7 +24,7 @@ const skills = [
     id: '03',
     name: 'REACT',
     role: 'UI Library',
-    description: 'Modern React web applications built with functional components, custom hooks, reusable component hierarchies, virtual DOM optimization, and client-side routing.',
+    description: 'Creating modern, modular user interfaces with React hooks and components.',
     level: '88%',
     svg: `<svg viewBox="-11.5 -10.23 23 20.46" width="36" height="36"><circle cx="0" cy="0" r="2.05" fill="currentColor"/><g stroke="currentColor" stroke-width="1.2" fill="none"><ellipse rx="11" ry="4.2"/><ellipse rx="11" ry="4.2" transform="rotate(60)"/><ellipse rx="11" ry="4.2" transform="rotate(120)"/></g></svg>`
   },
@@ -32,7 +32,7 @@ const skills = [
     id: '04',
     name: 'JAVASCRIPT',
     role: 'Core Language',
-    description: 'Deep modern ES6+ JavaScript capabilities: asynchronous programming, event loop mechanics, closures, functional array manipulation, and Web APIs.',
+    description: 'Core ES6+ development with asynchronous logic, clean patterns, and Web APIs.',
     level: '94%',
     svg: `<svg viewBox="0 0 630 630" width="36" height="36"><rect width="630" height="630" fill="currentColor" rx="80"/><path fill="#f4f5f7" d="m165.32 478.41c10.59 18.04 26.77 31.88 53.45 31.88 24.79 0 40.5-12.44 40.5-29.62 0-20.72-16.46-27.98-44.18-39.87l-15.17-6.49c-43.59-18.59-72.33-41.97-72.33-91.48 0-45.54 35.14-80.46 90.17-80.46 39.13 0 67.24 15.65 86.87 50.19l-38.38 24.62c-8.49-15.15-19.82-21.5-48.49-21.5-20.08 0-33.12 12.63-33.12 28.18 0 19.38 13.46 26.68 39.52 37.89l15.17 6.49c51.98 22.35 83.24 45.42 83.24 94.73 0 54.08-42.54 84.44-98.54 84.44-55.22 0-90.87-28.71-105.77-58.49zm216.98-8.24c8.68 15.34 20.37 25.13 43.8 25.13 22.11 0 36.27-8.91 36.27-43.68v-196.44h48.42v196.88c0 62.45-36.68 89.9-85.39 89.9-46.73 0-73.49-24.34-86.3-51.56z"/></svg>`
   },
@@ -40,7 +40,7 @@ const skills = [
     id: '05',
     name: 'PHP',
     role: 'Backend Language',
-    description: 'Object-oriented PHP 8+ development focusing on strict typing, dependency injection, PSR standards, database communication, and high-performance server logic.',
+    description: 'Server-side web development with object-oriented programming and secure logic.',
     level: '90%',
     svg: `<svg viewBox="0 0 256 138" width="36" height="36"><path fill="currentColor" d="M128 0C57.3 0 0 30.9 0 69s57.3 69 128 69 128-30.9 128-69-57.3-69-128-69zm-73.8 100.8H34.5l14.8-63.7h28.3c16.6 0 26.5 7.7 23.4 21.2-3.4 14.8-16 23.1-32.9 23.1H59.1zm38.1-21.2c1.9-7.7-2.8-12-11.7-12h-9.2l-5.5 24h9.2c8.3 0 15.4-4.3 17.2-12zm40.7 21.2h-19.7l14.8-63.7h19.7l-4.9 21.2h18.5c16.6 0 26.4 7.7 23.4 21.2-3.4 14.8-16 23.1-32.9 23.1h-18.5zm40.9-21.2c1.8-7.7-2.8-12-11.7-12h-9.2l-5.6 24h9.3c8.3 0 15.3-4.3 17.2-12zm40.3 21.2h-19.7l14.8-63.7h28.3c16.6 0 26.4 7.7 23.4 21.2-3.4 14.8-16 23.1-32.9 23.1h-14.8zm38.2-21.2c1.8-7.7-2.8-12-11.7-12h-9.2l-5.6 24h9.3c8.3 0 15.3-4.3 17.2-12z"/></svg>`
   },
@@ -48,7 +48,7 @@ const skills = [
     id: '06',
     name: 'TAILWIND',
     role: 'CSS Framework',
-    description: 'Fast, scalable user interfaces designed with Tailwind CSS: customized themes, responsive grid systems, fluid layouts, and clean aesthetic micro-interactions.',
+    description: 'Designing responsive, mobile-first layouts using modern utility classes.',
     level: '95%',
     svg: `<svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z"/></svg>`
   },
@@ -56,7 +56,7 @@ const skills = [
     id: '07',
     name: 'POSTGRESQL',
     role: 'Database',
-    description: 'Advanced relational database architecture, relational schema design, complex joins, indexing optimization, data integrity constraints, and query profiling.',
+    description: 'Relational database design, complex SQL queries, and ACID-compliant storage.',
     level: '86%',
     svg: `<svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.32 14.77c-.44.57-1.12.96-1.9.96-.32 0-.62-.07-.89-.2l-.12-.06c-.44-.23-.84-.57-1.16-.98-.48-.63-.78-1.42-.87-2.29-.06-.59.01-1.17.2-1.7.27-.75.76-1.37 1.39-1.78.43-.28.93-.45 1.46-.49.5-.04 1 .04 1.46.23.49.21.9.54 1.21.97.41.57.63 1.25.64 1.96.01.76-.23 1.49-.66 2.08-.2.27-.45.5-.75.69z"/></svg>`
   },
@@ -64,7 +64,7 @@ const skills = [
     id: '08',
     name: 'MYSQL',
     role: 'Database',
-    description: 'Production relational databases managed with MySQL: normalized schema modeling, transaction management, automated backups, and index tuning for high read/write volume.',
+    description: 'Database schema design, normalization, indexing, and query optimization.',
     level: '90%',
     svg: `<svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M19.78 12.3c-.34-.14-.7-.25-1.07-.33.27-.45.48-.95.61-1.48.16-.67.16-1.35 0-2.01-.17-.7-.52-1.32-1.01-1.82-.55-.56-1.26-.95-2.04-1.13-.78-.18-1.61-.13-2.37.15-.71.26-1.33.72-1.79 1.31-.46.59-.73 1.3-.78 2.05-.05.75.12 1.5.49 2.16.29.52.7.96 1.19 1.28-.48.24-.92.56-1.29.95-.49.52-.84 1.15-1.02 1.83-.18.68-.18 1.4-.01 2.08.17.68.52 1.29 1.01 1.79.55.56 1.25.96 2.03 1.14.78.18 1.6.14 2.37-.13.72-.25 1.35-.7 1.82-1.29.47-.59.75-1.3.82-2.05.07-.75-.08-1.51-.44-2.17-.29-.53-.71-.97-1.21-1.31.5-.24.96-.57 1.34-.97.42-.44.73-.97.91-1.54.18-.57.22-1.18.12-1.77z"/></svg>`
   },
@@ -72,7 +72,7 @@ const skills = [
     id: '09',
     name: 'REST API',
     role: 'API Architecture',
-    description: 'Clean, well-architected RESTful API endpoints with structured JSON responses, route middleware, request validation, CORS configuration, and bearer token security.',
+    description: 'Architecting clean, structured JSON endpoints with secure authentication.',
     level: '95%',
     svg: `<svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-4h2v4zm-2-8a1 1 0 110-2 1 1 0 010 2zm4 8h-2V7h2v10z"/></svg>`
   },
@@ -80,7 +80,7 @@ const skills = [
     id: '10',
     name: 'DOCKER',
     role: 'Containerization',
-    description: 'Containerized environments built with Docker and Docker Compose, ensuring seamless consistency between local development setups and production deployments.',
+    description: 'Containerizing services for reliable, consistent development environments.',
     level: '82%',
     svg: `<svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.186.185.186zm0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186zm-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186zm-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186zm5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185zm-2.929 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185zm-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186H5.136a.186.186 0 00-.186.185v1.888c0 .102.084.185.186.185zm-2.928 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186H2.208a.186.186 0 00-.186.185v1.888c0 .102.084.185.186.185zM23.79 11.78c-.288-.172-.94-.356-1.89-.356-.514 0-.962.062-1.332.185-.157-.847-.732-1.39-1.428-1.39-.327 0-.638.12-.9.345-.19-.68-.69-1.196-1.342-1.196-.448 0-.846.242-1.107.618a3.7 3.7 0 00-.458-.029H1.42a.42.42 0 00-.42.42c0 .618.156 2.057.818 3.327C2.927 15.82 5.093 17 8.27 17c6.19 0 10.92-3.13 13.064-7.447.46.062.924.093 1.385.093.535 0 .93-.042 1.07-.113.12-.062.21-.197.21-.357 0-.276-.083-.432-.21-.506z"/></svg>`
   },
@@ -88,7 +88,7 @@ const skills = [
     id: '11',
     name: 'GIT',
     role: 'Version Control',
-    description: 'Version control mastery using Git & GitHub: interactive rebasing, feature branching, merge strategies, pull requests, and automated deployment actions.',
+    description: 'Version control, feature branching, collaboration, and repository management via GitHub.',
     level: '92%',
     svg: `<svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M21.707 11.293l-9-9a.999.999 0 0 0-1.414 0l-9 9a.999.999 0 0 0 0 1.414l9 9a.999.999 0 0 0 1.414 0l9-9a.999.999 0 0 0 0-1.414zM13 15.586V12.414a2 2 0 1 0-2 0v3.172a2 2 0 1 0 2 0z"/></svg>`
   },
@@ -96,7 +96,7 @@ const skills = [
     id: '12',
     name: 'THREE.JS',
     role: '3D Graphics',
-    description: 'Interactive 3D WebGL scenes, custom GLSL vertex and fragment shaders, procedural noise displacement, camera controls, and high-performance canvas rendering.',
+    description: 'Building interactive 3D WebGL scenes with procedural shaders and smooth animations.',
     level: '85%',
     svg: `<svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M12 2.248L2 19.5h20L12 2.248zm0 4.195L18.423 17.5H5.577L12 6.443z"/></svg>`
   }
@@ -344,11 +344,11 @@ const skills = [
 
 .inspector-description {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: #334155;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: #475569;
   flex-grow: 1;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 /* Bottom Progress Track */
