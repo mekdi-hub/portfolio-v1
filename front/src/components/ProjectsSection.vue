@@ -55,24 +55,70 @@ const normalizeTechStack = (tech) => {
   return []
 }
 
-onMounted(async () => {
+const sortProjects = (list) => {
+  if (!Array.isArray(list)) return []
+  const cloned = [...list]
+  
+  // If items have explicit order property
+  const hasOrderProps = cloned.some(p => p.order !== undefined && p.order !== null)
+  if (hasOrderProps) {
+    return cloned.sort((a, b) => {
+      const ordA = a.order !== undefined && a.order !== null ? Number(a.order) : 9999
+      const ordB = b.order !== undefined && b.order !== null ? Number(b.order) : 9999
+      return ordA - ordB
+    })
+  }
+
+  // Fallback to local storage custom sequence
+  try {
+    const savedOrder = JSON.parse(localStorage.getItem('portfolio_projects_order') || '[]')
+    if (Array.isArray(savedOrder) && savedOrder.length > 0) {
+      cloned.sort((a, b) => {
+        const idxA = savedOrder.indexOf(a.id)
+        const idxB = savedOrder.indexOf(b.id)
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB
+        if (idxA !== -1) return -1
+        if (idxB !== -1) return 1
+        return 0
+      })
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return cloned
+}
+
+const fetchPortfolioProjects = async () => {
   try {
     const res = await fetch(`${API_BASE}/projects`)
     if (res.ok) {
       const data = await res.json()
       if (Array.isArray(data) && data.length > 0) {
-        projects.value = data.map((item, idx) => ({
+        const sorted = sortProjects(data)
+        projects.value = sorted.map((item, idx) => ({
           ...item,
           tech_stack: normalizeTechStack(item.tech_stack),
           isDark: idx % 2 === 0,
           demo_link: item.demo_link || '#'
         }))
+        return
       }
     }
   } catch (err) {
-    // Keep default projects if API server is offline
     console.info('Loaded curated portfolio projects (Backend offline or local cache active).')
   }
+
+  // Fallback sorting on default projects
+  projects.value = sortProjects(defaultProjects).map((item, idx) => ({
+    ...item,
+    isDark: idx % 2 === 0
+  }))
+}
+
+onMounted(() => {
+  fetchPortfolioProjects()
+  window.addEventListener('focus', fetchPortfolioProjects)
 })
 </script>
 

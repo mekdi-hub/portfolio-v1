@@ -144,15 +144,52 @@ const updateApiUrl = () => {
 }
 
 // ---------------------------------------------
-// Projects Management
+// Projects Management & Ordering
 // ---------------------------------------------
+const isReordering = ref(false)
+
+const sortProjectsArray = (list) => {
+  if (!Array.isArray(list)) return []
+  const cloned = [...list]
+
+  // Check if projects have an explicit .order attribute
+  const hasOrderProps = cloned.some(p => p.order !== undefined && p.order !== null)
+  if (hasOrderProps) {
+    return cloned.sort((a, b) => {
+      const ordA = a.order !== undefined && a.order !== null ? Number(a.order) : 9999
+      const ordB = b.order !== undefined && b.order !== null ? Number(b.order) : 9999
+      return ordA - ordB
+    })
+  }
+
+  // Fallback to localStorage saved order if present
+  try {
+    const savedOrder = JSON.parse(localStorage.getItem('portfolio_projects_order') || '[]')
+    if (Array.isArray(savedOrder) && savedOrder.length > 0) {
+      cloned.sort((a, b) => {
+        const idxA = savedOrder.indexOf(a.id)
+        const idxB = savedOrder.indexOf(b.id)
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB
+        if (idxA !== -1) return -1
+        if (idxB !== -1) return 1
+        return 0
+      })
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return cloned
+}
+
 const fetchProjects = async () => {
   loading.value = true
   try {
     const res = await fetch(`${customApiUrl.value}/projects`)
     if (res.ok) {
       const data = await res.json()
-      projects.value = Array.isArray(data) ? data : []
+      const rawList = Array.isArray(data) ? data : []
+      projects.value = sortProjectsArray(rawList)
     } else {
       loadFallbackProjects()
     }
@@ -166,7 +203,7 @@ const fetchProjects = async () => {
 
 const loadFallbackProjects = () => {
   if (projects.value.length === 0) {
-    projects.value = [
+    const fallbacks = [
       {
         id: 1,
         title: 'Gibi-Equb',
@@ -175,6 +212,7 @@ const loadFallbackProjects = () => {
         image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&auto=format&fit=crop&q=80',
         demo_link: 'https://example.com/gibi-equb',
         github_link: 'https://github.com/example/gibi-equb',
+        order: 0,
         created_at: new Date().toISOString()
       },
       {
@@ -185,6 +223,7 @@ const loadFallbackProjects = () => {
         image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80',
         demo_link: 'https://example.com/lumina',
         github_link: 'https://github.com/example/lumina',
+        order: 1,
         created_at: new Date().toISOString()
       },
       {
@@ -195,9 +234,87 @@ const loadFallbackProjects = () => {
         image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80',
         demo_link: 'https://example.com/eduage',
         github_link: 'https://github.com/example/eduage',
+        order: 2,
         created_at: new Date().toISOString()
       }
     ]
+    projects.value = sortProjectsArray(fallbacks)
+  }
+}
+
+const moveProjectUp = async (index) => {
+  if (index <= 0 || isReordering.value) return
+  const currentList = [...filteredProjects.value]
+  const targetProj = currentList[index]
+  const prevProj = currentList[index - 1]
+
+  const mainIdx = projects.value.findIndex(p => p.id === targetProj.id)
+  const prevIdx = projects.value.findIndex(p => p.id === prevProj.id)
+
+  if (mainIdx !== -1 && prevIdx !== -1) {
+    const temp = projects.value[mainIdx]
+    projects.value[mainIdx] = projects.value[prevIdx]
+    projects.value[prevIdx] = temp
+    await syncProjectsOrder(`Moved "${targetProj.title}" up to #${index}`)
+  }
+}
+
+const moveProjectDown = async (index) => {
+  if (index >= filteredProjects.value.length - 1 || isReordering.value) return
+  const currentList = [...filteredProjects.value]
+  const targetProj = currentList[index]
+  const nextProj = currentList[index + 1]
+
+  const mainIdx = projects.value.findIndex(p => p.id === targetProj.id)
+  const nextIdx = projects.value.findIndex(p => p.id === nextProj.id)
+
+  if (mainIdx !== -1 && nextIdx !== -1) {
+    const temp = projects.value[mainIdx]
+    projects.value[mainIdx] = projects.value[nextIdx]
+    projects.value[nextIdx] = temp
+    await syncProjectsOrder(`Moved "${targetProj.title}" down to #${index + 2}`)
+  }
+}
+
+const syncProjectsOrder = async (msg = 'Projects reordered successfully.') => {
+  isReordering.value = true
+  
+  // Assign sequential order indices
+  projects.value.forEach((proj, idx) => {
+    proj.order = idx
+  })
+
+  // 1. Immediately cache order sequence locally
+  try {
+    const idOrder = projects.value.map(p => p.id)
+    localStorage.setItem('portfolio_projects_order', JSON.stringify(idOrder))
+  } catch (err) {
+    console.warn('LocalStorage save error:', err)
+  }
+
+  // 2. Synchronize order with Laravel API
+  try {
+    const payload = {
+      orders: projects.value.map((p, idx) => ({ id: p.id, order: idx }))
+    }
+    const res = await fetch(`${customApiUrl.value}/projects/reorder`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (res.ok) {
+      notify(msg, 'success')
+    } else {
+      notify('Project sequence saved locally (backend pending).', 'info')
+    }
+  } catch (err) {
+    notify('Project sequence saved locally (backend offline).', 'info')
+  } finally {
+    isReordering.value = false
   }
 }
 
@@ -796,6 +913,7 @@ const saveSettings = async () => {
             <table v-if="filteredProjects.length > 0" class="admin-data-table">
               <thead>
                 <tr>
+                  <th style="width: 105px; text-align: center;">Order</th>
                   <th style="width: 90px;">Cover</th>
                   <th>Project Details</th>
                   <th>Tech Stack</th>
@@ -804,7 +922,36 @@ const saveSettings = async () => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="proj in filteredProjects" :key="proj.id">
+                <tr v-for="(proj, index) in filteredProjects" :key="proj.id">
+                  <td class="cell-order">
+                    <div class="order-control-box">
+                      <span class="order-badge">#{{ index + 1 }}</span>
+                      <div class="order-arrow-buttons">
+                        <button
+                          type="button"
+                          class="order-btn up"
+                          :disabled="index === 0 || isReordering"
+                          @click="moveProjectUp(index)"
+                          title="Move Earlier"
+                        >
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class="order-btn down"
+                          :disabled="index === filteredProjects.length - 1 || isReordering"
+                          @click="moveProjectDown(index)"
+                          title="Move Later"
+                        >
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </td>
                   <td class="cell-cover">
                     <img
                       :src="proj.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=150'"
@@ -875,17 +1022,40 @@ const saveSettings = async () => {
           <!-- CARDS VIEW -->
           <div v-else class="cards-grid">
             <div
-              v-for="proj in filteredProjects"
+              v-for="(proj, index) in filteredProjects"
               :key="proj.id"
               class="admin-proj-card"
             >
               <div class="card-cover-container">
+                <span class="card-order-chip">#{{ index + 1 }}</span>
                 <img
                   :src="proj.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400'"
                   :alt="proj.title"
                   class="card-cover-img"
                 />
                 <div class="card-overlay-actions">
+                  <button
+                    type="button"
+                    class="card-action-circle order-btn-circle"
+                    :disabled="index === 0 || isReordering"
+                    @click="moveProjectUp(index)"
+                    title="Move Up (#{{ index }})"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="card-action-circle order-btn-circle"
+                    :disabled="index === filteredProjects.length - 1 || isReordering"
+                    @click="moveProjectDown(index)"
+                    title="Move Down (#{{ index + 2 }})"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
                   <button @click="openEditProjectModal(proj)" class="card-action-circle" title="Edit">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -2015,6 +2185,95 @@ const saveSettings = async () => {
   padding: 1.2rem 1.6rem;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
+}
+
+/* Order Column & Controls */
+.cell-order {
+  text-align: center;
+}
+
+.order-control-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.order-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0891b2;
+  background-color: #ecfeff;
+  border: 1px solid #cffafe;
+  border-radius: 8px;
+  padding: 0.25rem 0.55rem;
+  min-width: 32px;
+  text-align: center;
+  user-select: none;
+}
+
+.order-arrow-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.order-btn {
+  width: 24px;
+  height: 20px;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #475569;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.order-btn:hover:not(:disabled) {
+  background: #06b6d4;
+  color: #ffffff;
+  border-color: #06b6d4;
+  transform: scale(1.05);
+}
+
+.order-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+  background: #f8fafc;
+}
+
+.card-order-chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #0891b2;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  user-select: none;
+}
+
+.card-action-circle.order-btn-circle {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.card-action-circle.order-btn-circle:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .project-thumb-img {
