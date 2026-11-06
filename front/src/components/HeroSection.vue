@@ -1,12 +1,5 @@
 <script setup>
-import { ref } from 'vue'
 import WindBloom from './WindBloom.vue'
-
-const isMenuOpen = ref(false)
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
 </script>
 
 <template>
@@ -28,26 +21,6 @@ const toggleMenu = () => {
           />
         </svg>
       </a>
-
-      <!-- Floating Pill Bar -->
-      <div class="pill-nav-bar">
-        <div class="pill-nav-inner">
-          <div class="pill-nav-links">
-            <!-- Space for nav links if needed in future, matching design -->
-          </div>
-          <!-- Hamburger Menu Icon -->
-          <button 
-            class="hamburger-btn" 
-            :class="{ open: isMenuOpen }" 
-            @click="toggleMenu" 
-            aria-label="Toggle navigation menu"
-          >
-            <span class="bar bar-1"></span>
-            <span class="bar bar-2"></span>
-            <span class="bar bar-3"></span>
-          </button>
-        </div>
-      </div>
     </header>
 
     <!-- Main Content Grid -->
@@ -62,10 +35,6 @@ const toggleMenu = () => {
         <h1 class="hero-title">
           <span class="title-line">Full Stack</span>
           <span class="title-line">Developer</span>
-          <span class="title-line sub">
-            <span class="plus-icon">+</span>
-            <span class="sub-text">SaaS Platforms</span>
-          </span>
         </h1>
 
         <!-- Scroll Indicator -->
@@ -90,13 +59,12 @@ const toggleMenu = () => {
   flex-direction: column;
 }
 
-/* Header & Navigation */
+/* Header */
 .hero-header {
   position: relative;
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 2.2rem 4rem 1rem 4rem;
   width: 100%;
 }
@@ -115,64 +83,6 @@ const toggleMenu = () => {
 .logo-svg {
   width: 44px;
   height: 44px;
-}
-
-/* Floating Pill Bar matching the screenshot */
-.pill-nav-bar {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  max-width: 680px;
-  margin-left: 3rem;
-}
-
-.pill-nav-inner {
-  width: 100%;
-  height: 54px;
-  background-color: #ffffff;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 1.5rem 0 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(229, 231, 235, 0.7);
-  transition: box-shadow 0.3s ease;
-}
-
-.pill-nav-inner:hover {
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
-}
-
-.hamburger-btn {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 24px;
-  height: 16px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.hamburger-btn .bar {
-  display: block;
-  width: 100%;
-  height: 2px;
-  background-color: #111827;
-  border-radius: 2px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.hamburger-btn.open .bar-1 {
-  transform: translateY(7px) rotate(45deg);
-}
-.hamburger-btn.open .bar-2 {
-  opacity: 0;
-}
-.hamburger-btn.open .bar-3 {
-  transform: translateY(-7px) rotate(-45deg);
 }
 
 /* Main Hero Content */
@@ -216,9 +126,9 @@ const toggleMenu = () => {
   display: flex;
   flex-direction: column;
   font-family: 'Space Grotesk', 'Space Mono', sans-serif;
-  font-size: clamp(3.2rem, 6.5vw, 5.8rem);
+  font-size: clamp(3.4rem, 6.8vw, 6.2rem);
   font-weight: 700;
-  line-height: 1.06;
+  line-height: 1.05;
   letter-spacing: -0.03em;
   color: #0f172a;
 }
@@ -226,28 +136,6 @@ const toggleMenu = () => {
 .title-line {
   display: block;
   word-break: break-word;
-}
-
-.title-line.sub {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  font-size: clamp(2.4rem, 4.8vw, 4.4rem);
-  margin-top: 0.2rem;
-  color: #1e293b;
-}
-
-.plus-icon {
-  color: #94a3b8;
-  font-family: 'Space Mono', monospace;
-  font-weight: 400;
-  margin-right: 0.2rem;
-}
-
-.sub-text {
-  font-family: 'Space Grotesk', monospace;
-  letter-spacing: -0.02em;
 }
 
 /* Scroll Pill Indicator */
@@ -306,32 +194,17 @@ const toggleMenu = () => {
   .hero-content {
     padding: 0 2rem 2rem 2rem;
   }
-  .pill-nav-bar {
-    max-width: 460px;
-    margin-left: 1.5rem;
-  }
 }
 
 @media (max-width: 768px) {
   .hero-header {
     padding: 1.2rem 1.2rem;
   }
-  .pill-nav-bar {
-    margin-left: 1rem;
-    height: 46px;
-  }
-  .pill-nav-inner {
-    height: 46px;
-    padding: 0 1rem;
-  }
   .hero-content {
     padding: 0 1.2rem 2rem 1.2rem;
   }
   .hero-title {
-    font-size: 2.8rem;
-  }
-  .title-line.sub {
-    font-size: 2.1rem;
+    font-size: 3rem;
   }
   .author-name {
     font-size: 0.9rem;
@@ -339,4 +212,3 @@ const toggleMenu = () => {
   }
 }
 </style>
-
