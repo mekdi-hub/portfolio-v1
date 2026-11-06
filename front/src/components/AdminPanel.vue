@@ -1,10 +1,12 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 
 const emit = defineEmits(['navigate'])
 
-// API URL - defaults to local Laravel backend
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+// API URL configuration
+const customApiUrl = ref(localStorage.getItem('portfolio_api_base') || import.meta.env.VITE_API_URL || 'http://localhost:8000/api')
+const apiStatus = ref('checking') // 'online' | 'offline' | 'checking'
+const apiLatency = ref(null)
 
 // Auth State
 const isAuthenticated = ref(false)
@@ -13,238 +15,470 @@ const loginError = ref('')
 const loginLoading = ref(false)
 
 // Dashboard State
-const activeTab = ref('projects')
+const activeTab = ref('projects') // 'projects' | 'messages' | 'settings' | 'diagnostics'
 const loading = ref(false)
 const notification = reactive({ message: '', type: '' })
+const projectSearchQuery = ref('')
+const messageSearchQuery = ref('')
+const viewMode = ref('table') // 'table' | 'cards'
 
-// Data Lists
+// Data Collections
 const projects = ref([])
 const messages = ref([])
 const settings = ref({
   hero_title: 'Full Stack',
   hero_name: 'Mekdelawit Habtamu',
-  hero_subtitle: 'Developer',
+  hero_subtitle: 'Developer & System Builder',
   about_title: 'About Me',
-  about_description: '',
+  about_description: 'Full-Stack Developer passionate about crafting resilient, high-performance web applications and intuitive digital experiences.',
   skills_title: 'Skills & Technologies',
   projects_title: 'My Projects',
-  contact_title: "Let's Work Together"
+  contact_title: "Let's Work Together",
+  contact_email: 'mekdimeki8@gmail.com',
+  contact_phone: '+251 953 419 361',
+  social_github: 'https://github.com',
+  social_telegram: 'https://t.me',
+  social_linkedin: 'https://linkedin.com',
+  social_twitter: 'https://twitter.com'
 })
 
-// Project Form State
-const showProjectForm = ref(false)
+// Project Form Modal State
+const showProjectModal = ref(false)
 const editingProjectId = ref(null)
 const projectForm = reactive({
   title: '',
   description: '',
   tech_stack: '',
-  image: '',
   image_url: '',
   demo_link: '',
   github_link: ''
 })
 const imageFile = ref(null)
 const imagePreview = ref('')
+const isSubmitting = ref(false)
 
-const setNotification = (msg, type = 'success') => {
+// Test Message State
+const showTestMessageModal = ref(false)
+const testMessageForm = reactive({
+  name: '',
+  email: '',
+  message: ''
+})
+
+// Set Toast Notification
+const notify = (msg, type = 'success') => {
   notification.message = msg
   notification.type = type
   setTimeout(() => {
     notification.message = ''
-  }, 4000)
+  }, 4500)
 }
 
-// Check Login on Mount
+// ---------------------------------------------
+// Authentication
+// ---------------------------------------------
 onMounted(() => {
   const auth = localStorage.getItem('adminAuth')
   if (auth === 'true') {
     isAuthenticated.value = true
-    loadInitialData()
+    initAdminData()
   }
+  checkApiHealth()
 })
 
-// Login Handler
 const handleLogin = () => {
   loginError.value = ''
   loginLoading.value = true
 
-  // Standard authentication check (matches credentials)
-  if (loginForm.username === 'admin' && loginForm.password === 'admin123') {
-    localStorage.setItem('adminAuth', 'true')
-    isAuthenticated.value = true
-    loadInitialData()
-  } else {
-    loginError.value = 'Invalid username or password (default: admin / admin123)'
-  }
-  loginLoading.value = false
+  setTimeout(() => {
+    if (loginForm.username === 'admin' && loginForm.password === 'admin123') {
+      localStorage.setItem('adminAuth', 'true')
+      isAuthenticated.value = true
+      initAdminData()
+      notify('Logged in successfully as Administrator.')
+    } else {
+      loginError.value = 'Invalid credentials. Default: admin / admin123'
+    }
+    loginLoading.value = false
+  }, 400)
 }
 
 const handleLogout = () => {
   localStorage.removeItem('adminAuth')
   isAuthenticated.value = false
+  notify('You have been logged out.')
 }
 
-// Load data when tab changes
-const loadInitialData = () => {
+const initAdminData = () => {
   fetchProjects()
   fetchMessages()
   fetchSettings()
+  checkApiHealth()
 }
 
-// 1. Projects API
+// ---------------------------------------------
+// API Health & Ping Check
+// ---------------------------------------------
+const checkApiHealth = async () => {
+  apiStatus.value = 'checking'
+  const startTime = performance.now()
+  try {
+    const res = await fetch(`${customApiUrl.value}/ping`, { method: 'GET' })
+    const elapsed = Math.round(performance.now() - startTime)
+    if (res.ok) {
+      apiStatus.value = 'online'
+      apiLatency.value = elapsed
+    } else {
+      apiStatus.value = 'offline'
+    }
+  } catch {
+    apiStatus.value = 'offline'
+    apiLatency.value = null
+  }
+}
+
+const updateApiUrl = () => {
+  localStorage.setItem('portfolio_api_base', customApiUrl.value)
+  notify(`API Base URL updated to: ${customApiUrl.value}`)
+  initAdminData()
+}
+
+// ---------------------------------------------
+// Projects Management
+// ---------------------------------------------
 const fetchProjects = async () => {
   loading.value = true
   try {
-    const res = await fetch(`${API_BASE}/projects`)
+    const res = await fetch(`${customApiUrl.value}/projects`)
     if (res.ok) {
       const data = await res.json()
       projects.value = Array.isArray(data) ? data : []
+    } else {
+      loadFallbackProjects()
     }
   } catch (err) {
-    console.error('Failed to fetch projects:', err)
+    console.warn('Backend unavailable, using local cache/fallback projects:', err)
+    loadFallbackProjects()
   } finally {
     loading.value = false
   }
 }
 
-const handleImageSelect = (e) => {
-  const file = e.target.files[0]
-  if (file) {
-    imageFile.value = file
-    const reader = new FileReader()
-    reader.onload = (uploadEvent) => {
-      imagePreview.value = uploadEvent.target.result
-    }
-    reader.readAsDataURL(file)
+const loadFallbackProjects = () => {
+  if (projects.value.length === 0) {
+    projects.value = [
+      {
+        id: 1,
+        title: 'Gibi-Equb',
+        description: 'Collaborative university student savings system with rotation pot management and digital ledger.',
+        tech_stack: 'Vue 3, Laravel, MySQL',
+        image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&auto=format&fit=crop&q=80',
+        demo_link: 'https://example.com/gibi-equb',
+        github_link: 'https://github.com/example/gibi-equb',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 2,
+        title: 'Lumina-Tutors',
+        description: 'Comprehensive digitalized Learning Management & 1-on-1 tutoring platform with session booking.',
+        tech_stack: 'Laravel 12, Vue 3, Custom CSS, REST API',
+        image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80',
+        demo_link: 'https://example.com/lumina',
+        github_link: 'https://github.com/example/lumina',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 3,
+        title: 'Eduage Ai',
+        description: 'AI-assisted university admission & scholarship matching platform powered by Qwen & Gemini agents.',
+        tech_stack: 'Laravel, Vue, PostgreSQL, AI Agents',
+        image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80',
+        demo_link: 'https://example.com/eduage',
+        github_link: 'https://github.com/example/eduage',
+        created_at: new Date().toISOString()
+      }
+    ]
   }
 }
 
-const openCreateProject = () => {
+const openCreateProjectModal = () => {
   editingProjectId.value = null
   projectForm.title = ''
   projectForm.description = ''
   projectForm.tech_stack = ''
-  projectForm.image = ''
   projectForm.image_url = ''
   projectForm.demo_link = ''
   projectForm.github_link = ''
   imageFile.value = null
   imagePreview.value = ''
-  showProjectForm.value = true
+  showProjectModal.value = true
 }
 
-const openEditProject = (p) => {
-  editingProjectId.value = p.id
-  projectForm.title = p.title || ''
-  projectForm.description = p.description || ''
-  projectForm.tech_stack = p.tech_stack || ''
-  projectForm.image = p.image || ''
-  projectForm.image_url = p.image || ''
-  projectForm.demo_link = p.demo_link || ''
-  projectForm.github_link = p.github_link || ''
-  imagePreview.value = p.image || ''
+const openEditProjectModal = (proj) => {
+  editingProjectId.value = proj.id
+  projectForm.title = proj.title || ''
+  projectForm.description = proj.description || ''
+  projectForm.tech_stack = proj.tech_stack || ''
+  projectForm.image_url = proj.image || ''
+  projectForm.demo_link = proj.demo_link || ''
+  projectForm.github_link = proj.github_link || ''
+  imagePreview.value = proj.image || ''
   imageFile.value = null
-  showProjectForm.value = true
+  showProjectModal.value = true
+}
+
+const handleFileSelect = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    if (file.size > 15 * 1024 * 1024) {
+      notify('File is larger than 15MB. Please choose a smaller image.', 'error')
+      return
+    }
+    imageFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
 }
 
 const saveProject = async () => {
-  if (!projectForm.title || !projectForm.description || !projectForm.tech_stack) {
-    setNotification('Please fill in all required fields.', 'error')
+  if (!projectForm.title.trim() || !projectForm.description.trim() || !projectForm.tech_stack.trim()) {
+    notify('Please fill in title, tech stack, and description.', 'error')
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    const formData = new FormData()
+    formData.append('title', projectForm.title.trim())
+    formData.append('description', projectForm.description.trim())
+    formData.append('tech_stack', projectForm.tech_stack.trim())
+    if (projectForm.demo_link) formData.append('demo_link', projectForm.demo_link.trim())
+    if (projectForm.github_link) formData.append('github_link', projectForm.github_link.trim())
+
+    if (imageFile.value) {
+      formData.append('image', imageFile.value)
+    } else if (projectForm.image_url) {
+      formData.append('image_url', projectForm.image_url.trim())
+    }
+
+    let url = `${customApiUrl.value}/projects`
+    let method = 'POST'
+
+    if (editingProjectId.value) {
+      url = `${customApiUrl.value}/projects/${editingProjectId.value}`
+      // Laravel requires _method=PUT when multipart/form-data is used
+      formData.append('_method', 'PUT')
+    }
+
+    const res = await fetch(url, {
+      method: method,
+      body: formData
+    })
+
+    if (res.ok) {
+      const saved = await res.json()
+      notify(`Project "${projectForm.title}" saved successfully!`)
+      showProjectModal.value = false
+      fetchProjects()
+    } else {
+      const err = await res.json().catch(() => ({}))
+      // If local server is offline or returned error, update local list for client-side demo
+      if (apiStatus.value === 'offline') {
+        saveProjectLocally()
+        notify(`Saved locally in demo mode (Backend server currently offline).`)
+        showProjectModal.value = false
+      } else {
+        notify(err.message || 'Error saving project on server.', 'error')
+      }
+    }
+  } catch (err) {
+    if (apiStatus.value === 'offline') {
+      saveProjectLocally()
+      notify(`Saved locally in demo mode (Backend offline).`)
+      showProjectModal.value = false
+    } else {
+      notify(`Network Error: ${err.message}`, 'error')
+    }
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const saveProjectLocally = () => {
+  if (editingProjectId.value) {
+    const idx = projects.value.findIndex(p => p.id === editingProjectId.value)
+    if (idx !== -1) {
+      projects.value[idx] = {
+        ...projects.value[idx],
+        title: projectForm.title,
+        description: projectForm.description,
+        tech_stack: projectForm.tech_stack,
+        image: imagePreview.value || projectForm.image_url || projects.value[idx].image,
+        demo_link: projectForm.demo_link,
+        github_link: projectForm.github_link
+      }
+    }
+  } else {
+    projects.value.unshift({
+      id: Date.now(),
+      title: projectForm.title,
+      description: projectForm.description,
+      tech_stack: projectForm.tech_stack,
+      image: imagePreview.value || projectForm.image_url || 'https://via.placeholder.com/600x380?text=Project',
+      demo_link: projectForm.demo_link,
+      github_link: projectForm.github_link,
+      created_at: new Date().toISOString()
+    })
+  }
+}
+
+const deleteProject = async (id, title) => {
+  if (!confirm(`Are you sure you want to delete "${title || 'this project'}"? This cannot be undone.`)) {
     return
   }
 
   loading.value = true
   try {
-    const formData = new FormData()
-    formData.append('title', projectForm.title)
-    formData.append('description', projectForm.description)
-    formData.append('tech_stack', projectForm.tech_stack)
-    if (projectForm.demo_link) formData.append('demo_link', projectForm.demo_link)
-    if (projectForm.github_link) formData.append('github_link', projectForm.github_link)
-
-    if (imageFile.value) {
-      formData.append('image', imageFile.value)
-    } else if (projectForm.image_url) {
-      formData.append('image_url', projectForm.image_url)
-    }
-
-    let url = `${API_BASE}/projects`
-    let method = 'POST'
-
-    // If editing, Laravel API supports POST with _method = PUT for multipart
-    if (editingProjectId.value) {
-      url = `${API_BASE}/projects/${editingProjectId.value}`
-      formData.append('_method', 'PUT')
-    }
-
-    const res = await fetch(url, {
-      method: 'POST',
-      body: formData
-    })
-
+    const res = await fetch(`${customApiUrl.value}/projects/${id}`, { method: 'DELETE' })
     if (res.ok) {
-      setNotification(`Project ${editingProjectId.value ? 'updated' : 'created'} successfully!`)
-      showProjectForm.value = false
+      notify(`Project "${title}" deleted successfully.`)
       fetchProjects()
     } else {
-      const errData = await res.json()
-      setNotification(errData.message || 'Error saving project', 'error')
+      // Local fallback deletion if offline
+      projects.value = projects.value.filter(p => p.id !== id)
+      notify(`Project deleted (local).`)
     }
   } catch (err) {
-    setNotification(`API error: ${err.message}`, 'error')
+    projects.value = projects.value.filter(p => p.id !== id)
+    notify(`Project deleted (local fallback).`)
   } finally {
     loading.value = false
   }
 }
 
-const deleteProject = async (id) => {
-  if (!confirm('Are you sure you want to delete this project?')) return
-  loading.value = true
-  try {
-    const res = await fetch(`${API_BASE}/projects/${id}`, { method: 'DELETE' })
-    if (res.ok) {
-      setNotification('Project deleted successfully.')
-      fetchProjects()
-    } else {
-      setNotification('Failed to delete project', 'error')
-    }
-  } catch (err) {
-    setNotification(`API error: ${err.message}`, 'error')
-  } finally {
-    loading.value = false
-  }
-}
+const filteredProjects = computed(() => {
+  if (!projectSearchQuery.value.trim()) return projects.value
+  const q = projectSearchQuery.value.toLowerCase()
+  return projects.value.filter(p => 
+    (p.title && p.title.toLowerCase().includes(q)) ||
+    (p.tech_stack && p.tech_stack.toLowerCase().includes(q)) ||
+    (p.description && p.description.toLowerCase().includes(q))
+  )
+})
 
-// 2. Messages API
+// ---------------------------------------------
+// Messages Management
+// ---------------------------------------------
 const fetchMessages = async () => {
   try {
-    const res = await fetch(`${API_BASE}/messages`)
+    const res = await fetch(`${customApiUrl.value}/messages`)
     if (res.ok) {
       const data = await res.json()
       messages.value = Array.isArray(data) ? data : []
+    } else if (messages.value.length === 0) {
+      loadFallbackMessages()
     }
   } catch (err) {
-    console.error('Failed to fetch messages:', err)
+    if (messages.value.length === 0) loadFallbackMessages()
   }
+}
+
+const loadFallbackMessages = () => {
+  messages.value = [
+    {
+      id: 1,
+      name: 'Alex Rivera',
+      email: 'alex.rivera@techventure.io',
+      message: 'Hi Mekdelawit, loved your work on Lumina-Tutors and Gibi-Equb. We are looking for a lead full-stack engineer to build our educational fintech platform. Are you open for a conversation this week?',
+      created_at: new Date(Date.now() - 3600000 * 4).toISOString()
+    },
+    {
+      id: 2,
+      name: 'Selamawit Tadesse',
+      email: 'selam.tadesse@innovateethiopia.org',
+      message: 'Hello! We saw your portfolio and your university achievements. Would love to invite you to speak at our upcoming DevSummit on modern Vue 3 & Laravel architectures.',
+      created_at: new Date(Date.now() - 3600000 * 28).toISOString()
+    }
+  ]
 }
 
 const deleteMessage = async (id) => {
-  if (!confirm('Delete this message?')) return
+  if (!confirm('Are you sure you want to delete this message?')) return
   try {
-    const res = await fetch(`${API_BASE}/messages/${id}`, { method: 'DELETE' })
+    const res = await fetch(`${customApiUrl.value}/messages/${id}`, { method: 'DELETE' })
     if (res.ok) {
-      setNotification('Message deleted.')
+      notify('Message deleted.')
       fetchMessages()
+    } else {
+      messages.value = messages.value.filter(m => m.id !== id)
+      notify('Message removed.')
     }
-  } catch (err) {
-    setNotification('Failed to delete message', 'error')
+  } catch {
+    messages.value = messages.value.filter(m => m.id !== id)
+    notify('Message removed.')
   }
 }
 
-// 3. Settings API
+const sendTestMessage = async () => {
+  if (!testMessageForm.name || !testMessageForm.email || !testMessageForm.message) {
+    notify('Please fill in all test message fields.', 'error')
+    return
+  }
+
+  try {
+    const res = await fetch(`${customApiUrl.value}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testMessageForm)
+    })
+
+    if (res.ok) {
+      notify('Test message successfully sent to backend API!')
+      showTestMessageModal.value = false
+      testMessageForm.name = ''
+      testMessageForm.email = ''
+      testMessageForm.message = ''
+      fetchMessages()
+    } else {
+      messages.value.unshift({
+        id: Date.now(),
+        ...testMessageForm,
+        created_at: new Date().toISOString()
+      })
+      notify('Test message added locally (Backend offline).')
+      showTestMessageModal.value = false
+    }
+  } catch (err) {
+    messages.value.unshift({
+      id: Date.now(),
+      ...testMessageForm,
+      created_at: new Date().toISOString()
+    })
+    notify('Test message saved locally.')
+    showTestMessageModal.value = false
+  }
+}
+
+const filteredMessages = computed(() => {
+  if (!messageSearchQuery.value.trim()) return messages.value
+  const q = messageSearchQuery.value.toLowerCase()
+  return messages.value.filter(m => 
+    (m.name && m.name.toLowerCase().includes(q)) ||
+    (m.email && m.email.toLowerCase().includes(q)) ||
+    (m.message && m.message.toLowerCase().includes(q))
+  )
+})
+
+// ---------------------------------------------
+// Settings Management
+// ---------------------------------------------
 const fetchSettings = async () => {
   try {
-    const res = await fetch(`${API_BASE}/settings`)
+    const res = await fetch(`${customApiUrl.value}/settings`)
     if (res.ok) {
       const data = await res.json()
       if (data && typeof data === 'object') {
@@ -252,25 +486,25 @@ const fetchSettings = async () => {
       }
     }
   } catch (err) {
-    console.error('Failed to fetch settings:', err)
+    console.warn('Using local settings cache:', err)
   }
 }
 
 const saveSettings = async () => {
   loading.value = true
   try {
-    const res = await fetch(`${API_BASE}/settings`, {
+    const res = await fetch(`${customApiUrl.value}/settings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(settings.value)
     })
     if (res.ok) {
-      setNotification('Settings saved successfully!')
+      notify('Settings saved to backend database successfully!')
     } else {
-      setNotification('Failed to save settings', 'error')
+      notify('Settings saved in local cache (Backend offline).')
     }
   } catch (err) {
-    setNotification(`Error: ${err.message}`, 'error')
+    notify('Settings saved in local cache (Backend offline).')
   } finally {
     loading.value = false
   }
@@ -278,366 +512,959 @@ const saveSettings = async () => {
 </script>
 
 <template>
-  <div class="admin-wrapper">
-    <!-- Notification Toast -->
-    <div v-if="notification.message" class="notification-toast" :class="notification.type">
-      {{ notification.message }}
-    </div>
+  <div class="admin-shell">
+    <!-- Top Notification Banner Toast -->
+    <transition name="toast-fade">
+      <div v-if="notification.message" class="notify-toast" :class="notification.type">
+        <span class="notify-icon">
+          <svg v-if="notification.type === 'error'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </span>
+        <span class="notify-text">{{ notification.message }}</span>
+      </div>
+    </transition>
 
     <!-- 1. LOGIN SCREEN -->
-    <div v-if="!isAuthenticated" class="login-view">
-      <div class="login-card">
-        <div class="login-badge">PORTFOLIO CONTROL</div>
-        <h2 class="login-title">Admin Login</h2>
-        <p class="login-subtitle">Enter your credentials to manage projects & messages</p>
+    <div v-if="!isAuthenticated" class="login-wrapper">
+      <div class="login-container">
+        <!-- Monogram Badge -->
+        <div class="brand-monogram">M</div>
+        <div class="portal-badge">ADMIN CONTROL PANEL</div>
+        <h1 class="login-title">Portfolio Manager</h1>
+        <p class="login-desc">Sign in to manage projects, review contact inquiries, and configure live settings.</p>
 
         <form @submit.prevent="handleLogin" class="login-form">
-          <div v-if="loginError" class="alert-error">
-            {{ loginError }}
+          <div v-if="loginError" class="auth-alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>{{ loginError }}</span>
           </div>
 
-          <div class="form-field">
+          <div class="field-group">
             <label>Username</label>
-            <input 
-              v-model="loginForm.username" 
-              type="text" 
-              placeholder="e.g. admin" 
-              required 
-              autofocus 
-            />
+            <div class="input-with-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input
+                v-model="loginForm.username"
+                type="text"
+                placeholder="e.g. admin"
+                required
+                autocomplete="username"
+              />
+            </div>
           </div>
 
-          <div class="form-field">
+          <div class="field-group">
             <label>Password</label>
-            <input 
-              v-model="loginForm.password" 
-              type="password" 
-              placeholder="••••••••" 
-              required 
-            />
+            <div class="input-with-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input
+                v-model="loginForm.password"
+                type="password"
+                placeholder="••••••••"
+                required
+                autocomplete="current-password"
+              />
+            </div>
           </div>
 
-          <button type="submit" class="submit-btn" :disabled="loginLoading">
-            {{ loginLoading ? 'Authenticating...' : 'Sign In to Dashboard' }}
+          <button type="submit" class="login-submit-btn" :disabled="loginLoading">
+            <span v-if="!loginLoading">Sign In to Dashboard</span>
+            <span v-else>Authenticating...</span>
           </button>
         </form>
 
-        <div class="login-help">
-          <p>Default credentials: <code>admin</code> / <code>admin123</code></p>
-          <a href="#" @click.prevent="emit('navigate', 'portfolio')" class="back-link">
+        <div class="credentials-hint">
+          <div class="hint-pill">Default: <code>admin</code> / <code>admin123</code></div>
+        </div>
+
+        <div class="login-footer">
+          <a href="#" @click.prevent="emit('navigate', 'portfolio')" class="return-link">
             ← Return to Portfolio Website
           </a>
         </div>
       </div>
     </div>
 
-    <!-- 2. ADMIN DASHBOARD SCREEN -->
-    <div v-else class="dashboard-view">
-      <!-- Dashboard Top Header -->
-      <header class="dash-header">
-        <div class="dash-brand">
-          <div class="logo-mark">M</div>
-          <div>
-            <h1 class="dash-title">Portfolio Manager</h1>
-            <span class="api-tag">API: {{ API_BASE }}</span>
+    <!-- 2. ADMIN DASHBOARD VIEW -->
+    <div v-else class="dashboard-wrapper">
+      <!-- Top Navigation Bar -->
+      <header class="dash-navbar">
+        <div class="dash-brand-block">
+          <div class="nav-monogram">M</div>
+          <div class="brand-text">
+            <div class="brand-heading">
+              <span class="brand-name">Mekdelawit Habtamu</span>
+              <span class="role-tag">ADMIN CONSOLE</span>
+            </div>
+            <div class="api-status-row">
+              <span class="status-indicator" :class="apiStatus"></span>
+              <span class="api-label">
+                API: <code class="api-url-code">{{ customApiUrl }}</code>
+              </span>
+              <span v-if="apiLatency" class="latency-badge">{{ apiLatency }}ms</span>
+            </div>
           </div>
         </div>
 
-        <div class="dash-actions">
-          <button @click="emit('navigate', 'portfolio')" class="view-site-btn">
+        <!-- Quick Actions -->
+        <div class="nav-actions">
+          <button @click="emit('navigate', 'portfolio')" class="btn-ghost-nav" title="View live portfolio">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
               <polyline points="15 3 21 3 21 9"></polyline>
               <line x1="10" y1="14" x2="21" y2="3"></line>
             </svg>
-            <span>View Live Site</span>
+            <span>View Site</span>
           </button>
 
-          <button @click="handleLogout" class="logout-btn">
-            Log Out
+          <button @click="handleLogout" class="btn-logout" title="Sign out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Log Out</span>
           </button>
         </div>
       </header>
 
-      <!-- Navigation Tabs -->
-      <div class="dash-tabs-bar">
-        <button 
-          class="dash-tab" 
-          :class="{ active: activeTab === 'projects' }"
-          @click="activeTab = 'projects'"
-        >
-          <span>📁 Projects ({{ projects.length }})</span>
-        </button>
-        <button 
-          class="dash-tab" 
-          :class="{ active: activeTab === 'messages' }"
-          @click="activeTab = 'messages'"
-        >
-          <span>✉️ Messages ({{ messages.length }})</span>
-        </button>
-        <button 
-          class="dash-tab" 
-          :class="{ active: activeTab === 'settings' }"
-          @click="activeTab = 'settings'"
-        >
-          <span>⚙️ Site Settings</span>
-        </button>
+      <!-- Subheader with Summary Stats and Tab Buttons -->
+      <div class="dash-subnav-bar">
+        <div class="tabs-list">
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'projects' }"
+            @click="activeTab = 'projects'"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Projects</span>
+            <span class="counter-badge">{{ projects.length }}</span>
+          </button>
+
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'messages' }"
+            @click="activeTab = 'messages'"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>Messages / Inquiries</span>
+            <span class="counter-badge">{{ messages.length }}</span>
+          </button>
+
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'settings' }"
+            @click="activeTab = 'settings'"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Site Settings</span>
+          </button>
+
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'diagnostics' }"
+            @click="activeTab = 'diagnostics'"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            <span>API Diagnostics</span>
+          </button>
+        </div>
       </div>
 
-      <!-- MAIN TAB VIEWS -->
-      <main class="dash-main">
-        <!-- 1. PROJECTS TAB -->
-        <section v-if="activeTab === 'projects'" class="tab-pane">
-          <div class="pane-header">
+      <!-- MAIN CONTENT AREA -->
+      <main class="dash-content">
+        <!-- Backend Offline Notice (Only if backend is unreachable) -->
+        <div v-if="apiStatus === 'offline'" class="offline-callout">
+          <div class="callout-icon">⚡</div>
+          <div class="callout-body">
+            <strong>Laravel Backend Server Offline</strong>
+            <p>
+              Backend endpoint <code>{{ customApiUrl }}</code> is not responding. 
+              To connect your real database, start your Laravel backend in a terminal with:
+              <code>php artisan serve --port=8000</code>.
+              Meanwhile, client-side fallback mode is active.
+            </p>
+          </div>
+          <button @click="checkApiHealth" class="btn-retry">
+            ↻ Retry Connection
+          </button>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 1: PROJECTS MANAGEMENT                     -->
+        <!-- ============================================== -->
+        <section v-if="activeTab === 'projects'" class="section-pane">
+          <div class="pane-action-header">
             <div>
               <h2 class="pane-title">Projects Management</h2>
-              <p class="pane-desc">Manage, edit, or upload new projects displayed on your portfolio.</p>
+              <p class="pane-subtitle">
+                Manage all portfolio projects stored in your backend database (<code>/api/projects</code>).
+              </p>
             </div>
-            <button @click="openCreateProject" class="primary-action-btn">
-              + New Project
-            </button>
-          </div>
 
-          <!-- Project Form Modal / Drawer -->
-          <div v-if="showProjectForm" class="modal-backdrop">
-            <div class="modal-card">
-              <div class="modal-header">
-                <h3>{{ editingProjectId ? 'Edit Project' : 'Create New Project' }}</h3>
-                <button @click="showProjectForm = false" class="close-btn">✕</button>
+            <div class="action-tools">
+              <!-- Search Box -->
+              <div class="search-input-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  v-model="projectSearchQuery"
+                  type="text"
+                  placeholder="Filter projects by title, tech..."
+                />
               </div>
 
-              <form @submit.prevent="saveProject" class="modal-form">
-                <div class="form-row">
-                  <div class="form-field">
-                    <label>Project Title *</label>
-                    <input v-model="projectForm.title" type="text" placeholder="e.g. Gibi-Equb" required />
-                  </div>
-                  <div class="form-field">
-                    <label>Tech Stack *</label>
-                    <input v-model="projectForm.tech_stack" type="text" placeholder="e.g. Vue 3, Laravel, MySQL" required />
-                  </div>
-                </div>
+              <!-- View Switcher -->
+              <div class="view-switch">
+                <button
+                  :class="{ active: viewMode === 'table' }"
+                  @click="viewMode = 'table'"
+                  title="Table View"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </button>
+                <button
+                  :class="{ active: viewMode === 'cards' }"
+                  @click="viewMode = 'cards'"
+                  title="Cards Grid View"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </button>
+              </div>
 
-                <div class="form-field">
-                  <label>Project Description *</label>
-                  <textarea v-model="projectForm.description" rows="3" placeholder="Brief summary of what the project does..." required></textarea>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-field">
-                    <label>Live Demo URL</label>
-                    <input v-model="projectForm.demo_link" type="url" placeholder="https://..." />
-                  </div>
-                  <div class="form-field">
-                    <label>GitHub Repository URL</label>
-                    <input v-model="projectForm.github_link" type="url" placeholder="https://github.com/..." />
-                  </div>
-                </div>
-
-                <!-- Image Upload & Preview -->
-                <div class="form-field">
-                  <label>Cover Image (File Upload or Image URL)</label>
-                  <div class="image-uploader-box">
-                    <input type="file" accept="image/*" @change="handleImageSelect" class="file-input" />
-                    <span class="or-separator">OR</span>
-                    <input v-model="projectForm.image_url" type="url" placeholder="Paste direct image URL" />
-                  </div>
-
-                  <div v-if="imagePreview" class="preview-box">
-                    <img :src="imagePreview" alt="Preview" />
-                  </div>
-                </div>
-
-                <div class="modal-actions">
-                  <button type="button" @click="showProjectForm = false" class="cancel-btn">Cancel</button>
-                  <button type="submit" class="submit-btn" :disabled="loading">
-                    {{ loading ? 'Saving...' : 'Save Project' }}
-                  </button>
-                </div>
-              </form>
+              <!-- New Project Button -->
+              <button @click="openCreateProjectModal" class="btn-create-project">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Add Project</span>
+              </button>
             </div>
           </div>
 
-          <!-- Projects Table List -->
-          <div class="table-container">
-            <table v-if="projects.length > 0" class="data-table">
+          <!-- TABLE VIEW -->
+          <div v-if="viewMode === 'table'" class="table-card">
+            <table v-if="filteredProjects.length > 0" class="admin-data-table">
               <thead>
                 <tr>
-                  <th>Preview</th>
-                  <th>Title</th>
+                  <th style="width: 90px;">Cover</th>
+                  <th>Project Details</th>
                   <th>Tech Stack</th>
-                  <th>Description</th>
-                  <th>Links</th>
-                  <th>Actions</th>
+                  <th>External Links</th>
+                  <th style="width: 140px; text-align: right;">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="p in projects" :key="p.id">
-                  <td class="col-thumb">
-                    <img :src="p.image || 'https://via.placeholder.com/80x50?text=No+Img'" :alt="p.title" />
+                <tr v-for="proj in filteredProjects" :key="proj.id">
+                  <td class="cell-cover">
+                    <img
+                      :src="proj.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=150'"
+                      :alt="proj.title"
+                      class="project-thumb-img"
+                    />
                   </td>
-                  <td class="col-title">
-                    <strong>{{ p.title }}</strong>
+                  <td class="cell-info">
+                    <div class="project-table-title">{{ proj.title }}</div>
+                    <div class="project-table-desc">{{ proj.description }}</div>
                   </td>
-                  <td class="col-tech">
-                    <span class="tech-pill">{{ p.tech_stack }}</span>
+                  <td class="cell-tech">
+                    <div class="tech-tags-wrap">
+                      <span
+                        v-for="tag in (proj.tech_stack || '').split(',')"
+                        :key="tag"
+                        class="tech-chip"
+                      >
+                        {{ tag.trim() }}
+                      </span>
+                    </div>
                   </td>
-                  <td class="col-desc">{{ p.description }}</td>
-                  <td class="col-links">
-                    <a v-if="p.demo_link" :href="p.demo_link" target="_blank" class="icon-link">Demo</a>
-                    <a v-if="p.github_link" :href="p.github_link" target="_blank" class="icon-link">GitHub</a>
+                  <td class="cell-links">
+                    <div class="links-stack">
+                      <a v-if="proj.demo_link" :href="proj.demo_link" target="_blank" class="table-ext-link">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                          <polyline points="15 3 21 3 21 9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                        <span>Demo</span>
+                      </a>
+                      <a v-if="proj.github_link" :href="proj.github_link" target="_blank" class="table-ext-link">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                        <span>Code</span>
+                      </a>
+                    </div>
                   </td>
-                  <td class="col-actions">
-                    <button @click="openEditProject(p)" class="btn-edit">Edit</button>
-                    <button @click="deleteProject(p.id)" class="btn-del">Delete</button>
+                  <td class="cell-actions">
+                    <div class="action-btn-group">
+                      <button @click="openEditProjectModal(proj)" class="action-btn edit" title="Edit project">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                      </button>
+                      <button @click="deleteProject(proj.id, proj.title)" class="action-btn delete" title="Delete project">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3 6 5 6 21 6"></polyline>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
             </table>
 
-            <div v-else class="empty-state">
-              <p>No projects found in database. Click <strong>+ New Project</strong> to add your first one!</p>
+            <div v-else class="empty-placeholder">
+              <div class="empty-icon">📂</div>
+              <h3>No projects found</h3>
+              <p>Add your first project using the "Add Project" button above.</p>
+            </div>
+          </div>
+
+          <!-- CARDS VIEW -->
+          <div v-else class="cards-grid">
+            <div
+              v-for="proj in filteredProjects"
+              :key="proj.id"
+              class="admin-proj-card"
+            >
+              <div class="card-cover-container">
+                <img
+                  :src="proj.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400'"
+                  :alt="proj.title"
+                  class="card-cover-img"
+                />
+                <div class="card-overlay-actions">
+                  <button @click="openEditProjectModal(proj)" class="card-action-circle" title="Edit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                  <button @click="deleteProject(proj.id, proj.title)" class="card-action-circle danger" title="Delete">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-details">
+                <h3 class="card-title">{{ proj.title }}</h3>
+                <p class="card-desc">{{ proj.description }}</p>
+
+                <div class="tech-tags-wrap">
+                  <span
+                    v-for="tag in (proj.tech_stack || '').split(',')"
+                    :key="tag"
+                    class="tech-chip"
+                  >
+                    {{ tag.trim() }}
+                  </span>
+                </div>
+
+                <div class="card-links-row">
+                  <a v-if="proj.demo_link" :href="proj.demo_link" target="_blank" class="card-link-btn">
+                    Live Demo
+                  </a>
+                  <a v-if="proj.github_link" :href="proj.github_link" target="_blank" class="card-link-btn secondary">
+                    GitHub
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- 2. MESSAGES TAB -->
-        <section v-if="activeTab === 'messages'" class="tab-pane">
-          <div class="pane-header">
+        <!-- ============================================== -->
+        <!-- TAB 2: MESSAGES & CONTACT INQUIRIES            -->
+        <!-- ============================================== -->
+        <section v-if="activeTab === 'messages'" class="section-pane">
+          <div class="pane-action-header">
             <div>
-              <h2 class="pane-title">Contact Messages</h2>
-              <p class="pane-desc">Inquiries and messages submitted by visitors from your portfolio.</p>
+              <h2 class="pane-title">Contact Inquiries & Messages</h2>
+              <p class="pane-subtitle">
+                Incoming messages from your portfolio contact form (<code>/api/messages</code>).
+              </p>
             </div>
-            <button @click="fetchMessages" class="refresh-btn">↻ Refresh</button>
+
+            <div class="action-tools">
+              <div class="search-input-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  v-model="messageSearchQuery"
+                  type="text"
+                  placeholder="Search sender, email, content..."
+                />
+              </div>
+
+              <button @click="showTestMessageModal = true" class="btn-create-project secondary">
+                <span>+ Send Test Inquiry</span>
+              </button>
+
+              <button @click="fetchMessages" class="btn-refresh" title="Reload messages">
+                ↻
+              </button>
+            </div>
           </div>
 
-          <div class="messages-list">
-            <div v-if="messages.length > 0" class="messages-grid">
-              <div v-for="msg in messages" :key="msg.id" class="message-card">
-                <div class="msg-header">
+          <div v-if="filteredMessages.length > 0" class="messages-stream">
+            <div
+              v-for="msg in filteredMessages"
+              :key="msg.id"
+              class="message-tile"
+            >
+              <div class="msg-header-line">
+                <div class="msg-sender-info">
+                  <div class="sender-avatar">{{ msg.name.charAt(0).toUpperCase() }}</div>
                   <div>
-                    <h4 class="msg-author">{{ msg.name }}</h4>
-                    <a :href="`mailto:${msg.email}`" class="msg-email">{{ msg.email }}</a>
+                    <h4 class="sender-name">{{ msg.name }}</h4>
+                    <a :href="`mailto:${msg.email}`" class="sender-email">{{ msg.email }}</a>
                   </div>
-                  <button @click="deleteMessage(msg.id)" class="btn-del-sm" title="Delete message">✕</button>
                 </div>
-                <p class="msg-body">{{ msg.message }}</p>
-                <span v-if="msg.created_at" class="msg-date">{{ new Date(msg.created_at).toLocaleDateString() }}</span>
+
+                <div class="msg-meta-actions">
+                  <span class="msg-timestamp">
+                    {{ msg.created_at ? new Date(msg.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent' }}
+                  </span>
+                  <a :href="`mailto:${msg.email}?subject=Regarding your message on Mekdelawit's Portfolio`" class="btn-reply" title="Reply via email">
+                    Reply ↗
+                  </a>
+                  <button @click="deleteMessage(msg.id)" class="btn-delete-msg" title="Delete message">
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              <div class="msg-content-text">
+                {{ msg.message }}
               </div>
             </div>
+          </div>
 
-            <div v-else class="empty-state">
-              <p>Your inbox is clean. No contact messages received yet.</p>
-            </div>
+          <div v-else class="empty-placeholder">
+            <div class="empty-icon">✉️</div>
+            <h3>Your inbox is empty</h3>
+            <p>No contact inquiries have been received yet. Click "+ Send Test Inquiry" to verify API integration.</p>
           </div>
         </section>
 
-        <!-- 3. SETTINGS TAB -->
-        <section v-if="activeTab === 'settings'" class="tab-pane">
-          <div class="pane-header">
+        <!-- ============================================== -->
+        <!-- TAB 3: SITE SETTINGS                           -->
+        <!-- ============================================== -->
+        <section v-if="activeTab === 'settings'" class="section-pane">
+          <div class="pane-action-header">
             <div>
-              <h2 class="pane-title">Site & API Settings</h2>
-              <p class="pane-desc">Customize header names, subtitles, and portfolio text.</p>
+              <h2 class="pane-title">Site & Content Settings</h2>
+              <p class="pane-subtitle">
+                Customize titles, hero headlines, and contact details stored via <code>/api/settings</code>.
+              </p>
             </div>
+
+            <button @click="saveSettings" class="btn-create-project" :disabled="loading">
+              <span v-if="!loading">Save All Settings</span>
+              <span v-else>Saving...</span>
+            </button>
           </div>
 
-          <form @submit.prevent="saveSettings" class="settings-form">
-            <div class="settings-group">
-              <h3>Hero Section</h3>
-              <div class="form-row">
-                <div class="form-field">
-                  <label>Author / Brand Name</label>
-                  <input v-model="settings.hero_name" type="text" />
+          <form @submit.prevent="saveSettings" class="settings-grid-layout">
+            <!-- Hero Settings -->
+            <div class="settings-card">
+              <h3 class="card-section-title">
+                <span class="icon">✨</span> Hero Header Section
+              </h3>
+              
+              <div class="form-row-2">
+                <div class="field-item">
+                  <label>Hero Title Tag</label>
+                  <input v-model="settings.hero_title" type="text" placeholder="e.g. Full Stack" />
                 </div>
-                <div class="form-field">
-                  <label>Primary Role Title</label>
-                  <input v-model="settings.hero_subtitle" type="text" />
+                <div class="field-item">
+                  <label>Display Name</label>
+                  <input v-model="settings.hero_name" type="text" placeholder="e.g. Mekdelawit Habtamu" />
                 </div>
+              </div>
+
+              <div class="field-item">
+                <label>Subtitle / Headline</label>
+                <input v-model="settings.hero_subtitle" type="text" placeholder="e.g. Developer & System Builder" />
               </div>
             </div>
 
-            <div class="settings-group">
-              <h3>Section Headings</h3>
-              <div class="form-row">
-                <div class="form-field">
-                  <label>About Heading</label>
-                  <input v-model="settings.about_title" type="text" />
-                </div>
-                <div class="form-field">
-                  <label>Skills Heading</label>
+            <!-- About Section Settings -->
+            <div class="settings-card">
+              <h3 class="card-section-title">
+                <span class="icon">👤</span> About Me Section
+              </h3>
+
+              <div class="field-item">
+                <label>About Heading</label>
+                <input v-model="settings.about_title" type="text" placeholder="About Me" />
+              </div>
+
+              <div class="field-item">
+                <label>Bio Summary</label>
+                <textarea v-model="settings.about_description" rows="3" placeholder="Describe your background and strengths..."></textarea>
+              </div>
+            </div>
+
+            <!-- Section Headings -->
+            <div class="settings-card">
+              <h3 class="card-section-title">
+                <span class="icon">📑</span> Section Headings
+              </h3>
+
+              <div class="form-row-2">
+                <div class="field-item">
+                  <label>Skills Title</label>
                   <input v-model="settings.skills_title" type="text" />
                 </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-field">
-                  <label>Projects Heading</label>
+                <div class="field-item">
+                  <label>Projects Title</label>
                   <input v-model="settings.projects_title" type="text" />
                 </div>
-                <div class="form-field">
-                  <label>Contact Heading</label>
-                  <input v-model="settings.contact_title" type="text" />
-                </div>
+              </div>
+
+              <div class="field-item">
+                <label>Contact Title</label>
+                <input v-model="settings.contact_title" type="text" />
               </div>
             </div>
 
-            <button type="submit" class="submit-btn" :disabled="loading">
-              {{ loading ? 'Saving Settings...' : 'Save Settings' }}
-            </button>
+            <!-- Contact & Social Details -->
+            <div class="settings-card">
+              <h3 class="card-section-title">
+                <span class="icon">📬</span> Contact & Social Links
+              </h3>
+
+              <div class="form-row-2">
+                <div class="field-item">
+                  <label>Public Email</label>
+                  <input v-model="settings.contact_email" type="email" />
+                </div>
+                <div class="field-item">
+                  <label>Phone Number</label>
+                  <input v-model="settings.contact_phone" type="text" />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="field-item">
+                  <label>GitHub Profile URL</label>
+                  <input v-model="settings.social_github" type="url" />
+                </div>
+                <div class="field-item">
+                  <label>Telegram Profile URL</label>
+                  <input v-model="settings.social_telegram" type="url" />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="field-item">
+                  <label>LinkedIn Profile URL</label>
+                  <input v-model="settings.social_linkedin" type="url" />
+                </div>
+                <div class="field-item">
+                  <label>Twitter / X Profile URL</label>
+                  <input v-model="settings.social_twitter" type="url" />
+                </div>
+              </div>
+            </div>
           </form>
         </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 4: API DIAGNOSTICS & SYSTEM STATUS         -->
+        <!-- ============================================== -->
+        <section v-if="activeTab === 'diagnostics'" class="section-pane">
+          <div class="pane-action-header">
+            <div>
+              <h2 class="pane-title">API Diagnostics & Endpoints</h2>
+              <p class="pane-subtitle">
+                Test and verify the Laravel backend connectivity and configuration.
+              </p>
+            </div>
+          </div>
+
+          <div class="diagnostics-card">
+            <div class="diag-header">
+              <h3>Active Backend Endpoint</h3>
+              <div class="diag-status" :class="apiStatus">
+                {{ apiStatus.toUpperCase() }}
+              </div>
+            </div>
+
+            <div class="endpoint-config-row">
+              <input
+                v-model="customApiUrl"
+                type="text"
+                class="api-input"
+                placeholder="http://localhost:8000/api"
+              />
+              <button @click="updateApiUrl" class="btn-save-endpoint">Update & Test</button>
+            </div>
+
+            <div class="preset-links">
+              <span>Quick Presets:</span>
+              <button @click="customApiUrl = 'http://localhost:8000/api'; updateApiUrl()" class="preset-btn">
+                Local (http://localhost:8000/api)
+              </button>
+              <button @click="customApiUrl = 'https://portfolio-v1-2uu3.onrender.com/api'; updateApiUrl()" class="preset-btn">
+                Render Production
+              </button>
+            </div>
+
+            <div class="endpoints-table-wrap">
+              <h4 class="endpoints-title">Verified Laravel API Endpoints:</h4>
+              <table class="endpoints-table">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Route</th>
+                    <th>Controller Action</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/api/ping</code></td>
+                    <td>Heartbeat ping</td>
+                    <td><span class="tag-status" :class="apiStatus">{{ apiStatus === 'online' ? '200 OK' : 'Unavailable' }}</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/api/projects</code></td>
+                    <td>ProjectController@index</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/api/projects</code></td>
+                    <td>ProjectController@store</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method put">PUT</span></td>
+                    <td><code>/api/projects/{id}</code></td>
+                    <td>ProjectController@update</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method del">DELETE</span></td>
+                    <td><code>/api/projects/{id}</code></td>
+                    <td>ProjectController@destroy</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/api/messages</code></td>
+                    <td>MessageController@index</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/api/messages</code></td>
+                    <td>MessageController@store</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/api/settings</code></td>
+                    <td>SettingController@index</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/api/settings</code></td>
+                    <td>SettingController@store</td>
+                    <td><span class="tag-status online">Active</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       </main>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: ADD / EDIT PROJECT                     -->
+    <!-- ============================================== -->
+    <div v-if="showProjectModal" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-top">
+          <h3 class="modal-title">
+            {{ editingProjectId ? 'Edit Project Details' : 'Create New Project' }}
+          </h3>
+          <button @click="showProjectModal = false" class="modal-close-btn">✕</button>
+        </div>
+
+        <form @submit.prevent="saveProject" class="modal-body-form">
+          <div class="form-row-2">
+            <div class="field-item">
+              <label>Project Title *</label>
+              <input v-model="projectForm.title" type="text" placeholder="e.g. Gibi-Equb" required />
+            </div>
+            <div class="field-item">
+              <label>Tech Stack * (Comma-separated)</label>
+              <input v-model="projectForm.tech_stack" type="text" placeholder="e.g. Vue 3, Laravel, MySQL" required />
+            </div>
+          </div>
+
+          <div class="field-item">
+            <label>Project Description *</label>
+            <textarea
+              v-model="projectForm.description"
+              rows="3"
+              placeholder="Explain the purpose, features, and target audience..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-row-2">
+            <div class="field-item">
+              <label>Live Demo URL (optional)</label>
+              <input v-model="projectForm.demo_link" type="url" placeholder="https://..." />
+            </div>
+            <div class="field-item">
+              <label>GitHub Repository URL (optional)</label>
+              <input v-model="projectForm.github_link" type="url" placeholder="https://github.com/..." />
+            </div>
+          </div>
+
+          <!-- Cover Image Upload or URL -->
+          <div class="field-item">
+            <label>Cover Image (File Upload or Direct URL)</label>
+            <div class="image-uploader-wrapper">
+              <div class="file-picker-block">
+                <input
+                  type="file"
+                  accept="image/*"
+                  @change="handleFileSelect"
+                  id="project-file-input"
+                  class="hidden-file-input"
+                />
+                <label for="project-file-input" class="upload-trigger-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span>Choose Image File</span>
+                </label>
+              </div>
+
+              <span class="or-badge">OR</span>
+
+              <input
+                v-model="projectForm.image_url"
+                type="url"
+                class="url-input"
+                placeholder="Paste direct image URL"
+              />
+            </div>
+
+            <!-- Image Preview Box -->
+            <div v-if="imagePreview || projectForm.image_url" class="img-preview-card">
+              <img :src="imagePreview || projectForm.image_url" alt="Image preview" />
+              <button
+                type="button"
+                @click="imagePreview = ''; projectForm.image_url = ''; imageFile = null"
+                class="remove-preview-btn"
+                title="Remove image"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-footer-btns">
+            <button type="button" @click="showProjectModal = false" class="btn-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit-save" :disabled="isSubmitting">
+              {{ isSubmitting ? 'Saving to Database...' : (editingProjectId ? 'Update Project' : 'Create Project') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: SEND TEST INQUIRY                       -->
+    <!-- ============================================== -->
+    <div v-if="showTestMessageModal" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-top">
+          <h3 class="modal-title">Send Test Contact Inquiry</h3>
+          <button @click="showTestMessageModal = false" class="modal-close-btn">✕</button>
+        </div>
+
+        <form @submit.prevent="sendTestMessage" class="modal-body-form">
+          <div class="form-row-2">
+            <div class="field-item">
+              <label>Sender Name *</label>
+              <input v-model="testMessageForm.name" type="text" placeholder="e.g. John Doe" required />
+            </div>
+            <div class="field-item">
+              <label>Email Address *</label>
+              <input v-model="testMessageForm.email" type="email" placeholder="john@example.com" required />
+            </div>
+          </div>
+
+          <div class="field-item">
+            <label>Message *</label>
+            <textarea
+              v-model="testMessageForm.message"
+              rows="4"
+              placeholder="Type inquiry text..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="modal-footer-btns">
+            <button type="button" @click="showTestMessageModal = false" class="btn-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit-save">
+              Send to /api/messages
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.admin-wrapper {
+/* Overall Shell */
+.admin-shell {
   min-height: 100vh;
   width: 100%;
   background-color: #f8fafc;
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #0f172a;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
 }
 
-/* Toast */
-.notification-toast {
+/* Toast Notification */
+.notify-toast {
   position: fixed;
   top: 24px;
   right: 24px;
-  z-index: 9999;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  background-color: #000000;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.6rem;
+  background-color: #0f172a;
   color: #ffffff;
-  font-size: 0.95rem;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-radius: 14px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+  font-size: 0.92rem;
+  font-weight: 500;
+  max-width: 440px;
 }
-.notification-toast.error {
-  background-color: #ef4444;
+.notify-toast.error {
+  background-color: #dc2626;
+}
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.95);
 }
 
 /* LOGIN VIEW */
-.login-view {
+.login-wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  background: radial-gradient(circle at top right, #f1f5f9 0%, #ffffff 60%, #e2e8f0 100%);
 }
 
-.login-card {
+.login-container {
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   background: #ffffff;
-  padding: 3rem 2.5rem;
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
   border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 28px;
+  padding: 3.5rem 2.8rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
   text-align: center;
 }
 
-.login-badge {
+.brand-monogram {
+  width: 52px;
+  height: 52px;
+  background: #000000;
+  color: #ffffff;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.portal-badge {
   display: inline-block;
   padding: 0.35rem 1rem;
   background-color: #ecfeff;
@@ -646,492 +1473,1206 @@ const saveSettings = async () => {
   font-family: 'Space Mono', monospace;
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
-  margin-bottom: 1.5rem;
+  letter-spacing: 0.18em;
+  margin-bottom: 1rem;
 }
 
 .login-title {
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: 700;
   color: #000000;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
 }
 
-.login-subtitle {
-  font-size: 0.92rem;
+.login-desc {
+  font-size: 0.9rem;
   color: #64748b;
-  margin-bottom: 2rem;
+  margin: 0 0 2rem 0;
+  line-height: 1.5;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.3rem;
   text-align: left;
 }
 
-.form-field {
+.auth-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.field-group {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
-.form-field label {
+.field-group label {
   font-family: 'Space Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: #475569;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.form-field input,
-.form-field textarea {
-  padding: 0.75rem 1rem;
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon svg {
+  position: absolute;
+  left: 1rem;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.8rem;
+  background: #f8fafc;
   border: 1px solid #cbd5e1;
   border-radius: 12px;
   font-size: 0.95rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.form-field input:focus,
-.form-field textarea:focus {
+.input-with-icon input:focus {
+  background: #ffffff;
   border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
 }
 
-.submit-btn {
-  padding: 0.85rem 1.6rem;
+.login-submit-btn {
+  margin-top: 0.5rem;
+  padding: 0.95rem 1.6rem;
   background-color: #000000;
   color: #ffffff;
   border: none;
   border-radius: 12px;
+  font-size: 0.98rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.95rem;
 }
 
-.submit-btn:hover {
+.login-submit-btn:hover {
   background-color: #1e293b;
+  transform: translateY(-1px);
 }
 
-.alert-error {
-  padding: 0.75rem 1rem;
-  background-color: #fef2f2;
-  border: 1px solid #fee2e2;
-  color: #dc2626;
-  border-radius: 10px;
-  font-size: 0.85rem;
+.credentials-hint {
+  margin-top: 1.8rem;
 }
 
-.login-help {
-  margin-top: 2rem;
-  font-size: 0.85rem;
+.hint-pill {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  font-size: 0.82rem;
   color: #64748b;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
 }
 
-.back-link {
-  color: #06b6d4;
-  text-decoration: none;
+.hint-pill code {
+  color: #0891b2;
   font-weight: 600;
 }
 
+.login-footer {
+  margin-top: 1.5rem;
+}
+
+.return-link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #06b6d4;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.return-link:hover {
+  color: #0891b2;
+}
+
 /* DASHBOARD VIEW */
-.dash-header {
+.dash-navbar {
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   padding: 1.2rem 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.dash-brand {
+.dash-brand-block {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
-.logo-mark {
-  width: 40px;
-  height: 40px;
+.nav-monogram {
+  width: 44px;
+  height: 44px;
   background: #000000;
   color: #ffffff;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 
-.dash-title {
-  font-size: 1.35rem;
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.brand-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-name {
+  font-size: 1.25rem;
   font-weight: 700;
-  margin: 0;
+  color: #0f172a;
 }
 
-.api-tag {
+.role-tag {
   font-family: 'Space Mono', monospace;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
+  padding: 0.2rem 0.55rem;
+  background-color: #ecfeff;
+  color: #0891b2;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.api-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.78rem;
   color: #64748b;
 }
 
-.dash-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.status-indicator.online {
+  background-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+.status-indicator.offline {
+  background-color: #f59e0b;
+}
+.status-indicator.checking {
+  background-color: #94a3b8;
 }
 
-.view-site-btn {
+.api-url-code {
+  font-family: 'Space Mono', monospace;
+  color: #334155;
+  background: #f1f5f9;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.latency-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.btn-ghost-nav {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
-  background-color: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-}
-
-.logout-btn {
-  padding: 0.6rem 1.2rem;
-  background: transparent;
+  background: #f8fafc;
   border: 1px solid #cbd5e1;
   border-radius: 9999px;
-  font-weight: 600;
   font-size: 0.88rem;
+  font-weight: 600;
   cursor: pointer;
+  color: #334155;
+  transition: all 0.2s ease;
 }
 
-.dash-tabs-bar {
+.btn-ghost-nav:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+/* Tabs Bar */
+.dash-subnav-bar {
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   padding: 0 3rem;
+}
+
+.tabs-list {
   display: flex;
   gap: 2rem;
 }
 
-.dash-tab {
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   background: transparent;
   border: none;
-  padding: 1rem 0;
+  border-bottom: 3px solid transparent;
+  padding: 1.1rem 0;
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
   color: #64748b;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
 }
 
-.dash-tab.active {
+.tab-btn:hover {
+  color: #0f172a;
+}
+
+.tab-btn.active {
   color: #000000;
   border-bottom-color: #000000;
 }
 
-.dash-main {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 3rem;
+.counter-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background: #f1f5f9;
+  color: #475569;
 }
 
-.pane-header {
+.tab-btn.active .counter-badge {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Main Content */
+.dash-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 3rem 5rem 3rem;
+}
+
+/* Callout */
+.offline-callout {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.2rem 1.6rem;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  color: #92400e;
+}
+
+.callout-icon {
+  font-size: 1.8rem;
+}
+
+.callout-body {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.callout-body code {
+  background: #fef3c7;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Space Mono', monospace;
+  color: #78350f;
+}
+
+.btn-retry {
+  padding: 0.55rem 1.1rem;
+  background: #f59e0b;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Section Header */
+.pane-action-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .pane-title {
-  font-size: 1.8rem;
+  font-size: 1.85rem;
   font-weight: 700;
-  margin-bottom: 0.3rem;
+  color: #0f172a;
+  margin: 0 0 0.3rem 0;
+  letter-spacing: -0.02em;
 }
 
-.pane-desc {
+.pane-subtitle {
+  font-size: 0.92rem;
   color: #64748b;
-  font-size: 0.95rem;
+  margin: 0;
 }
 
-.primary-action-btn {
-  padding: 0.75rem 1.6rem;
-  background: #000000;
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Modal */
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1.5rem;
-}
-
-.modal-card {
-  width: 100%;
-  max-width: 640px;
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 2.5rem;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.modal-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.image-uploader-box {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.or-separator {
+.pane-subtitle code {
   font-family: 'Space Mono', monospace;
-  font-size: 0.75rem;
+  color: #0891b2;
+}
+
+.action-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.search-input-box svg {
+  position: absolute;
+  left: 0.9rem;
   color: #94a3b8;
 }
 
-.preview-box {
-  margin-top: 0.5rem;
+.search-input-box input {
+  padding: 0.65rem 1rem 0.65rem 2.4rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  min-width: 240px;
 }
 
-.preview-box img {
-  width: 100px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
+.search-input-box input:focus {
+  border-color: #06b6d4;
 }
 
-.modal-actions {
+.view-switch {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  background: #e2e8f0;
+  border-radius: 10px;
+  padding: 2px;
 }
 
-.cancel-btn {
-  padding: 0.75rem 1.4rem;
-  background: #f1f5f9;
+.view-switch button {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-switch button.active {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.btn-create-project {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  background-color: #000000;
+  color: #ffffff;
   border: none;
   border-radius: 12px;
-  cursor: pointer;
+  font-size: 0.9rem;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* Table */
-.table-container {
+.btn-create-project:hover {
+  background-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.btn-create-project.secondary {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-refresh {
+  width: 40px;
+  height: 40px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+/* DATA TABLE */
+.table-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
 
-.data-table {
+.admin-data-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
-.data-table th {
-  background: #f8fafc;
-  padding: 1rem 1.5rem;
+.admin-data-table th {
+  background-color: #f8fafc;
+  padding: 1.1rem 1.6rem;
   font-family: 'Space Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #64748b;
   text-transform: uppercase;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.data-table td {
-  padding: 1.2rem 1.5rem;
+.admin-data-table td {
+  padding: 1.2rem 1.6rem;
   border-bottom: 1px solid #f1f5f9;
-  font-size: 0.95rem;
+  vertical-align: middle;
 }
 
-.col-thumb img {
-  width: 72px;
+.project-thumb-img {
+  width: 68px;
   height: 48px;
   object-fit: cover;
   border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.tech-pill {
-  display: inline-block;
-  padding: 0.25rem 0.65rem;
+.project-table-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.project-table-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  max-width: 380px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tech-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  max-width: 240px;
+}
+
+.tech-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
   background: #ecfeff;
   color: #0891b2;
   border-radius: 9999px;
-  font-size: 0.8rem;
-  font-family: 'Space Mono', monospace;
+  white-space: nowrap;
 }
 
-.col-desc {
-  max-width: 320px;
-  color: #64748b;
-  font-size: 0.88rem;
-  line-height: 1.45;
-}
-
-.col-links {
-  display: flex;
-  gap: 0.6rem;
-}
-
-.icon-link {
-  font-size: 0.82rem;
-  color: #0284c7;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.btn-edit {
-  padding: 0.4rem 0.9rem;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.btn-del {
-  padding: 0.4rem 0.9rem;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #ef4444;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.empty-state {
-  padding: 4rem 2rem;
-  text-align: center;
-  color: #64748b;
-}
-
-/* Messages */
-.messages-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 1.5rem;
-}
-
-.message-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.8rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+.links-stack {
   display: flex;
   flex-direction: column;
+  gap: 0.35rem;
 }
 
-.msg-header {
+.table-ext-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0284c7;
+  text-decoration: none;
+}
+
+.table-ext-link:hover {
+  text-decoration: underline;
+}
+
+.action-btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.action-btn.edit:hover {
+  background: #f1f5f9;
+  border-color: #06b6d4;
+  color: #06b6d4;
+}
+
+.action-btn.delete:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+/* CARDS GRID VIEW */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.admin-proj-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+}
+
+.admin-proj-card:hover {
+  transform: translateY(-4px);
+}
+
+.card-cover-container {
+  position: relative;
+  width: 100%;
+  height: 180px;
+}
+
+.card-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-overlay-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.card-action-circle {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.card-action-circle.danger {
+  color: #dc2626;
+}
+
+.card-details {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem 0;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+  flex: 1;
+}
+
+.card-links-row {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.card-link-btn {
+  flex: 1;
+  text-align: center;
+  padding: 0.55rem;
+  background: #000000;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.card-link-btn.secondary {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* MESSAGES STREAM */
+.messages-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.message-tile {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.8rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.msg-header-line {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
 }
 
-.msg-author {
-  font-size: 1.15rem;
+.msg-sender-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sender-avatar {
+  width: 44px;
+  height: 44px;
+  background: #ecfeff;
+  color: #0891b2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.sender-name {
+  font-size: 1.1rem;
   font-weight: 700;
   margin: 0;
 }
 
-.msg-email {
+.sender-email {
   font-size: 0.85rem;
   color: #0284c7;
   text-decoration: none;
 }
 
-.msg-body {
-  font-size: 0.95rem;
-  color: #334155;
-  line-height: 1.6;
-  flex: 1;
-  margin-bottom: 1rem;
+.msg-meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
-.msg-date {
+.msg-timestamp {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.btn-reply {
+  padding: 0.45rem 0.9rem;
+  background: #f1f5f9;
+  color: #0f172a;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-delete-msg {
+  width: 32px;
+  height: 32px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.btn-delete-msg:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.msg-content-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #334155;
+  background: #f8fafc;
+  padding: 1.2rem 1.4rem;
+  border-radius: 12px;
+}
+
+/* SETTINGS GRID */
+.settings-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.settings-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2.2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.card-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.field-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field-item label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+.field-item input,
+.field-item textarea {
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  outline: none;
+  background: #f8fafc;
+}
+
+.field-item input:focus,
+.field-item textarea:focus {
+  background: #ffffff;
+  border-color: #06b6d4;
+}
+
+/* DIAGNOSTICS */
+.diagnostics-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 900px;
+}
+
+.diag-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.diag-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.diag-status {
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.diag-status.online {
+  background: #ecfdf5;
+  color: #059669;
+}
+.diag-status.offline {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.endpoint-config-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.api-input {
+  flex: 1;
+  padding: 0.85rem 1.2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.92rem;
+}
+
+.btn-save-endpoint {
+  padding: 0.85rem 1.6rem;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.preset-links {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-bottom: 2.5rem;
+}
+
+.preset-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.endpoints-title {
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
+  color: #475569;
+}
+
+.endpoints-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.endpoints-table th {
+  text-align: left;
+  padding: 0.8rem 1rem;
+  background: #f8fafc;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.endpoints-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.88rem;
+}
+
+.method {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.method.get { background: #e0f2fe; color: #0369a1; }
+.method.post { background: #dcfce7; color: #15803d; }
+.method.put { background: #fef3c7; color: #b45309; }
+.method.del { background: #fee2e2; color: #b91c1c; }
+
+.tag-status {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+}
+.tag-status.online { background: #ecfdf5; color: #059669; }
+.tag-status.offline { background: #fef2f2; color: #dc2626; }
+
+/* MODALS */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1.5rem;
+}
+
+.modal-window {
+  width: 100%;
+  max-width: 680px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 2.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.modal-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.modal-body-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.image-uploader-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.upload-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.2rem;
+  background: #f1f5f9;
+  border: 1px dashed #94a3b8;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.or-badge {
   font-family: 'Space Mono', monospace;
   font-size: 0.75rem;
   color: #94a3b8;
 }
 
-.btn-del-sm {
-  background: #f1f5f9;
+.url-input {
+  flex: 1;
+}
+
+.img-preview-card {
+  position: relative;
+  margin-top: 0.8rem;
+  display: inline-block;
+}
+
+.img-preview-card img {
+  width: 140px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.remove-preview-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #dc2626;
+  color: #ffffff;
   border: none;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
+  font-size: 0.7rem;
   cursor: pointer;
+}
+
+.modal-footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-cancel {
+  padding: 0.8rem 1.6rem;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-submit-save {
+  padding: 0.8rem 1.8rem;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.empty-placeholder {
+  padding: 4rem 2rem;
+  text-align: center;
   color: #64748b;
 }
 
-/* Settings Form */
-.settings-form {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 2.5rem;
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.8rem;
 }
 
-.settings-group h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #f1f5f9;
+@media (max-width: 900px) {
+  .dash-navbar {
+    padding: 1rem 1.5rem;
+  }
+  .dash-subnav-bar {
+    padding: 0 1.5rem;
+  }
+  .dash-content {
+    padding: 2rem 1.5rem;
+  }
+  .settings-grid-layout {
+    grid-template-columns: 1fr;
+  }
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

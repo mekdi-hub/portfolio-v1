@@ -1,5 +1,9 @@
 <script setup>
-const projects = [
+import { ref, onMounted } from 'vue'
+
+const API_BASE = localStorage.getItem('portfolio_api_base') || import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+
+const defaultProjects = [
   {
     id: 1,
     title: 'Gibi-Equb',
@@ -40,6 +44,36 @@ const projects = [
     demo_link: '#'
   }
 ]
+
+const projects = ref([...defaultProjects])
+
+const normalizeTechStack = (tech) => {
+  if (Array.isArray(tech)) return tech
+  if (typeof tech === 'string') {
+    return tech.split(',').map(s => s.trim()).filter(Boolean)
+  }
+  return []
+}
+
+onMounted(async () => {
+  try {
+    const res = await fetch(`${API_BASE}/projects`)
+    if (res.ok) {
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        projects.value = data.map((item, idx) => ({
+          ...item,
+          tech_stack: normalizeTechStack(item.tech_stack),
+          isDark: idx % 2 === 0,
+          demo_link: item.demo_link || '#'
+        }))
+      }
+    }
+  } catch (err) {
+    // Keep default projects if API server is offline
+    console.info('Loaded curated portfolio projects (Backend offline or local cache active).')
+  }
+})
 </script>
 
 <template>
@@ -75,25 +109,33 @@ const projects = [
           >
             <!-- Mockup Window Box matching reference -->
             <div class="mockup-window" :class="{ 'dark-theme': project.isDark, 'light-theme': !project.isDark }">
-              <div class="mockup-header-bar">
-                <span class="mockup-brand">{{ project.title }}</span>
-                <div class="mockup-nav-links">
-                  <span>Home</span>
-                  <span>About</span>
-                  <span>Features</span>
-                  <span>Contact</span>
-                </div>
-              </div>
+              <!-- If custom image is uploaded -->
+              <template v-if="project.image && !project.imageText">
+                <img :src="project.image" :alt="project.title" class="custom-cover-img" />
+              </template>
 
-              <div class="mockup-content-body">
-                <span class="mockup-pill-tag">{{ project.imageText.tag }}</span>
-                <h4 class="mockup-headline">{{ project.imageText.headline }}</h4>
-                <p class="mockup-subtext">{{ project.imageText.subtext }}</p>
-                
-                <div class="mockup-cta-btn">
-                  <span>Explore Platform</span>
+              <!-- Styled interactive mockup for curated projects -->
+              <template v-else>
+                <div class="mockup-header-bar">
+                  <span class="mockup-brand">{{ project.title }}</span>
+                  <div class="mockup-nav-links">
+                    <span>Home</span>
+                    <span>About</span>
+                    <span>Features</span>
+                    <span>Contact</span>
+                  </div>
                 </div>
-              </div>
+
+                <div class="mockup-content-body">
+                  <span class="mockup-pill-tag">{{ project.imageText?.tag || 'Featured Project' }}</span>
+                  <h4 class="mockup-headline">{{ project.imageText?.headline || project.title }}</h4>
+                  <p class="mockup-subtext">{{ project.imageText?.subtext || project.description }}</p>
+                  
+                  <div class="mockup-cta-btn">
+                    <span>Explore Platform</span>
+                  </div>
+                </div>
+              </template>
             </div>
 
             <!-- Details Under Card -->
@@ -272,6 +314,15 @@ const projects = [
   padding: 1.2rem 1.4rem;
 }
 
+.custom-cover-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .mockup-window.dark-theme {
   background: radial-gradient(circle at 85% 15%, #1e293b 0%, #090d16 100%);
   color: #ffffff;
@@ -291,6 +342,8 @@ const projects = [
   opacity: 0.8;
   border-bottom: 1px solid rgba(148, 163, 184, 0.15);
   padding-bottom: 0.6rem;
+  position: relative;
+  z-index: 2;
 }
 
 .mockup-brand {
@@ -311,6 +364,8 @@ const projects = [
   flex-direction: column;
   gap: 0.6rem;
   margin-top: 0.8rem;
+  position: relative;
+  z-index: 2;
 }
 
 .mockup-pill-tag {
