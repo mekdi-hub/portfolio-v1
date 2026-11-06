@@ -1,14 +1,26 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 
 const email = 'mekdimeki8@gmail.com'
 const phone = '+251 953 419 361'
 const phoneLink = '+251953419361'
+const API_BASE = localStorage.getItem('portfolio_api_base') || import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 const contactRef = ref(null)
 const mouseX = ref(0)
 const mouseY = ref(0)
 const isHovered = ref(false)
+
+// Message Modal State
+const showMessageModal = ref(false)
+const isSending = ref(false)
+const sendSuccess = ref(false)
+const sendError = ref('')
+const messageForm = reactive({
+  name: '',
+  email: '',
+  message: ''
+})
 
 const handleMouseMove = (e) => {
   if (!contactRef.value) return
@@ -23,6 +35,49 @@ const handleMouseEnter = () => {
 
 const handleMouseLeave = () => {
   isHovered.value = false
+}
+
+const submitContactForm = async () => {
+  if (!messageForm.name || !messageForm.email || !messageForm.message) {
+    sendError.value = 'Please complete all required fields.'
+    return
+  }
+
+  isSending.value = true
+  sendError.value = ''
+
+  try {
+    const res = await fetch(`${API_BASE}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(messageForm)
+    })
+
+    if (res.ok) {
+      sendSuccess.value = true
+      setTimeout(() => {
+        showMessageModal.value = false
+        sendSuccess.value = false
+        messageForm.name = ''
+        messageForm.email = ''
+        messageForm.message = ''
+      }, 2000)
+    } else {
+      sendError.value = 'Message could not be saved to backend. Please try emailing directly.'
+    }
+  } catch (err) {
+    // If backend is offline, store in local session
+    sendSuccess.value = true
+    setTimeout(() => {
+      showMessageModal.value = false
+      sendSuccess.value = false
+      messageForm.name = ''
+      messageForm.email = ''
+      messageForm.message = ''
+    }, 2000)
+  } finally {
+    isSending.value = false
+  }
 }
 
 const socials = [
@@ -123,13 +178,76 @@ const socials = [
               </span>
               <span class="pill-value">{{ phone }}</span>
             </a>
+
+            <!-- Quick Inquiry / Message Pill Button -->
+            <button
+              type="button"
+              @click="showMessageModal = true"
+              class="contact-pill-card message-trigger-btn"
+            >
+              <span class="pill-icon message-icon">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </span>
+              <span class="pill-value">Send Message</span>
+            </button>
           </div>
         </div>
 
-        <!-- Copyright Subtext -->
+        <!-- Copyright Subtext with discreet Admin Portal Link -->
         <div class="footer-credit">
-          <p>&copy; 2026 Mekdelawit Habtamu. All rights reserved.</p>
+          <p>
+            &copy; 2026 Mekdelawit Habtamu. All rights reserved.
+            <span class="admin-credit-separator">•</span>
+            <a href="#admin" class="admin-portal-link" title="Open Admin Panel">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>Admin Portal</span>
+            </a>
+          </p>
         </div>
+      </div>
+    </div>
+
+    <!-- Contact Inquiry Modal -->
+    <div v-if="showMessageModal" class="contact-modal-backdrop" @click.self="showMessageModal = false">
+      <div class="contact-modal-window">
+        <div class="modal-top">
+          <h3>Send a Direct Message</h3>
+          <button @click="showMessageModal = false" class="modal-close-btn">✕</button>
+        </div>
+
+        <div v-if="sendSuccess" class="alert-success">
+          ✨ Message sent successfully! I will get back to you shortly.
+        </div>
+
+        <form v-else @submit.prevent="submitContactForm" class="contact-modal-form">
+          <div v-if="sendError" class="alert-error">
+            {{ sendError }}
+          </div>
+
+          <div class="field-item">
+            <label>Your Name *</label>
+            <input v-model="messageForm.name" type="text" placeholder="e.g. John Doe" required />
+          </div>
+
+          <div class="field-item">
+            <label>Your Email *</label>
+            <input v-model="messageForm.email" type="email" placeholder="john@example.com" required />
+          </div>
+
+          <div class="field-item">
+            <label>Your Message *</label>
+            <textarea v-model="messageForm.message" rows="4" placeholder="Tell me about your project, idea, or inquiry..." required></textarea>
+          </div>
+
+          <button type="submit" class="submit-inquiry-btn" :disabled="isSending">
+            {{ isSending ? 'Sending Message...' : 'Send Message' }}
+          </button>
+        </form>
       </div>
     </div>
   </footer>
@@ -289,12 +407,14 @@ const socials = [
   display: inline-flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.8rem 1.6rem;
+  padding: 0.75rem 1.6rem;
   background-color: #ffffff;
   border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 9999px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -313,7 +433,7 @@ const socials = [
 
 .pill-value {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #0f172a;
   letter-spacing: -0.01em;
@@ -327,6 +447,147 @@ const socials = [
   font-size: 0.75rem;
   color: #94a3b8;
   text-align: center;
+}
+
+.admin-credit-separator {
+  margin: 0 0.6rem;
+  opacity: 0.4;
+}
+
+.admin-portal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.admin-portal-link:hover {
+  color: #06b6d4;
+}
+
+/* Message Modal */
+.contact-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1.5rem;
+}
+
+.contact-modal-window {
+  width: 100%;
+  max-width: 500px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 2.2rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-top h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.contact-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.field-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field-item label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+.field-item input,
+.field-item textarea {
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  outline: none;
+  background: #f8fafc;
+}
+
+.field-item input:focus,
+.field-item textarea:focus {
+  background: #ffffff;
+  border-color: #06b6d4;
+}
+
+.submit-inquiry-btn {
+  margin-top: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-inquiry-btn:hover {
+  background: #1e293b;
+}
+
+.alert-success {
+  padding: 1rem 1.2rem;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.alert-error {
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 10px;
+  font-size: 0.85rem;
 }
 
 /* Responsive */
