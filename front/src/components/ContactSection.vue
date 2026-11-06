@@ -1,7 +1,29 @@
 <script setup>
+import { ref } from 'vue'
+
 const email = 'mekdimeki8@gmail.com'
 const phone = '+251 953 419 361'
 const phoneLink = '+251953419361'
+
+const contactRef = ref(null)
+const mouseX = ref(0)
+const mouseY = ref(0)
+const isHovered = ref(false)
+
+const handleMouseMove = (e) => {
+  if (!contactRef.value) return
+  const rect = contactRef.value.getBoundingClientRect()
+  mouseX.value = e.clientX - rect.left
+  mouseY.value = e.clientY - rect.top
+}
+
+const handleMouseEnter = () => {
+  isHovered.value = true
+}
+
+const handleMouseLeave = () => {
+  isHovered.value = false
+}
 
 const socials = [
   {
@@ -28,15 +50,29 @@ const socials = [
 </script>
 
 <template>
-  <footer id="contact" class="contact-section">
+  <footer
+    id="contact"
+    ref="contactRef"
+    class="contact-section"
+    @mousemove="handleMouseMove"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+  >
+    <!-- Interactive Cursor Color Glow Effect (Only in Contact Section) -->
+    <div
+      class="cursor-glow-spotlight"
+      :style="{
+        transform: `translate(${mouseX}px, ${mouseY}px)`,
+        opacity: isHovered ? 1 : 0
+      }"
+      aria-hidden="true"
+    ></div>
+
     <div class="contact-container">
       <!-- Centered Huge Headline in the Middle -->
       <div class="headline-container">
         <h2 class="contact-headline">
-          <span class="headline-line">
-            LET'S WORK 
-            <span class="accent-ring" aria-hidden="true"></span>
-          </span>
+          <span class="headline-line">LET'S WORK</span>
           <span class="headline-line">TOGETHER</span>
         </h2>
       </div>
@@ -100,21 +136,41 @@ const socials = [
 </template>
 
 <style scoped>
-/* Full Single Viewport Screen (100vh) */
+/* Full Single Viewport Screen (100vh) in Clear White */
 .contact-section {
   position: relative;
   width: 100%;
   min-height: 100vh;
   height: 100vh;
-  background-color: #f4f5f7;
+  background-color: #ffffff; /* Clear White */
   padding: 4rem 3rem 2rem 3rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
+}
+
+/* Interactive Cursor Color Glow Effect */
+.cursor-glow-spotlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  margin-top: -260px;
+  margin-left: -260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(34, 211, 238, 0.12) 35%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.35s ease, transform 0.08s ease-out;
+  filter: blur(10px);
 }
 
 .contact-container {
+  position: relative;
+  z-index: 2;
   max-width: 1300px;
   width: 100%;
   height: 100%;
@@ -152,30 +208,6 @@ const socials = [
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-}
-
-/* Cyan Accent Ring */
-.accent-ring {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  border: 2.5px solid #06b6d4;
-  border-radius: 50%;
-  margin-left: 1rem;
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.45);
-  animation: pulseRing 3s infinite ease-in-out;
-}
-
-@keyframes pulseRing {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 1;
-  }
 }
 
 /* Bottom Cluster */
@@ -188,7 +220,7 @@ const socials = [
 .contact-divider {
   width: 100%;
   height: 1px;
-  background-color: rgba(203, 213, 225, 0.8);
+  background-color: rgba(226, 232, 240, 0.9);
   margin-bottom: 2.2rem;
 }
 
@@ -242,7 +274,7 @@ const socials = [
   transform: translateY(-4px);
   border-color: #06b6d4;
   color: #06b6d4;
-  box-shadow: 0 8px 22px rgba(6, 182, 212, 0.15);
+  box-shadow: 0 8px 22px rgba(6, 182, 212, 0.18);
 }
 
 /* Right: Contact Details Column */
@@ -259,9 +291,9 @@ const socials = [
   gap: 1rem;
   padding: 0.8rem 1.6rem;
   background-color: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 9999px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   text-decoration: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -269,7 +301,7 @@ const socials = [
 .contact-pill-card:hover {
   transform: translateY(-3px);
   border-color: #06b6d4;
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.12);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15);
 }
 
 .pill-icon {
