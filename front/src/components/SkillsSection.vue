@@ -517,7 +517,7 @@ const skills = [
 /* DARK THEME STYLES                         */
 /* ========================================= */
 :global(.dark) .skills-tech-section {
-  background-color: #0a0b0e;
+  background-color: #000000 !important;
 }
 
 :global(.dark) .skills-top-bar {

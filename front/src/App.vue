@@ -86,8 +86,8 @@ const handleNavigate = (view) => {
 }
 
 :global(.dark) .app-wrapper {
-  background-color: #08090b;
-  color: #f8fafc;
+  background-color: #000000 !important;
+  color: #ffffff;
 }
 
 .portfolio-view {

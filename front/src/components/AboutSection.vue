@@ -269,7 +269,7 @@ onMounted(() => {
 /* DARK THEME STYLES                         */
 /* ========================================= */
 :global(.dark) .about-section {
-  background-color: #0a0b0e;
+  background-color: #000000 !important;
 }
 
 :global(.dark) .about-title {

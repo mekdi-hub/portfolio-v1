@@ -516,7 +516,7 @@ onMounted(async () => {
 /* ========================================= */
 :global(.dark) .curtain-wrapper,
 :global(.dark) .curtain-underlay {
-  background-color: #08090b;
+  background-color: #000000 !important;
 }
 
 :global(.dark) .underlay-title {
@@ -534,9 +534,9 @@ onMounted(async () => {
 }
 
 :global(.dark) .curtain-sheet {
-  background-color: #0d0f14;
-  border-top-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.6);
+  background-color: #000000 !important;
+  border-top-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.9);
 }
 
 :global(.dark) .curtain-pill-notch {

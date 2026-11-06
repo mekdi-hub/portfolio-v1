@@ -299,7 +299,7 @@ const scrollToAbout = () => {
 /* DARK THEME STYLES                         */
 /* ========================================= */
 :global(.dark) .hero-container {
-  background-color: #08090b;
+  background-color: #000000 !important;
 }
 
 :global(.dark) .logo-svg path {

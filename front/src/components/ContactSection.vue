@@ -619,7 +619,7 @@ const socials = [
 /* DARK THEME STYLES                         */
 /* ========================================= */
 :global(.dark) .contact-section {
-  background-color: #050608;
+  background-color: #000000 !important;
 }
 
 :global(.dark) .contact-headline {
@@ -627,7 +627,7 @@ const socials = [
 }
 
 :global(.dark) .contact-divider {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.12);
 }
 
 :global(.dark) .socials-label {
@@ -635,8 +635,8 @@ const socials = [
 }
 
 :global(.dark) .social-icon-btn {
-  background-color: #11131a;
-  border-color: rgba(255, 255, 255, 0.08);
+  background-color: #050505;
+  border-color: rgba(255, 255, 255, 0.12);
   color: #f8fafc;
 }
 
@@ -647,8 +647,8 @@ const socials = [
 }
 
 :global(.dark) .contact-pill-card {
-  background-color: #11131a;
-  border-color: rgba(255, 255, 255, 0.08);
+  background-color: #050505;
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 :global(.dark) .pill-value {
