@@ -264,4 +264,52 @@ onMounted(() => {
     display: none;
   }
 }
+
+/* ========================================= */
+/* DARK THEME STYLES                         */
+/* ========================================= */
+:global(.dark) .about-section {
+  background-color: #0a0b0e;
+}
+
+:global(.dark) .about-title {
+  color: #ffffff;
+}
+
+:global(.dark) .about-greeting {
+  color: #f8fafc;
+}
+
+:global(.dark) .highlight-name {
+  color: #22d3ee;
+}
+
+:global(.dark) .about-role-tag {
+  color: #94a3b8;
+}
+
+:global(.dark) .lead-col p,
+:global(.dark) .detail-col p {
+  color: #cbd5e1;
+}
+
+:global(.dark) strong {
+  color: #ffffff;
+}
+
+:global(.dark) .stats-row {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .stat-number {
+  color: #ffffff;
+}
+
+:global(.dark) .stat-label {
+  color: #94a3b8;
+}
+
+:global(.dark) .stat-divider {
+  background-color: rgba(255, 255, 255, 0.12);
+}
 </style>

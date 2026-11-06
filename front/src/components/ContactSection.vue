@@ -614,4 +614,96 @@ const socials = [
     justify-content: center;
   }
 }
+
+/* ========================================= */
+/* DARK THEME STYLES                         */
+/* ========================================= */
+:global(.dark) .contact-section {
+  background-color: #050608;
+}
+
+:global(.dark) .contact-headline {
+  color: #ffffff;
+}
+
+:global(.dark) .contact-divider {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .socials-label {
+  color: #94a3b8;
+}
+
+:global(.dark) .social-icon-btn {
+  background-color: #11131a;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
+:global(.dark) .social-icon-btn:hover {
+  border-color: #06b6d4;
+  color: #06b6d4;
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25);
+}
+
+:global(.dark) .contact-pill-card {
+  background-color: #11131a;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .pill-value {
+  color: #f8fafc;
+}
+
+:global(.dark) .contact-pill-card:hover {
+  border-color: #06b6d4;
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.2);
+}
+
+:global(.dark) .footer-credit {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  color: #64748b;
+}
+
+:global(.dark) .admin-portal-link {
+  color: #64748b;
+}
+
+:global(.dark) .admin-portal-link:hover {
+  color: #06b6d4;
+}
+
+:global(.dark) .contact-modal-window {
+  background-color: #11131a;
+  color: #f8fafc;
+}
+
+:global(.dark) .field-item label {
+  color: #94a3b8;
+}
+
+:global(.dark) .field-item input,
+:global(.dark) .field-item textarea {
+  background-color: #181b24;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+:global(.dark) .modal-close-btn {
+  background-color: #181b24;
+  color: #ffffff;
+}
+
+:global(.dark) .submit-inquiry-btn {
+  background-color: #06b6d4;
+  color: #000000;
+}
+
+:global(.dark) .submit-inquiry-btn:hover {
+  background-color: #22d3ee;
+}
+
+:global(.dark) .cursor-glow-spotlight {
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.32) 0%, rgba(34, 211, 238, 0.16) 35%, rgba(0, 0, 0, 0) 70%);
+}
 </style>

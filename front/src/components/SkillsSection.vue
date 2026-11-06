@@ -512,4 +512,72 @@ const skills = [
     font-size: 0.72rem;
   }
 }
+
+/* ========================================= */
+/* DARK THEME STYLES                         */
+/* ========================================= */
+:global(.dark) .skills-tech-section {
+  background-color: #0a0b0e;
+}
+
+:global(.dark) .skills-top-bar {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .section-tag,
+:global(.dark) .table-status {
+  color: #94a3b8;
+}
+
+:global(.dark) .search-icon-btn {
+  color: #94a3b8;
+}
+
+:global(.dark) .inspector-card {
+  background-color: #11131a;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark) .inspector-title {
+  color: #ffffff;
+}
+
+:global(.dark) .inspector-desc {
+  color: #cbd5e1;
+}
+
+:global(.dark) .inspector-header-deco {
+  color: #94a3b8;
+}
+
+:global(.dark) .metric-bar {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .matrix-tile {
+  background-color: #11131a;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+}
+
+:global(.dark) .matrix-tile:hover {
+  border-color: #06b6d4;
+  color: #22d3ee;
+}
+
+:global(.dark) .matrix-tile.active {
+  background-color: #000000;
+  border-color: #06b6d4;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+}
+
+:global(.dark) .tile-progress-bar {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .tile-progress-fill {
+  background-color: #06b6d4;
+}
 </style>

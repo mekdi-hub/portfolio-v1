@@ -510,4 +510,74 @@ onMounted(async () => {
     height: 240px;
   }
 }
+
+/* ========================================= */
+/* DARK THEME STYLES                         */
+/* ========================================= */
+:global(.dark) .curtain-wrapper,
+:global(.dark) .curtain-underlay {
+  background-color: #08090b;
+}
+
+:global(.dark) .underlay-title {
+  color: #ffffff;
+}
+
+:global(.dark) .portfolio-badge {
+  background-color: #082f49;
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #38bdf8;
+}
+
+:global(.dark) .scroll-curtain-hint {
+  color: #94a3b8;
+}
+
+:global(.dark) .curtain-sheet {
+  background-color: #0d0f14;
+  border-top-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.6);
+}
+
+:global(.dark) .curtain-pill-notch {
+  background-color: #334155;
+}
+
+:global(.dark) .project-name {
+  color: #ffffff;
+}
+
+:global(.dark) .project-summary {
+  color: #94a3b8;
+}
+
+:global(.dark) .tech-tag {
+  background-color: #082f49;
+  border-color: rgba(6, 182, 212, 0.3);
+  color: #22d3ee;
+}
+
+:global(.dark) .live-demo-btn {
+  background-color: #11131a;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark) .live-demo-btn:hover {
+  background-color: #181c26;
+  border-color: #06b6d4;
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3);
+}
+
+:global(.dark) .mockup-window.light-theme {
+  background: linear-gradient(135deg, #161922 0%, #11131a 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .mockup-window.light-theme .mockup-cta-btn {
+  background-color: #06b6d4;
+  color: #000000;
+}
 </style>

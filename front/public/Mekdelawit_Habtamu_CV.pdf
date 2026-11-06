@@ -1,0 +1,60 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 741 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(MEKDELAWIT HABTAMU) Tj
+/F1 13 Tf
+0 -24 Td
+(Full-Stack Developer & System Builder) Tj
+/F1 10 Tf
+0 -18 Td
+(Email: mekdimeki8@gmail.com | Phone: +251 953 419 361 | Wollo University) Tj
+0 -30 Td
+/F1 14 Tf
+(CORE EXPERTISE & TECHNOLOGIES) Tj
+/F1 10 Tf
+0 -18 Td
+(- Frontend: Vue.js 3, React, JavaScript, TypeScript, Tailwind CSS, Three.js) Tj
+0 -16 Td
+(- Backend: Laravel, PHP, REST APIs, PostgreSQL, MySQL, Docker, Git) Tj
+0 -30 Td
+/F1 14 Tf
+(FEATURED PROJECTS) Tj
+/F1 10 Tf
+0 -18 Td
+(1. Gibi-Equb: Collaborative university student savings platform) Tj
+0 -16 Td
+(2. Lumina-Tutors: Digitalized tutorial & learning management system) Tj
+0 -16 Td
+(3. Eduage AI: Study-abroad guidance platform with specialized AI agents) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001033 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1103
+%%EOF
