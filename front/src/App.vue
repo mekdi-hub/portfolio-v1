@@ -1,10 +1,14 @@
 <script setup>
 import HeroSection from './components/HeroSection.vue'
+import AboutSection from './components/AboutSection.vue'
+import SkillsSection from './components/SkillsSection.vue'
 </script>
 
 <template>
   <div class="app-wrapper">
     <HeroSection />
+    <AboutSection />
+    <SkillsSection />
   </div>
 </template>
 

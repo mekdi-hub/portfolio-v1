@@ -1,5 +1,9 @@
 <script setup>
 import WindBloom from './WindBloom.vue'
+
+const scrollToAbout = () => {
+  document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -9,11 +13,11 @@ import WindBloom from './WindBloom.vue'
 
     <!-- Top Navigation Bar -->
     <header class="hero-header">
-      <!-- Monogram 'S' Logo -->
+      <!-- Monogram 'M' Logo -->
       <a href="#" class="logo" aria-label="Home">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
           <path 
-            d="M29 13.5C28 11.5 25.5 10 22 10C17.5 10 14 13.2 14 17.5C14 22.8 19.5 24.5 24.5 26.2C29.5 27.8 34 30.2 34 35.5C34 40.8 29.8 44 24 44C19 44 15.5 41.5 14 38.5M14 14.5C15 12.5 17.5 10.5 21 10M34 33.5C33 35.5 30.5 37.5 26 37.5" 
+            d="M12 36V14L24 28L36 14V36" 
             stroke="#111827" 
             stroke-width="3.5" 
             stroke-linecap="round" 
@@ -28,7 +32,7 @@ import WindBloom from './WindBloom.vue'
       <div class="hero-text-block">
         <!-- Subtitle / Name -->
         <div class="hero-author-tag">
-          <span class="author-name">SAMUEL &nbsp; TESFAYE</span>
+          <span class="author-name">MEKDELAWIT &nbsp; HABTAMU</span>
         </div>
 
         <!-- Big Bold Title -->
@@ -38,7 +42,7 @@ import WindBloom from './WindBloom.vue'
         </h1>
 
         <!-- Scroll Indicator -->
-        <div class="scroll-indicator" aria-hidden="true">
+        <div class="scroll-indicator" @click="scrollToAbout" title="Scroll to About">
           <div class="mouse-pill">
             <div class="scroll-wheel"></div>
           </div>
@@ -144,6 +148,7 @@ import WindBloom from './WindBloom.vue'
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
+  cursor: pointer;
 }
 
 .mouse-pill {
