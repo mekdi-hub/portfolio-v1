@@ -67,17 +67,18 @@ onMounted(() => {
         <p class="about-role-tag">Full-Stack Developer & System Builder</p>
       </div>
 
-      <!-- Description Paragraphs (Cardless) -->
-      <div class="about-paragraphs">
-        <p>
-          A dedicated software engineer specializing in the development of robust and scalable web applications. My journey in software engineering began at <strong>Wollo University</strong>, where I developed a strong foundation in software engineering and programming.
-        </p>
-        <p>
-          With a particular focus on <strong>React and Laravel</strong>, I am committed to delivering high-quality solutions that meet both user needs and business objectives. My expertise extends across the full software development lifecycle, from conceptualization to implementation.
-        </p>
-        <p>
-          I am driven by the challenges of problem-solving and continuously seek to enhance my skills to stay at the forefront of the ever-evolving technology landscape.
-        </p>
+      <!-- Description Text in 2-Column Grid (Cardless) -->
+      <div class="about-paragraphs-grid">
+        <div class="grid-col lead-col">
+          <p>
+            A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at <strong>Wollo University</strong>, focused on strong engineering principles and problem-solving.
+          </p>
+        </div>
+        <div class="grid-col detail-col">
+          <p>
+            With a focus on <strong>React and Laravel</strong>, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.
+          </p>
+        </div>
       </div>
 
       <!-- Minimalist Cardless Stats -->
@@ -113,7 +114,7 @@ onMounted(() => {
 }
 
 .about-container {
-  max-width: 860px;
+  max-width: 1040px;
   width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -130,12 +131,12 @@ onMounted(() => {
   color: #000000;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.2rem;
 }
 
 /* Greeting and Role */
 .about-heading-block {
-  margin-bottom: 2.2rem;
+  margin-bottom: 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -156,33 +157,47 @@ onMounted(() => {
 
 .about-role-tag {
   font-family: 'Space Mono', monospace;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #06b6d4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-/* Paragraphs */
-.about-paragraphs {
+/* 2-Column Grid Layout */
+.about-paragraphs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem;
+  width: 100%;
+  margin-bottom: 4.5rem;
+  text-align: left;
+}
+
+.grid-col {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 820px;
-  margin-bottom: 4rem;
 }
 
-.about-paragraphs p {
+.lead-col p {
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+  font-size: clamp(1.15rem, 1.8vw, 1.38rem);
   font-weight: 400;
-  line-height: 1.75;
-  color: #334155;
-  text-align: center;
+  line-height: 1.8;
+  color: #0f172a;
 }
 
-.about-paragraphs strong {
-  color: #0f172a;
+.detail-col p {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(1.05rem, 1.5vw, 1.22rem);
+  font-weight: 400;
+  line-height: 1.8;
+  color: #334155;
+}
+
+.grid-col strong {
+  color: #000000;
   font-weight: 600;
 }
 
@@ -191,11 +206,11 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3.5rem;
-  padding-top: 2rem;
+  gap: 4rem;
+  padding-top: 2.5rem;
   border-top: 1px solid #e2e8f0;
   width: 100%;
-  max-width: 760px;
+  max-width: 820px;
 }
 
 .stat-item {
@@ -228,40 +243,25 @@ onMounted(() => {
   background-color: #cbd5e1;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 868px) {
   .about-section {
     padding: 5rem 1.5rem 6rem 1.5rem;
   }
-  .about-title {
-    font-size: 2.4rem;
-    margin-bottom: 1.8rem;
+  .about-paragraphs-grid {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
   }
-  .about-greeting {
-    font-size: 1.7rem;
-  }
-  .about-role-tag {
-    font-size: 0.85rem;
-  }
-  .about-paragraphs {
-    gap: 1.2rem;
-    margin-bottom: 3rem;
-  }
-  .about-paragraphs p {
-    font-size: 1.05rem;
-    line-height: 1.65;
+  .lead-col p,
+  .detail-col p {
+    font-size: 1.1rem;
+    line-height: 1.7;
   }
   .stats-row {
-    gap: 1.5rem;
+    gap: 1.8rem;
     flex-wrap: wrap;
   }
   .stat-divider {
     display: none;
-  }
-  .stat-number {
-    font-size: 2.2rem;
-  }
-  .stat-label {
-    font-size: 0.75rem;
   }
 }
 </style>
