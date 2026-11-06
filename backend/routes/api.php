@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 
 // Public routes for portfolio
 Route::post('projects/upload-image', [ProjectController::class, 'uploadImage']);
+Route::post('projects/reorder', [ProjectController::class, 'reorder']);
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('messages', MessageController::class);
 

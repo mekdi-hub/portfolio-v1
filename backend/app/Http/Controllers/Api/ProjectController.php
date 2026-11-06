@@ -7,6 +7,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class ProjectController extends Controller
 {
@@ -15,8 +16,50 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::latest()->get();
+        if (Schema::hasColumn('projects', 'order')) {
+            $projects = Project::orderBy('order', 'asc')->orderBy('created_at', 'desc')->get();
+        } else {
+            $projects = Project::latest()->get();
+        }
         return response()->json($projects);
+    }
+
+    /**
+     * Update display order of projects.
+     */
+    public function reorder(Request $request)
+    {
+        try {
+            $orders = $request->input('orders', []);
+            if (!is_array($orders)) {
+                return response()->json(['error' => 'Invalid orders payload format'], 422);
+            }
+
+            if (!Schema::hasColumn('projects', 'order')) {
+                return response()->json([
+                    'status' => 'acknowledged',
+                    'message' => 'Order column not yet in database; client-side order will be preserved.'
+                ]);
+            }
+
+            foreach ($orders as $item) {
+                if (isset($item['id']) && isset($item['order'])) {
+                    Project::where('id', $item['id'])->update(['order' => (int) $item['order']]);
+                }
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Projects display order updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Projects reorder error: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to save project order.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -113,14 +156,21 @@ class ProjectController extends Controller
                 $githubLink = 'https://' . $githubLink;
             }
 
-            $project = Project::create([
+            $newProjectData = [
                 'title' => $validated['title'],
                 'description' => $validated['description'],
                 'tech_stack' => $validated['tech_stack'],
                 'image' => $imageUrl,
                 'demo_link' => $demoLink,
                 'github_link' => $githubLink
-            ]);
+            ];
+
+            if (Schema::hasColumn('projects', 'order')) {
+                $maxOrder = Project::max('order');
+                $newProjectData['order'] = ($maxOrder !== null) ? ($maxOrder + 1) : 0;
+            }
+
+            $project = Project::create($newProjectData);
 
             Log::info('Project created successfully', ['id' => $project->id]);
 
