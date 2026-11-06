@@ -276,6 +276,9 @@ const saveProject = async () => {
 
     const res = await fetch(url, {
       method: method,
+      headers: {
+        'Accept': 'application/json'
+      },
       body: formData
     })
 
@@ -283,17 +286,20 @@ const saveProject = async () => {
       const saved = await res.json()
       notify(`Project "${projectForm.title}" saved successfully!`)
       showProjectModal.value = false
+      imageFile.value = null
+      imagePreview.value = ''
       fetchProjects()
     } else {
       const err = await res.json().catch(() => ({}))
-      // If local server is offline or returned error, update local list for client-side demo
-      if (apiStatus.value === 'offline') {
-        saveProjectLocally()
-        notify(`Saved locally in demo mode (Backend server currently offline).`)
-        showProjectModal.value = false
-      } else {
-        notify(err.message || 'Error saving project on server.', 'error')
+      let errorMsg = 'Error saving project on server.'
+      if (err.errors) {
+        errorMsg = Object.values(err.errors).flat().join(' ')
+      } else if (err.message) {
+        errorMsg = err.message
+      } else if (err.error) {
+        errorMsg = err.error
       }
+      notify(errorMsg, 'error')
     }
   } catch (err) {
     if (apiStatus.value === 'offline') {
