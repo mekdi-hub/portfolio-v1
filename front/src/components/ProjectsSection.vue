@@ -154,13 +154,27 @@ onMounted(() => {
             class="project-card"
           >
             <!-- Mockup Window Box matching reference -->
-            <div class="mockup-window" :class="{ 'dark-theme': project.isDark, 'light-theme': !project.isDark }">
-              <!-- If custom image is uploaded -->
-              <template v-if="project.image && !project.imageText">
-                <img :src="project.image" :alt="project.title" class="custom-cover-img" />
+            <div
+              class="mockup-window"
+              :class="{
+                'dark-theme': project.isDark,
+                'light-theme': !project.isDark,
+                'has-custom-img': !!project.image
+              }"
+            >
+              <!-- If custom image is available -->
+              <template v-if="project.image">
+                <div
+                  class="cover-ambient-blur"
+                  :style="{ backgroundImage: `url(${project.image})` }"
+                  aria-hidden="true"
+                ></div>
+                <div class="cover-img-frame">
+                  <img :src="project.image" :alt="project.title" class="custom-cover-img" />
+                </div>
               </template>
 
-              <!-- Styled interactive mockup for curated projects -->
+              <!-- Styled interactive mockup for curated projects without an image -->
               <template v-else>
                 <div class="mockup-header-bar">
                   <span class="mockup-brand">{{ project.title }}</span>
@@ -358,15 +372,64 @@ onMounted(() => {
   flex-direction: column;
   justify-content: space-between;
   padding: 1.2rem 1.4rem;
+  background-color: #0b0f17;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mockup-window.has-custom-img {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0d131f;
+}
+
+:global(.dark) .mockup-window.has-custom-img {
+  background-color: #030712;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.cover-ambient-blur {
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 130%;
+  height: 130%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(32px);
+  opacity: 0.28;
+  transform: scale(1.15);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cover-img-frame {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem;
+  box-sizing: border-box;
 }
 
 .custom-cover-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card:hover .custom-cover-img {
+  transform: scale(1.025);
 }
 
 .mockup-window.dark-theme {

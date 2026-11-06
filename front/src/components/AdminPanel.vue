@@ -1028,11 +1028,19 @@ const saveSettings = async () => {
             >
               <div class="card-cover-container">
                 <span class="card-order-chip">#{{ index + 1 }}</span>
-                <img
-                  :src="proj.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400'"
-                  :alt="proj.title"
-                  class="card-cover-img"
-                />
+                <div
+                  v-if="proj.image"
+                  class="card-ambient-backdrop"
+                  :style="{ backgroundImage: `url(${proj.image})` }"
+                  aria-hidden="true"
+                ></div>
+                <div class="card-img-wrap">
+                  <img
+                    :src="proj.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400'"
+                    :alt="proj.title"
+                    class="card-cover-img"
+                  />
+                </div>
                 <div class="card-overlay-actions">
                   <button
                     type="button"
@@ -2279,7 +2287,9 @@ const saveSettings = async () => {
 .project-thumb-img {
   width: 68px;
   height: 48px;
-  object-fit: cover;
+  object-fit: contain;
+  background-color: #0f172a;
+  padding: 2px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
@@ -2396,13 +2406,55 @@ const saveSettings = async () => {
 .card-cover-container {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 200px;
+  background-color: #0b1120;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-ambient-backdrop {
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 130%;
+  height: 130%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(24px);
+  opacity: 0.25;
+  transform: scale(1.15);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-img-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem;
+  box-sizing: border-box;
 }
 
 .card-cover-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.admin-proj-card:hover .card-cover-img {
+  transform: scale(1.03);
 }
 
 .card-overlay-actions {

@@ -57,7 +57,7 @@ const handleNavigate = (view) => {
     />
 
     <!-- Global Floating Theme Toggle (Dark / Light) -->
-    <ThemeToggle v-if="currentView !== 'admin'" />
+    <ThemeToggle />
 
     <!-- Admin Dashboard View -->
     <AdminPanel

@@ -1,0 +1,489 @@
+/* ======================================================== */
+/* COMPREHENSIVE DARK THEME (PURE BLACK & CYAN ACCENTS)     */
+/* Global Unscoped Styles (guaranteed across all bundlers)   */
+/* ======================================================== */
+
+html.dark,
+html[data-theme="dark"],
+:root[data-theme="dark"] {
+  --bg-color: #000000 !important;
+  --text-primary: #ffffff !important;
+  --text-muted: #94a3b8 !important;
+  color-scheme: dark !important;
+}
+
+html.dark,
+html.dark body,
+html.dark #app,
+html.dark .app-wrapper,
+html.dark .portfolio-view {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* ========================================= */
+/* 1. HERO SECTION                           */
+/* ========================================= */
+html.dark .hero-container {
+  background-color: #000000 !important;
+}
+
+html.dark .hero-title,
+html.dark .author-name {
+  color: #ffffff !important;
+}
+
+html.dark .logo-svg path {
+  stroke: #ffffff !important;
+}
+
+html.dark .download-cv-btn {
+  background-color: #0d1117 !important;
+  border-color: rgba(6, 182, 212, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(6, 182, 212, 0.15) !important;
+}
+
+html.dark .download-cv-btn:hover {
+  background-color: #161b22 !important;
+  border-color: #06b6d4 !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7), 0 0 16px rgba(6, 182, 212, 0.35) !important;
+}
+
+html.dark .mouse-pill {
+  border-color: #64748b !important;
+}
+
+html.dark .mouse-pill:hover {
+  border-color: #22d3ee !important;
+}
+
+html.dark .scroll-wheel {
+  background-color: #22d3ee !important;
+}
+
+/* ========================================= */
+/* 2. ABOUT SECTION                          */
+/* ========================================= */
+html.dark .about-section {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.dark .about-title,
+html.dark .about-greeting,
+html.dark .lead-col strong,
+html.dark .detail-col strong {
+  color: #ffffff !important;
+}
+
+html.dark .highlight-name {
+  color: #22d3ee !important;
+}
+
+html.dark .about-role-tag,
+html.dark .stat-label {
+  color: #94a3b8 !important;
+}
+
+html.dark .lead-col p,
+html.dark .detail-col p {
+  color: #cbd5e1 !important;
+}
+
+html.dark .stats-row {
+  border-top-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark .stat-number {
+  color: #ffffff !important;
+}
+
+html.dark .stat-divider {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ========================================= */
+/* 3. SKILLS SECTION                         */
+/* ========================================= */
+html.dark .skills-tech-section {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.dark .skills-top-bar {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .skills-divider-line {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .section-tag,
+html.dark .table-status,
+html.dark .skills-meta-row,
+html.dark .meta-dim,
+html.dark .skills-search-icon {
+  color: #94a3b8 !important;
+}
+
+html.dark .meta-status-text {
+  color: #e2e8f0 !important;
+}
+
+html.dark .inspector-card {
+  background-color: #090d16 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+html.dark .corner-bracket {
+  border-top-color: #22d3ee !important;
+  border-left-color: #22d3ee !important;
+}
+
+html.dark .inspector-title {
+  color: #ffffff !important;
+}
+
+html.dark .inspector-logo {
+  color: #22d3ee !important;
+}
+
+html.dark .inspector-desc {
+  color: #cbd5e1 !important;
+}
+
+html.dark .inspector-header-deco {
+  color: #94a3b8 !important;
+}
+
+html.dark .metric-bar {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark .matrix-tile {
+  background-color: #090d16 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .matrix-tile:hover {
+  border-color: #06b6d4 !important;
+  color: #22d3ee !important;
+  background-color: #0f172a !important;
+}
+
+html.dark .matrix-tile.active {
+  background-color: #000000 !important;
+  border-color: #06b6d4 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 24px rgba(6, 182, 212, 0.3) !important;
+}
+
+html.dark .tile-number {
+  color: #64748b !important;
+}
+
+html.dark .tile-progress-bar {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .tile-progress-fill {
+  background-color: #06b6d4 !important;
+}
+
+/* ========================================= */
+/* 4. PROJECTS SECTION                       */
+/* ========================================= */
+html.dark .curtain-wrapper,
+html.dark .curtain-underlay {
+  background-color: #000000 !important;
+}
+
+html.dark .underlay-title {
+  color: #ffffff !important;
+}
+
+html.dark .portfolio-badge {
+  background-color: #082f49 !important;
+  border-color: rgba(6, 182, 212, 0.4) !important;
+  color: #38bdf8 !important;
+}
+
+html.dark .scroll-curtain-hint {
+  color: #94a3b8 !important;
+}
+
+html.dark .curtain-sheet {
+  background-color: #000000 !important;
+  border-top-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.9) !important;
+}
+
+html.dark .curtain-pill-notch {
+  background-color: #334155 !important;
+}
+
+html.dark .project-name {
+  color: #ffffff !important;
+}
+
+html.dark .project-summary {
+  color: #94a3b8 !important;
+}
+
+html.dark .tech-tag {
+  background-color: #082f49 !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+  color: #22d3ee !important;
+}
+
+html.dark .live-demo-btn {
+  background-color: #0d1117 !important;
+  border: 1px solid rgba(6, 182, 212, 0.4) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .live-demo-btn:hover {
+  background-color: #161b22 !important;
+  border-color: #06b6d4 !important;
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3) !important;
+}
+
+html.dark .mockup-window {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .mockup-window.light-theme {
+  background: linear-gradient(135deg, #161922 0%, #090d16 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .mockup-window.light-theme .mockup-cta-btn {
+  background-color: #06b6d4 !important;
+  color: #000000 !important;
+}
+
+html.dark .mockup-window.has-custom-img {
+  background-color: #05070c !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ========================================= */
+/* 5. CONTACT SECTION                        */
+/* ========================================= */
+html.dark .contact-section {
+  background-color: #000000 !important;
+}
+
+html.dark .contact-headline {
+  color: #ffffff !important;
+}
+
+html.dark .contact-divider {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark .socials-label {
+  color: #94a3b8 !important;
+}
+
+html.dark .social-icon-btn {
+  background-color: #090d16 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .social-icon-btn:hover {
+  border-color: #06b6d4 !important;
+  color: #06b6d4 !important;
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25) !important;
+}
+
+html.dark .contact-pill-card {
+  background-color: #090d16 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark .contact-pill-card:hover {
+  border-color: #06b6d4 !important;
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.2) !important;
+}
+
+html.dark .pill-value {
+  color: #f8fafc !important;
+}
+
+html.dark .footer-credit {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  color: #64748b !important;
+}
+
+html.dark .admin-portal-link {
+  color: #64748b !important;
+}
+
+html.dark .admin-portal-link:hover {
+  color: #06b6d4 !important;
+}
+
+html.dark .contact-modal-window {
+  background-color: #0b1120 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .field-item label {
+  color: #94a3b8 !important;
+}
+
+html.dark .field-item input,
+html.dark .field-item textarea {
+  background-color: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+html.dark .modal-close-btn {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+}
+
+html.dark .submit-inquiry-btn {
+  background-color: #06b6d4 !important;
+  color: #000000 !important;
+}
+
+html.dark .cursor-glow-spotlight {
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.32) 0%, rgba(34, 211, 238, 0.16) 35%, rgba(0, 0, 0, 0) 70%) !important;
+}
+
+/* ========================================= */
+/* 6. ADMIN PANEL DARK THEME                 */
+/* ========================================= */
+html.dark .admin-shell {
+  background-color: #05070c !important;
+  color: #f1f5f9 !important;
+}
+
+html.dark .admin-header {
+  background-color: #0b101b !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .admin-sidebar,
+html.dark .sidebar-nav {
+  background-color: #090d16 !important;
+  border-right-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .nav-item {
+  color: #94a3b8 !important;
+}
+
+html.dark .nav-item:hover {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+}
+
+html.dark .nav-item.active {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+html.dark .table-card,
+html.dark .admin-proj-card,
+html.dark .admin-card,
+html.dark .settings-card,
+html.dark .diag-card,
+html.dark .modal-window {
+  background-color: #090d16 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f1f5f9 !important;
+}
+
+html.dark .admin-data-table th {
+  background-color: #0b101b !important;
+  color: #94a3b8 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .admin-data-table td {
+  border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .project-table-title {
+  color: #ffffff !important;
+}
+
+html.dark .project-table-desc,
+html.dark .card-desc {
+  color: #94a3b8 !important;
+}
+
+html.dark .card-title {
+  color: #ffffff !important;
+}
+
+html.dark .action-btn {
+  background-color: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .order-btn {
+  background-color: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .order-btn:hover:not(:disabled) {
+  background-color: #06b6d4 !important;
+  color: #000000 !important;
+}
+
+html.dark .order-badge {
+  background-color: #082f49 !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+  color: #38bdf8 !important;
+}
+
+html.dark .view-toggle-pill {
+  background-color: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .toggle-opt {
+  color: #94a3b8 !important;
+}
+
+html.dark .toggle-opt.active {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+html.dark .search-input-wrap input,
+html.dark .form-control,
+html.dark input[type="text"],
+html.dark input[type="email"],
+html.dark input[type="password"],
+html.dark textarea,
+html.dark select {
+  background-color: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+html.dark .login-container {
+  background-color: #090d16 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+html.dark .login-wrapper {
+  background: #000000 !important;
+}
+

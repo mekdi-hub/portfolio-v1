@@ -1,4 +1,6 @@
 /* Reset and Portfolio Styles */
+@import './dark-theme.css';
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;

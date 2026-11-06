@@ -1,7 +1,9 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import * as THREE from 'three'
+import { useTheme } from '../composables/useTheme'
 
+const { isDark } = useTheme()
 const canvasContainer = ref(null)
 
 let scene, camera, renderer, mesh, animationFrameId
@@ -136,6 +138,7 @@ void main() {
 
 const fragmentShader = `
 uniform float uTime;
+uniform vec3 uBgColor;
 varying vec3 vNormal;
 varying vec3 vViewPosition;
 varying vec3 vWorldPosition;
@@ -171,8 +174,6 @@ void main() {
   vec3 colorMid = vec3(0.05, 0.84, 0.76);
   // Deep emerald / oceanic shadow
   vec3 colorShadow = vec3(0.02, 0.54, 0.58);
-  // Light off-white background color
-  vec3 bgColor = vec3(0.957, 0.961, 0.969);
 
   // Color gradient based on displacement
   float h = clamp(vDisplacement / 2.2, 0.0, 1.0);
@@ -183,10 +184,10 @@ void main() {
   // Combine lighting
   vec3 finalColor = baseColor * (diff1 * 0.75 + diff2 + 0.35) + vec3(0.95, 1.0, 1.0) * fresnel * 0.45;
 
-  // Feather outer spikes softly into background
+  // Feather outer spikes softly into dynamic background (Pitch-black #000000 in dark mode, light grey in light mode)
   float dist = length(vLocalPosition);
   float edgeFade = smoothstep(2.8, 1.3, dist);
-  finalColor = mix(bgColor, finalColor, edgeFade);
+  finalColor = mix(uBgColor, finalColor, edgeFade);
 
   gl_FragColor = vec4(finalColor, 1.0);
 }
@@ -218,12 +219,25 @@ const initThree = () => {
   // Geometry: High-density Icosahedron for fine organic spikes
   const geometry = new THREE.IcosahedronGeometry(1.45, 64)
 
-  // Uniforms
+  // Uniforms with dynamic background color (Pure black #000000 in dark mode)
+  const initialBg = isDark.value ? new THREE.Vector3(0.0, 0.0, 0.0) : new THREE.Vector3(0.957, 0.961, 0.969)
   uniforms = {
     uTime: { value: 0 },
     uMouse: { value: new THREE.Vector2(0, 0) },
-    uMouseSpeed: { value: 0 }
+    uMouseSpeed: { value: 0 },
+    uBgColor: { value: initialBg }
   }
+
+  // React to theme changes in real-time
+  watch(isDark, (val) => {
+    if (uniforms && uniforms.uBgColor) {
+      if (val) {
+        uniforms.uBgColor.value.set(0.0, 0.0, 0.0)
+      } else {
+        uniforms.uBgColor.value.set(0.957, 0.961, 0.969)
+      }
+    }
+  })
 
   // Material
   const material = new THREE.ShaderMaterial({
