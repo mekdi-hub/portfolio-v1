@@ -1,10 +1,11 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { getApiBaseUrl, setApiBaseUrl } from '../config/api'
 
 const emit = defineEmits(['navigate'])
 
 // API URL configuration
-const customApiUrl = ref(localStorage.getItem('portfolio_api_base') || import.meta.env.VITE_API_URL || 'http://localhost:8000/api')
+const customApiUrl = ref(getApiBaseUrl())
 const apiStatus = ref('checking') // 'online' | 'offline' | 'checking'
 const apiLatency = ref(null)
 
@@ -138,7 +139,7 @@ const checkApiHealth = async () => {
 }
 
 const updateApiUrl = () => {
-  localStorage.setItem('portfolio_api_base', customApiUrl.value)
+  setApiBaseUrl(customApiUrl.value)
   notify(`API Base URL updated to: ${customApiUrl.value}`)
   initAdminData()
 }
