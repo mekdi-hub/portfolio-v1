@@ -367,13 +367,26 @@ onMounted(() => {
 }
 
 .underlay-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
   font-size: clamp(3.8rem, 8vw, 6.5rem);
   font-weight: 700;
   color: #000000;
-  letter-spacing: -0.03em;
-  line-height: 1;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
   margin: 0;
+  position: relative;
+  display: inline-block;
+}
+
+.underlay-title::after {
+  content: '';
+  display: block;
+  width: 68px;
+  height: 3px;
+  margin: 0.85rem auto 0 auto;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent 0%, #06b6d4 50%, transparent 100%);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.7);
 }
 
 .scroll-curtain-hint {
@@ -895,6 +908,11 @@ onMounted(() => {
 
 :global(.dark) .underlay-title {
   color: #ffffff;
+}
+
+:global(.dark) .underlay-title::after {
+  background: linear-gradient(90deg, transparent 0%, #22d3ee 50%, transparent 100%);
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.95);
 }
 
 :global(.dark) .portfolio-badge {

@@ -205,6 +205,11 @@ html.dark .underlay-title {
   color: #ffffff !important;
 }
 
+html.dark .underlay-title::after {
+  background: linear-gradient(90deg, transparent 0%, #22d3ee 50%, transparent 100%) !important;
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.95) !important;
+}
+
 html.dark .portfolio-badge {
   background-color: #082f49 !important;
   border-color: rgba(6, 182, 212, 0.4) !important;
