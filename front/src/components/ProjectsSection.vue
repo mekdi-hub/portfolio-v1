@@ -10,47 +10,6 @@ const onImageLoad = (id) => {
   imageLoadingStates[id] = true
 }
 
-const defaultProjects = [
-  {
-    id: 1,
-    title: 'Gibi-Equb',
-    description: 'this project is mainly built for ethiopian university students',
-    tech_stack: ['Laravel', 'vue', 'mysql'],
-    imageText: {
-      tag: 'Trusted by students across Ethiopia',
-      headline: 'Save Together, Win Together',
-      subtext: "Gibi-Equb brings Ethiopia's beloved savings tradition online — with fellow students, contribute monthly, and take turns receiving the full pot. Simple, transparent, and fair."
-    },
-    isDark: true,
-    demo_link: '#'
-  },
-  {
-    id: 2,
-    title: 'Lumina-Tutors',
-    description: 'Digitalized tutorial giving web based Learning Management System',
-    tech_stack: ['Laravel 12', 'Vue 3', 'Custom css', 'Mysql', 'RestApi'],
-    imageText: {
-      tag: 'Personalized Learning',
-      headline: 'Master Any Subject With Confidence',
-      subtext: 'Get personalized one-on-one support from experienced tutors who are passionate about your success.'
-    },
-    isDark: false,
-    demo_link: '#'
-  },
-  {
-    id: 3,
-    title: 'Eduage Ai',
-    description: 'Discover universities, match scholarships, check eligibility, and get visa guidance',
-    tech_stack: ['Laravel', 'Vue', 'Postgres', 'Qwen ai', 'Gemini ai'],
-    imageText: {
-      tag: 'EduVoyage AI',
-      headline: 'Plan your entire study-abroad journey with AI agents',
-      subtext: 'Discover universities, match scholarships, check eligibility, and get visa guidance — all orchestrated by specialized Qwen-powered agents.'
-    },
-    isDark: true,
-    demo_link: '#'
-  }
-]
 
 const projects = ref([])
 
