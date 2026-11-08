@@ -1,10 +1,11 @@
 <script setup>
 import { ref, reactive } from 'vue'
+import { getApiBaseUrl } from '../config/api'
 
 const email = 'mekdimeki8@gmail.com'
 const phone = '+251 953 419 361'
 const phoneLink = '+251953419361'
-const API_BASE = localStorage.getItem('portfolio_api_base') || import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+const API_BASE = getApiBaseUrl()
 
 const contactRef = ref(null)
 const mouseX = ref(0)
