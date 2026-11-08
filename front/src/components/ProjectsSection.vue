@@ -107,7 +107,6 @@ onMounted(() => {
     <!-- Pinned Underlay: Shows 'My Projects' full screen in background -->
     <div class="curtain-underlay">
       <div class="underlay-content">
-        <div class="portfolio-badge">PORTFOLIO</div>
         <h2 class="underlay-title">My Projects</h2>
         <div class="scroll-curtain-hint">
           <span class="hint-text">Scroll to reveal</span>

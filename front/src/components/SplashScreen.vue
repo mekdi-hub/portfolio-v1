@@ -136,7 +136,7 @@ onUnmounted(() => {
       <!-- Spaced Monospace System Text -->
       <div class="sys-init-caption">
         <span class="mono-text">
-          <span class="cyan-accent">SYS_INIT</span> &nbsp;—&nbsp; LOADING PORTFOLIO
+          <span class="cyan-accent">SYS_INIT</span> &nbsp;—&nbsp; LOADING
         </span>
       </div>
     </div>
