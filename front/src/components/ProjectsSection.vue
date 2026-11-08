@@ -1,7 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 
 const API_BASE = localStorage.getItem('portfolio_api_base') || import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+
+const isLoading = ref(true)
+const imageLoadingStates = reactive({})
+
+const onImageLoad = (id) => {
+  imageLoadingStates[id] = true
+}
 
 const defaultProjects = [
   {
@@ -45,7 +52,7 @@ const defaultProjects = [
   }
 ]
 
-const projects = ref([...defaultProjects])
+const projects = ref([])
 
 const normalizeTechStack = (tech) => {
   if (Array.isArray(tech)) return tech
@@ -89,7 +96,11 @@ const sortProjects = (list) => {
   return cloned
 }
 
-const fetchPortfolioProjects = async () => {
+const fetchPortfolioProjects = async (initial = false) => {
+  if (initial || projects.value.length === 0) {
+    isLoading.value = true
+  }
+  const startTime = Date.now()
   try {
     const res = await fetch(`${API_BASE}/projects`)
     if (res.ok) {
@@ -105,20 +116,29 @@ const fetchPortfolioProjects = async () => {
         return
       }
     }
+    // Fallback if data is empty
+    projects.value = sortProjects(defaultProjects).map((item, idx) => ({
+      ...item,
+      isDark: idx % 2 === 0
+    }))
   } catch (err) {
     console.info('Loaded curated portfolio projects (Backend offline or local cache active).')
+    projects.value = sortProjects(defaultProjects).map((item, idx) => ({
+      ...item,
+      isDark: idx % 2 === 0
+    }))
+  } finally {
+    const elapsed = Date.now() - startTime
+    const remaining = Math.max(0, 420 - elapsed)
+    setTimeout(() => {
+      isLoading.value = false
+    }, remaining)
   }
-
-  // Fallback sorting on default projects
-  projects.value = sortProjects(defaultProjects).map((item, idx) => ({
-    ...item,
-    isDark: idx % 2 === 0
-  }))
 }
 
 onMounted(() => {
-  fetchPortfolioProjects()
-  window.addEventListener('focus', fetchPortfolioProjects)
+  fetchPortfolioProjects(true)
+  window.addEventListener('focus', () => fetchPortfolioProjects(false))
 })
 </script>
 
@@ -148,85 +168,148 @@ onMounted(() => {
 
       <div class="curtain-content">
         <div class="projects-cards-grid">
-          <article
-            v-for="project in projects"
-            :key="project.id"
-            class="project-card"
-          >
-            <!-- Mockup Window Box matching reference -->
-            <div
-              class="mockup-window"
-              :class="{
-                'dark-theme': project.isDark,
-                'light-theme': !project.isDark,
-                'has-custom-img': !!project.image
-              }"
+          <!-- Skeleton Loading Placeholders -->
+          <template v-if="isLoading">
+            <article
+              v-for="n in 3"
+              :key="'skeleton-' + n"
+              class="project-card skeleton-card"
+              aria-hidden="true"
             >
-              <!-- If custom image is available -->
-              <template v-if="project.image">
-                <div
-                  class="cover-ambient-blur"
-                  :style="{ backgroundImage: `url(${project.image})` }"
-                  aria-hidden="true"
-                ></div>
-                <div class="cover-img-frame">
-                  <img :src="project.image" :alt="project.title" class="custom-cover-img" />
-                </div>
-              </template>
-
-              <!-- Styled interactive mockup for curated projects without an image -->
-              <template v-else>
-                <div class="mockup-header-bar">
-                  <span class="mockup-brand">{{ project.title }}</span>
-                  <div class="mockup-nav-links">
-                    <span>Home</span>
-                    <span>About</span>
-                    <span>Features</span>
-                    <span>Contact</span>
+              <!-- Mockup Window Box Skeleton -->
+              <div class="mockup-window skeleton-window skeleton-pulse">
+                <div class="skeleton-mockup-header">
+                  <div class="skeleton-shimmer-pill" style="width: 80px; height: 13px;"></div>
+                  <div class="skeleton-mockup-dots">
+                    <span class="skeleton-dot"></span>
+                    <span class="skeleton-dot"></span>
+                    <span class="skeleton-dot"></span>
                   </div>
                 </div>
 
-                <div class="mockup-content-body">
-                  <span class="mockup-pill-tag">{{ project.imageText?.tag || 'Featured Project' }}</span>
-                  <h4 class="mockup-headline">{{ project.imageText?.headline || project.title }}</h4>
-                  <p class="mockup-subtext">{{ project.imageText?.subtext || project.description }}</p>
-                  
-                  <div class="mockup-cta-btn">
-                    <span>Explore Platform</span>
-                  </div>
+                <div class="skeleton-mockup-body">
+                  <div class="skeleton-shimmer-pill" style="width: 90px; height: 18px; margin-bottom: 14px;"></div>
+                  <div class="skeleton-shimmer-bar" style="width: 82%; height: 22px; margin-bottom: 10px;"></div>
+                  <div class="skeleton-shimmer-bar" style="width: 65%; height: 14px;"></div>
                 </div>
-              </template>
-            </div>
 
-            <!-- Details Under Card -->
-            <div class="project-details">
-              <h3 class="project-name">{{ project.title }}</h3>
-              <p class="project-summary">{{ project.description }}</p>
-
-              <!-- Tech Tags -->
-              <div class="project-tags">
-                <span
-                  v-for="tech in project.tech_stack"
-                  :key="tech"
-                  class="tech-tag"
-                >
-                  {{ tech }}
-                </span>
+                <div class="skeleton-mockup-footer">
+                  <div class="skeleton-shimmer-pill" style="width: 110px; height: 26px;"></div>
+                </div>
               </div>
 
-              <!-- Action Link -->
-              <div v-if="project.demo_link" class="project-action-row">
-                <a :href="project.demo_link" class="live-demo-btn" target="_blank" rel="noopener noreferrer">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                  </svg>
-                  <span>Live Demo</span>
-                </a>
+              <!-- Details Under Card Skeleton -->
+              <div class="project-details">
+                <div class="skeleton-shimmer-bar skeleton-title-bar"></div>
+                <div class="skeleton-shimmer-bar skeleton-desc-line-1"></div>
+                <div class="skeleton-shimmer-bar skeleton-desc-line-2"></div>
+
+                <div class="skeleton-tags-row">
+                  <div class="skeleton-tag-pill" style="width: 75px;"></div>
+                  <div class="skeleton-tag-pill" style="width: 60px;"></div>
+                  <div class="skeleton-tag-pill" style="width: 85px;"></div>
+                </div>
+
+                <div class="skeleton-action-row">
+                  <div class="skeleton-btn-pill"></div>
+                </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </template>
+
+          <!-- Real Loaded Project Cards -->
+          <template v-else>
+            <article
+              v-for="project in projects"
+              :key="project.id"
+              class="project-card fade-in-card"
+            >
+              <!-- Mockup Window Box matching reference -->
+              <div
+                class="mockup-window"
+                :class="{
+                  'dark-theme': project.isDark,
+                  'light-theme': !project.isDark,
+                  'has-custom-img': !!project.image
+                }"
+              >
+                <!-- If custom image is available -->
+                <template v-if="project.image">
+                  <div
+                    class="cover-ambient-blur"
+                    :style="{ backgroundImage: `url(${project.image})` }"
+                    aria-hidden="true"
+                  ></div>
+                  <div class="cover-img-frame">
+                    <div
+                      v-if="!imageLoadingStates[project.id]"
+                      class="img-skeleton-placeholder skeleton-pulse"
+                      aria-hidden="true"
+                    ></div>
+                    <img
+                      :src="project.image"
+                      :alt="project.title"
+                      class="custom-cover-img"
+                      :class="{ 'img-loaded': imageLoadingStates[project.id] }"
+                      @load="onImageLoad(project.id)"
+                    />
+                  </div>
+                </template>
+
+                <!-- Styled interactive mockup for curated projects without an image -->
+                <template v-else>
+                  <div class="mockup-header-bar">
+                    <span class="mockup-brand">{{ project.title }}</span>
+                    <div class="mockup-nav-links">
+                      <span>Home</span>
+                      <span>About</span>
+                      <span>Features</span>
+                      <span>Contact</span>
+                    </div>
+                  </div>
+
+                  <div class="mockup-content-body">
+                    <span class="mockup-pill-tag">{{ project.imageText?.tag || 'Featured Project' }}</span>
+                    <h4 class="mockup-headline">{{ project.imageText?.headline || project.title }}</h4>
+                    <p class="mockup-subtext">{{ project.imageText?.subtext || project.description }}</p>
+                    
+                    <div class="mockup-cta-btn">
+                      <span>Explore Platform</span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Details Under Card -->
+              <div class="project-details">
+                <h3 class="project-name">{{ project.title }}</h3>
+                <p class="project-summary">{{ project.description }}</p>
+
+                <!-- Tech Tags -->
+                <div class="project-tags">
+                  <span
+                    v-for="tech in project.tech_stack"
+                    :key="tech"
+                    class="tech-tag"
+                  >
+                    {{ tech }}
+                  </span>
+                </div>
+
+                <!-- Action Link -->
+                <div v-if="project.demo_link" class="project-action-row">
+                  <a :href="project.demo_link" class="live-demo-btn" target="_blank" rel="noopener noreferrer">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    <span>Live Demo</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </template>
         </div>
       </div>
     </section>
@@ -425,11 +508,187 @@ onMounted(() => {
   object-position: center;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-cover-img.img-loaded {
+  opacity: 1;
 }
 
 .project-card:hover .custom-cover-img {
   transform: scale(1.025);
+}
+
+/* ======================================================== */
+/* SKELETON LOADING CARD STYLES                              */
+/* ======================================================== */
+.skeleton-card {
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-pulse {
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #f8fafc 40%,
+    #e2e8f0 80%,
+    #e2e8f0 100%
+  );
+  background-size: 250% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -150% 0;
+  }
+}
+
+.skeleton-window {
+  position: relative;
+  width: 100%;
+  height: 270px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.4rem 1.6rem;
+  background-color: #f1f5f9;
+}
+
+.skeleton-mockup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  padding-bottom: 0.7rem;
+}
+
+.skeleton-mockup-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.skeleton-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+}
+
+.skeleton-mockup-body {
+  margin: 1.2rem 0;
+}
+
+.skeleton-shimmer-bar {
+  background: linear-gradient(
+    90deg,
+    #cbd5e1 0%,
+    #e2e8f0 45%,
+    #cbd5e1 90%,
+    #cbd5e1 100%
+  );
+  background-size: 250% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+.skeleton-shimmer-pill {
+  background: linear-gradient(
+    90deg,
+    #cbd5e1 0%,
+    #e2e8f0 45%,
+    #cbd5e1 90%,
+    #cbd5e1 100%
+  );
+  background-size: 250% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+  border-radius: 9999px;
+}
+
+.skeleton-title-bar {
+  height: 28px;
+  width: 65%;
+  border-radius: 8px;
+  margin-bottom: 0.9rem;
+}
+
+.skeleton-desc-line-1 {
+  height: 16px;
+  width: 95%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-desc-line-2 {
+  height: 16px;
+  width: 70%;
+  margin-bottom: 1.4rem;
+}
+
+.skeleton-tags-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.skeleton-tag-pill {
+  height: 28px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    #e0f2fe 0%,
+    #f0fdfa 45%,
+    #e0f2fe 90%,
+    #e0f2fe 100%
+  );
+  background-size: 250% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+}
+
+.skeleton-btn-pill {
+  width: 120px;
+  height: 38px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    #cbd5e1 0%,
+    #e2e8f0 45%,
+    #cbd5e1 90%,
+    #cbd5e1 100%
+  );
+  background-size: 250% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+}
+
+.img-skeleton-placeholder {
+  position: absolute;
+  inset: 0.85rem;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.fade-in-card {
+  animation: fadeInCard 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .mockup-window.dark-theme {

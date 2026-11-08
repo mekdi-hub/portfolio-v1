@@ -487,3 +487,53 @@ html.dark .login-wrapper {
   background: #000000 !important;
 }
 
+/* ========================================= */
+/* 7. SKELETON LOADING DARK THEME            */
+/* ========================================= */
+html.dark .skeleton-window {
+  background-color: #090d16 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+}
+
+html.dark .skeleton-pulse {
+  background: linear-gradient(
+    90deg,
+    #0c101a 0%,
+    #172032 45%,
+    #0c101a 90%,
+    #0c101a 100%
+  ) !important;
+  background-size: 250% 100% !important;
+}
+
+html.dark .skeleton-shimmer-bar,
+html.dark .skeleton-shimmer-pill,
+html.dark .skeleton-btn-pill,
+html.dark .img-skeleton-placeholder {
+  background: linear-gradient(
+    90deg,
+    #131a29 0%,
+    #1e293b 45%,
+    #131a29 90%,
+    #131a29 100%
+  ) !important;
+  background-size: 250% 100% !important;
+}
+
+html.dark .skeleton-dot {
+  background-color: #334155 !important;
+}
+
+html.dark .skeleton-tag-pill {
+  background: linear-gradient(
+    90deg,
+    #082f49 0%,
+    #0e3e5e 45%,
+    #082f49 90%,
+    #082f49 100%
+  ) !important;
+  background-size: 250% 100% !important;
+}
+
+

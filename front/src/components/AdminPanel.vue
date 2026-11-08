@@ -921,7 +921,28 @@ const saveSettings = async () => {
                   <th style="width: 140px; text-align: right;">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <!-- SKELETON LOADING ROWS -->
+              <tbody v-if="loading">
+                <tr v-for="n in 3" :key="'admin-tbl-skel-' + n">
+                  <td style="text-align: center;"><div class="skeleton-shimmer-pill" style="width: 36px; height: 22px; margin: 0 auto;"></div></td>
+                  <td><div class="skeleton-shimmer-bar" style="width: 68px; height: 48px; border-radius: 8px;"></div></td>
+                  <td>
+                    <div class="skeleton-shimmer-bar" style="width: 140px; height: 18px; margin-bottom: 6px;"></div>
+                    <div class="skeleton-shimmer-bar" style="width: 220px; height: 12px;"></div>
+                  </td>
+                  <td>
+                    <div style="display: flex; gap: 6px;">
+                      <div class="skeleton-shimmer-pill" style="width: 50px; height: 20px;"></div>
+                      <div class="skeleton-shimmer-pill" style="width: 50px; height: 20px;"></div>
+                    </div>
+                  </td>
+                  <td><div class="skeleton-shimmer-pill" style="width: 60px; height: 16px;"></div></td>
+                  <td><div class="skeleton-shimmer-pill" style="width: 70px; height: 32px; margin-left: auto;"></div></td>
+                </tr>
+              </tbody>
+
+              <!-- REAL ROWS -->
+              <tbody v-else>
                 <tr v-for="(proj, index) in filteredProjects" :key="proj.id">
                   <td class="cell-order">
                     <div class="order-control-box">
@@ -1021,11 +1042,30 @@ const saveSettings = async () => {
 
           <!-- CARDS VIEW -->
           <div v-else class="cards-grid">
-            <div
-              v-for="(proj, index) in filteredProjects"
-              :key="proj.id"
-              class="admin-proj-card"
-            >
+            <template v-if="loading">
+              <div v-for="n in 3" :key="'admin-card-skel-' + n" class="admin-proj-card admin-skeleton-card" aria-hidden="true">
+                <div class="card-cover-container admin-skeleton-cover skeleton-pulse"></div>
+                <div class="card-details">
+                  <div class="skeleton-shimmer-bar" style="height: 22px; width: 65%; margin-bottom: 12px;"></div>
+                  <div class="skeleton-shimmer-bar" style="height: 14px; width: 95%; margin-bottom: 6px;"></div>
+                  <div class="skeleton-shimmer-bar" style="height: 14px; width: 75%; margin-bottom: 18px;"></div>
+                  <div class="tech-tags-wrap" style="margin-bottom: 16px;">
+                    <span class="skeleton-shimmer-pill" style="width: 55px; height: 22px; display: inline-block;"></span>
+                    <span class="skeleton-shimmer-pill" style="width: 65px; height: 22px; display: inline-block;"></span>
+                    <span class="skeleton-shimmer-pill" style="width: 45px; height: 22px; display: inline-block;"></span>
+                  </div>
+                  <div class="card-links-row">
+                    <span class="skeleton-shimmer-pill" style="width: 80px; height: 28px; display: inline-block;"></span>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <div
+                v-for="(proj, index) in filteredProjects"
+                :key="proj.id"
+                class="admin-proj-card"
+              >
               <div class="card-cover-container">
                 <span class="card-order-chip">#{{ index + 1 }}</span>
                 <div
@@ -1103,7 +1143,8 @@ const saveSettings = async () => {
                 </div>
               </div>
             </div>
-          </div>
+          </template>
+        </div>
         </section>
 
         <!-- ============================================== -->
