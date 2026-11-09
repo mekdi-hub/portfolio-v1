@@ -130,3 +130,4 @@ export function useSettings() {
     DEFAULT_SETTINGS
   }
 }
+
