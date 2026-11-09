@@ -1,11 +1,24 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { getApiBaseUrl } from '../config/api'
+import { useSettings } from '../composables/useSettings'
 
-const email = 'mekdimeki8@gmail.com'
-const phone = '+251 953 419 361'
-const phoneLink = '+251953419361'
+const { settings } = useSettings()
+
+const email = computed(() => settings.value.contact_email || 'mekdimeki8@gmail.com')
+const phone = computed(() => settings.value.contact_phone || '+251 953 419 361')
+const phoneLink = computed(() => (settings.value.contact_phone || '+251953419361').replace(/\s+/g, ''))
 const API_BASE = getApiBaseUrl()
+
+const headlineLines = computed(() => {
+  const raw = (settings.value.contact_title || "Let's Work Together").toUpperCase()
+  const words = raw.split(/\s+/)
+  if (words.length <= 2) {
+    return [words[0] || "LET'S WORK", words[1] || "TOGETHER"]
+  }
+  const mid = Math.ceil(words.length / 2)
+  return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')]
+})
 
 const contactRef = ref(null)
 const mouseX = ref(0)
