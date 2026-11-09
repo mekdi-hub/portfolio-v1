@@ -1,5 +1,28 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useSettings } from '../composables/useSettings'
+
+const { settings } = useSettings()
+
+const aboutParagraphs = computed(() => {
+  const desc = settings.value.about_description?.trim()
+  if (!desc) {
+    return [
+      'A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at Wollo University, focused on strong engineering principles and problem-solving.',
+      'With a focus on React and Laravel, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.'
+    ]
+  }
+  // Split multiple sentences/paragraphs across two columns
+  const sentences = desc.split(/(?<=[.!?])\s+/).filter(Boolean)
+  if (sentences.length >= 2) {
+    const mid = Math.ceil(sentences.length / 2)
+    return [
+      sentences.slice(0, mid).join(' '),
+      sentences.slice(mid).join(' ')
+    ]
+  }
+  return [desc, '']
+})
 
 const statsSection = ref(null)
 const hasCounted = ref(false)
@@ -59,25 +82,21 @@ onMounted(() => {
   <section id="about" class="about-section">
     <div class="about-container">
       <!-- Section Title in Black -->
-      <h2 class="about-title">About Me</h2>
+      <h2 class="about-title">{{ settings.about_title || 'About Me' }}</h2>
 
       <!-- Introduction -->
       <div class="about-heading-block">
-        <h3 class="about-greeting">Hello, I'm <span class="highlight-name">Mekdelawit Habtamu</span></h3>
-        <p class="about-role-tag">Full-Stack Developer & System Builder</p>
+        <h3 class="about-greeting">Hello, I'm <span class="highlight-name">{{ settings.hero_name || 'Mekdelawit Habtamu' }}</span></h3>
+        <p class="about-role-tag">{{ settings.hero_subtitle || 'Full-Stack Developer & System Builder' }}</p>
       </div>
 
       <!-- Description Text in 2-Column Grid (Cardless) -->
       <div class="about-paragraphs-grid">
         <div class="grid-col lead-col">
-          <p>
-            A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at <strong>Wollo University</strong>, focused on strong engineering principles and problem-solving.
-          </p>
+          <p>{{ aboutParagraphs[0] }}</p>
         </div>
-        <div class="grid-col detail-col">
-          <p>
-            With a focus on <strong>React and Laravel</strong>, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.
-          </p>
+        <div v-if="aboutParagraphs[1]" class="grid-col detail-col">
+          <p>{{ aboutParagraphs[1] }}</p>
         </div>
       </div>
 

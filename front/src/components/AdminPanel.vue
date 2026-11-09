@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { getApiBaseUrl, setApiBaseUrl } from '../config/api'
+import { useSettings } from '../composables/useSettings'
 
 const emit = defineEmits(['navigate'])
 
@@ -26,22 +27,7 @@ const viewMode = ref('table') // 'table' | 'cards'
 // Data Collections
 const projects = ref([])
 const messages = ref([])
-const settings = ref({
-  hero_title: 'Full Stack',
-  hero_name: 'Mekdelawit Habtamu',
-  hero_subtitle: 'Developer & System Builder',
-  about_title: 'About Me',
-  about_description: 'Full-Stack Developer passionate about crafting resilient, high-performance web applications and intuitive digital experiences.',
-  skills_title: 'Skills & Technologies',
-  projects_title: 'My Projects',
-  contact_title: "Let's Work Together",
-  contact_email: 'mekdimeki8@gmail.com',
-  contact_phone: '+251 953 419 361',
-  social_github: 'https://github.com',
-  social_telegram: 'https://t.me',
-  social_linkedin: 'https://linkedin.com',
-  social_twitter: 'https://twitter.com'
-})
+const { settings, fetchSettings: loadRemoteSettings, saveSettings: persistSettings } = useSettings()
 
 // Project Form Modal State
 const showProjectModal = ref(false)
@@ -611,13 +597,7 @@ const filteredMessages = computed(() => {
 // ---------------------------------------------
 const fetchSettings = async () => {
   try {
-    const res = await fetch(`${customApiUrl.value}/settings`)
-    if (res.ok) {
-      const data = await res.json()
-      if (data && typeof data === 'object') {
-        settings.value = { ...settings.value, ...data }
-      }
-    }
+    await loadRemoteSettings()
   } catch (err) {
     console.warn('Using local settings cache:', err)
   }
@@ -626,18 +606,11 @@ const fetchSettings = async () => {
 const saveSettings = async () => {
   loading.value = true
   try {
-    const res = await fetch(`${customApiUrl.value}/settings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(settings.value)
-    })
-    if (res.ok) {
-      notify('Settings saved to backend database successfully!')
-    } else {
-      notify('Settings saved in local cache (Backend offline).')
-    }
+    await persistSettings(settings.value)
+    notify('Settings saved and updated live across the home page!')
   } catch (err) {
-    notify('Settings saved in local cache (Backend offline).')
+    console.warn('Backend save notice:', err)
+    notify('Settings updated live in local cache (Backend offline or syncing).')
   } finally {
     loading.value = false
   }

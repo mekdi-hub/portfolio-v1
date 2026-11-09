@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useSettings } from '../composables/useSettings'
 
+const { settings } = useSettings()
 const activeIndex = ref(0)
 
 const skills = [
@@ -109,7 +111,7 @@ const skills = [
       <!-- Top Section Header -->
       <div class="skills-top-bar">
         <div class="skills-label">
-          <span class="label-code">03 — SKILLS</span>
+          <span class="label-code">03 — {{ (settings.skills_title || 'SKILLS').toUpperCase() }}</span>
         </div>
         <div class="skills-divider-line"></div>
         <div class="skills-search-icon" aria-hidden="true">

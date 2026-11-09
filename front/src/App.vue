@@ -8,11 +8,13 @@ import SkillsSection from './components/SkillsSection.vue'
 import ProjectsSection from './components/ProjectsSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import { useTheme } from './composables/useTheme'
+import { useSettings } from './composables/useSettings'
 
 // Lazy-load AdminPanel on demand to optimize performance
 const AdminPanel = defineAsyncComponent(() => import('./components/AdminPanel.vue'))
 
 const { initTheme } = useTheme()
+const { fetchSettings } = useSettings()
 
 const currentView = ref('portfolio')
 const showSplash = ref(true)
@@ -29,6 +31,7 @@ const updateRouteFromHash = () => {
 
 onMounted(() => {
   initTheme()
+  fetchSettings()
   updateRouteFromHash()
   window.addEventListener('hashchange', updateRouteFromHash)
 })

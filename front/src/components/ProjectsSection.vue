@@ -1,6 +1,9 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { getApiBaseUrl } from '../config/api'
+import { useSettings } from '../composables/useSettings'
+
+const { settings } = useSettings()
 
 const API_BASE = getApiBaseUrl()
 
@@ -160,7 +163,7 @@ onMounted(() => {
     <!-- Pinned Underlay: Shows 'My Projects' full screen in background -->
     <div class="curtain-underlay">
       <div class="underlay-content">
-        <h2 class="underlay-title">My Projects</h2>
+        <h2 class="underlay-title">{{ settings.projects_title || 'My Projects' }}</h2>
         <div class="scroll-curtain-hint">
           <span class="hint-text">Scroll to reveal</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

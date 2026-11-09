@@ -1,5 +1,27 @@
 <script setup>
+import { computed } from 'vue'
 import WindBloom from './WindBloom.vue'
+import { useSettings } from '../composables/useSettings'
+
+const { settings } = useSettings()
+
+const heroAuthorName = computed(() => {
+  return (settings.value.hero_name || 'Mekdelawit Habtamu').toUpperCase()
+})
+
+const heroTitleLines = computed(() => {
+  const title = (settings.value.hero_title || 'Full Stack').trim()
+  const subtitle = (settings.value.hero_subtitle || 'Developer').trim()
+  
+  const titleWords = title.split(/\s+/)
+  if (titleWords.length >= 3) {
+    const mid = Math.ceil(titleWords.length / 2)
+    return [titleWords.slice(0, mid).join(' '), titleWords.slice(mid).join(' ')]
+  }
+  
+  const primaryRole = subtitle.split('&')[0].trim() || 'Developer'
+  return [title, primaryRole]
+})
 
 const scrollToAbout = () => {
   document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
@@ -32,13 +54,13 @@ const scrollToAbout = () => {
       <div class="hero-text-block">
         <!-- Subtitle / Name -->
         <div class="hero-author-tag">
-          <span class="author-name">MEKDELAWIT &nbsp; HABTAMU</span>
+          <span class="author-name">{{ heroAuthorName }}</span>
         </div>
 
         <!-- Big Bold Title -->
         <h1 class="hero-title">
-          <span class="title-line">Full Stack</span>
-          <span class="title-line">Developer</span>
+          <span class="title-line">{{ heroTitleLines[0] }}</span>
+          <span class="title-line">{{ heroTitleLines[1] }}</span>
         </h1>
 
         <!-- Action Cluster: Download CV Button + Scroll Indicator -->
