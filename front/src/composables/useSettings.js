@@ -6,7 +6,7 @@ export const DEFAULT_SETTINGS = {
   hero_name: 'Mekdelawit Habtamu',
   hero_subtitle: 'Developer & System Builder',
   about_title: 'About Me',
-  about_description: 'Full-Stack Developer passionate about crafting resilient, high-performance web applications and intuitive digital experiences.',
+  about_description: 'A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at Wollo University, focused on strong engineering principles and problem-solving. With a particular focus on Vue and Laravel, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.',
   skills_title: 'Skills & Technologies',
   projects_title: 'My Projects',
   contact_title: "Let's Work Together",
@@ -31,6 +31,12 @@ const sanitizeSettings = (raw) => {
   }
   if (result.contact_title && result.contact_title.trim().toLowerCase() === 'get in touch') {
     result.contact_title = "Let's Work Together"
+  }
+  if (result.about_description) {
+    result.about_description = result.about_description.replace(/React and Laravel/gi, 'Vue and Laravel')
+  }
+  if (!result.about_description || result.about_description.trim().toLowerCase() === 'your about description' || result.about_description.includes('Full-Stack Developer passionate about crafting')) {
+    result.about_description = 'A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at Wollo University, focused on strong engineering principles and problem-solving. With a particular focus on Vue and Laravel, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.'
   }
   return result
 }

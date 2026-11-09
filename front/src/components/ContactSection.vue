@@ -5,27 +5,33 @@ import { useSettings } from '../composables/useSettings'
 
 const { settings } = useSettings()
 
-const email = computed(() => settings.value.contact_email || 'mekdimeki8@gmail.com')
-const phone = computed(() => settings.value.contact_phone || '+251 953 419 361')
-const phoneLink = computed(() => (settings.value.contact_phone || '+251953419361').replace(/\s+/g, ''))
+const email = computed(() => (settings.value.contact_email !== null && settings.value.contact_email !== undefined) ? String(settings.value.contact_email).trim() : '')
+const phone = computed(() => (settings.value.contact_phone !== null && settings.value.contact_phone !== undefined) ? String(settings.value.contact_phone).trim() : '')
+const phoneLink = computed(() => phone.value.replace(/\s+/g, ''))
 const API_BASE = getApiBaseUrl()
 
 const headlineLines = computed(() => {
-  let title = settings.value.contact_title
-  if (!title || title.trim().toLowerCase() === 'get in touch') {
+  const raw = settings.value.contact_title
+  if (raw === null || raw === undefined || String(raw).trim() === '') {
+    return []
+  }
+  let title = String(raw).trim()
+  if (title.toLowerCase() === 'get in touch') {
     title = "Let's Work Together"
   }
-  const raw = title.toUpperCase()
-  const words = raw.split(/\s+/)
+  const upper = title.toUpperCase()
+  const words = upper.split(/\s+/)
   if (words.length <= 2) {
-    return [words[0] || "LET'S WORK", words[1] || "TOGETHER"]
+    return [words[0] || '', words[1] || '']
   }
-  if (raw === "LET'S WORK TOGETHER" || raw === "LETS WORK TOGETHER") {
+  if (upper === "LET'S WORK TOGETHER" || upper === "LETS WORK TOGETHER") {
     return ["LET'S WORK", "TOGETHER"]
   }
   const mid = Math.ceil(words.length / 2)
   return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')]
 })
+
+const hasHeadline = computed(() => headlineLines.value.some(line => !!line))
 
 const contactRef = ref(null)
 const mouseX = ref(0)
@@ -146,10 +152,10 @@ const socials = computed(() => [
 
     <div class="contact-container">
       <!-- Centered Huge Headline in the Middle -->
-      <div class="headline-container">
+      <div v-if="hasHeadline" class="headline-container">
         <h2 class="contact-headline">
-          <span class="headline-line">{{ headlineLines[0] }}</span>
-          <span class="headline-line">{{ headlineLines[1] }}</span>
+          <span v-if="headlineLines[0]" class="headline-line">{{ headlineLines[0] }}</span>
+          <span v-if="headlineLines[1]" class="headline-line">{{ headlineLines[1] }}</span>
         </h2>
       </div>
 
@@ -180,7 +186,7 @@ const socials = computed(() => [
           <!-- Right: Contact Pill Cards -->
           <div class="contact-details-column">
             <!-- Email Card -->
-            <a :href="`mailto:${email}`" class="contact-pill-card">
+            <a v-if="email" :href="`mailto:${email}`" class="contact-pill-card">
               <span class="pill-icon email-icon">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="4" width="20" height="16" rx="2"></rect>
@@ -191,7 +197,7 @@ const socials = computed(() => [
             </a>
 
             <!-- Phone Card -->
-            <a :href="`tel:${phoneLink}`" class="contact-pill-card">
+            <a v-if="phone" :href="`tel:${phoneLink}`" class="contact-pill-card">
               <span class="pill-icon phone-icon">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
