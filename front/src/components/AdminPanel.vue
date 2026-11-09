@@ -137,7 +137,21 @@ const checkApiHealth = async () => {
     apiLatency.value = null
   }
 }
-const updateApiUrl = ()
+const updateApiUrl = () => {
+  let url = customApiUrl.value.trim().replace(/\/+$/, '')
+
+  if (!url.endsWith('/api')) {
+    url += '/api'
+  }
+
+  customApiUrl.value = url
+
+  setApiBaseUrl(url)
+
+  notify(`API Base URL updated to: ${url}`)
+
+  initAdminData()
+}
 
 // ---------------------------------------------
 // Projects Management & Ordering
