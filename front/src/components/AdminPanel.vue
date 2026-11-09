@@ -137,12 +137,7 @@ const checkApiHealth = async () => {
     apiLatency.value = null
   }
 }
-
-const updateApiUrl = () => {
-  setApiBaseUrl(customApiUrl.value)
-  notify(`API Base URL updated to: ${customApiUrl.value}`)
-  initAdminData()
-}
+const updateApiUrl = ()
 
 // ---------------------------------------------
 // Projects Management & Ordering
