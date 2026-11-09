@@ -110,8 +110,8 @@ const skills = [
     <div class="skills-wrapper">
       <!-- Top Section Header -->
       <div class="skills-top-bar">
-        <div class="skills-label">
-          <span class="label-code">03 — {{ (settings.skills_title || 'SKILLS').toUpperCase() }}</span>
+        <div v-if="settings.skills_title" class="skills-label">
+          <span class="label-code">03 — {{ settings.skills_title.toUpperCase() }}</span>
         </div>
         <div class="skills-divider-line"></div>
         <div class="skills-search-icon" aria-hidden="true">

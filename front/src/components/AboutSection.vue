@@ -4,16 +4,21 @@ import { useSettings } from '../composables/useSettings'
 
 const { settings } = useSettings()
 
+const displayName = computed(() => {
+  const name = settings.value.hero_name
+  if (name === null || name === undefined) return ''
+  const trimmed = String(name).trim()
+  if (trimmed.toLowerCase() === 'your name') return ''
+  return trimmed
+})
+
 const aboutParagraphs = computed(() => {
-  const desc = settings.value.about_description?.trim()
-  if (!desc) {
-    return [
-      'A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at Wollo University, focused on strong engineering principles and problem-solving.',
-      'With a focus on React and Laravel, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.'
-    ]
+  const desc = settings.value.about_description
+  if (desc === null || desc === undefined || String(desc).trim() === '') {
+    return []
   }
-  // Split multiple sentences/paragraphs across two columns
-  const sentences = desc.split(/(?<=[.!?])\s+/).filter(Boolean)
+  const trimmed = String(desc).trim()
+  const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(Boolean)
   if (sentences.length >= 2) {
     const mid = Math.ceil(sentences.length / 2)
     return [
@@ -21,7 +26,7 @@ const aboutParagraphs = computed(() => {
       sentences.slice(mid).join(' ')
     ]
   }
-  return [desc, '']
+  return [trimmed, '']
 })
 
 const statsSection = ref(null)
@@ -82,16 +87,16 @@ onMounted(() => {
   <section id="about" class="about-section">
     <div class="about-container">
       <!-- Section Title in Black -->
-      <h2 class="about-title">{{ settings.about_title || 'About Me' }}</h2>
+      <h2 v-if="settings.about_title" class="about-title">{{ settings.about_title }}</h2>
 
       <!-- Introduction -->
-      <div class="about-heading-block">
-        <h3 class="about-greeting">Hello, I'm <span class="highlight-name">{{ settings.hero_name || 'Mekdelawit Habtamu' }}</span></h3>
-        <p class="about-role-tag">{{ settings.hero_subtitle || 'Full-Stack Developer & System Builder' }}</p>
+      <div v-if="displayName || settings.hero_subtitle" class="about-heading-block">
+        <h3 v-if="displayName" class="about-greeting">Hello, I'm <span class="highlight-name">{{ displayName }}</span></h3>
+        <p v-if="settings.hero_subtitle" class="about-role-tag">{{ settings.hero_subtitle }}</p>
       </div>
 
       <!-- Description Text in 2-Column Grid (Cardless) -->
-      <div class="about-paragraphs-grid">
+      <div v-if="aboutParagraphs.length > 0 && aboutParagraphs[0]" class="about-paragraphs-grid">
         <div class="grid-col lead-col">
           <p>{{ aboutParagraphs[0] }}</p>
         </div>

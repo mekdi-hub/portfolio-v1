@@ -6,21 +6,43 @@ import { useSettings } from '../composables/useSettings'
 const { settings } = useSettings()
 
 const heroAuthorName = computed(() => {
-  return (settings.value.hero_name || 'Mekdelawit Habtamu').toUpperCase()
+  const name = settings.value.hero_name
+  if (name === null || name === undefined) return ''
+  const trimmed = String(name).trim()
+  if (trimmed.toLowerCase() === 'your name') return ''
+  return trimmed.toUpperCase()
 })
 
 const heroTitleLines = computed(() => {
-  const title = (settings.value.hero_title || 'Full Stack').trim()
-  const subtitle = (settings.value.hero_subtitle || 'Developer').trim()
+  const rawTitle = settings.value.hero_title
+  const rawSub = settings.value.hero_subtitle
   
-  const titleWords = title.split(/\s+/)
-  if (titleWords.length >= 3) {
-    const mid = Math.ceil(titleWords.length / 2)
-    return [titleWords.slice(0, mid).join(' '), titleWords.slice(mid).join(' ')]
+  const title = (rawTitle !== null && rawTitle !== undefined) ? String(rawTitle).trim() : ''
+  const subtitle = (rawSub !== null && rawSub !== undefined) ? String(rawSub).trim() : ''
+  
+  // If user cleared title and subtitle, display nothing
+  if (!title && !subtitle) {
+    return []
   }
   
-  const primaryRole = subtitle.split('&')[0].trim() || 'Developer'
-  return [title, primaryRole]
+  if (title && !subtitle) {
+    const words = title.split(/\s+/)
+    if (words.length >= 2) {
+      const mid = Math.ceil(words.length / 2)
+      return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')]
+    }
+    return [title, '']
+  }
+  
+  if (!title && subtitle) {
+    return [subtitle, '']
+  }
+  
+  return [title, subtitle]
+})
+
+const hasHeroTitle = computed(() => {
+  return heroTitleLines.value.some(line => !!line)
 })
 
 const scrollToAbout = () => {
@@ -53,14 +75,14 @@ const scrollToAbout = () => {
     <main class="hero-content">
       <div class="hero-text-block">
         <!-- Subtitle / Name -->
-        <div class="hero-author-tag">
+        <div v-if="heroAuthorName" class="hero-author-tag">
           <span class="author-name">{{ heroAuthorName }}</span>
         </div>
 
         <!-- Big Bold Title -->
-        <h1 class="hero-title">
-          <span class="title-line">{{ heroTitleLines[0] }}</span>
-          <span class="title-line">{{ heroTitleLines[1] }}</span>
+        <h1 v-if="hasHeroTitle" class="hero-title">
+          <span v-if="heroTitleLines[0]" class="title-line">{{ heroTitleLines[0] }}</span>
+          <span v-if="heroTitleLines[1]" class="title-line">{{ heroTitleLines[1] }}</span>
         </h1>
 
         <!-- Action Cluster: Download CV Button + Scroll Indicator -->

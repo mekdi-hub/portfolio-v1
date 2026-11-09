@@ -15,15 +15,26 @@ class SettingController extends Controller
         // Return default values if no settings exist
         if (empty($settings)) {
             $settings = [
-                'hero_title' => 'Hi, I\'m',
-                'hero_name' => 'Your Name',
-                'hero_subtitle' => 'Full Stack Developer',
+                'hero_title' => 'Full Stack',
+                'hero_name' => 'Mekdelawit Habtamu',
+                'hero_subtitle' => 'Developer & System Builder',
                 'about_title' => 'About Me',
-                'about_description' => 'Your about description',
-                'skills_title' => 'My Skills',
+                'about_description' => 'Full-Stack Developer passionate about crafting resilient, high-performance web applications and intuitive digital experiences.',
+                'skills_title' => 'Skills & Technologies',
                 'projects_title' => 'My Projects',
                 'contact_title' => "Let's Work Together"
             ];
+        } else {
+            // Clean up any placeholder values from legacy seeds
+            if (isset($settings['hero_name']) && strtolower(trim($settings['hero_name'])) === 'your name') {
+                $settings['hero_name'] = 'Mekdelawit Habtamu';
+            }
+            if (isset($settings['hero_title']) && (stripos($settings['hero_title'], "hi, i'm") !== false || stripos($settings['hero_title'], "hi i'm") !== false)) {
+                $settings['hero_title'] = 'Full Stack';
+            }
+            if (isset($settings['contact_title']) && strtolower(trim($settings['contact_title'])) === 'get in touch') {
+                $settings['contact_title'] = "Let's Work Together";
+            }
         }
         
         return response()->json($settings);

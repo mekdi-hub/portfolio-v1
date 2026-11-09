@@ -163,7 +163,7 @@ onMounted(() => {
     <!-- Pinned Underlay: Shows 'My Projects' full screen in background -->
     <div class="curtain-underlay">
       <div class="underlay-content">
-        <h2 class="underlay-title">{{ settings.projects_title || 'My Projects' }}</h2>
+        <h2 v-if="settings.projects_title" class="underlay-title">{{ settings.projects_title }}</h2>
         <div class="scroll-curtain-hint">
           <span class="hint-text">Scroll to reveal</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

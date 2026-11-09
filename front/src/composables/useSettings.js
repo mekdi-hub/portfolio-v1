@@ -23,6 +23,12 @@ const STORAGE_KEY = 'portfolio_settings'
 const sanitizeSettings = (raw) => {
   if (!raw || typeof raw !== 'object') return { ...DEFAULT_SETTINGS }
   const result = { ...DEFAULT_SETTINGS, ...raw }
+  if (result.hero_name && result.hero_name.trim().toLowerCase() === 'your name') {
+    result.hero_name = 'Mekdelawit Habtamu'
+  }
+  if (result.hero_title && (result.hero_title.toLowerCase().includes("hi, i'm") || result.hero_title.toLowerCase().includes("hi i'm") || result.hero_title.trim().toLowerCase() === 'hi')) {
+    result.hero_title = 'Full Stack'
+  }
   if (result.contact_title && result.contact_title.trim().toLowerCase() === 'get in touch') {
     result.contact_title = "Let's Work Together"
   }
