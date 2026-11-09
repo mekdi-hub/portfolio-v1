@@ -102,32 +102,44 @@ const fetchPortfolioProjects = async (initial = false) => {
     isLoading.value = true
   }
   const startTime = Date.now()
+  const apiBase = getApiBaseUrl()
+
+  const loadFromApi = async () => {
+    const res = await fetch(`${apiBase}/projects`, {
+      headers: { Accept: 'application/json' }
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+    if (!Array.isArray(data) || data.length === 0) throw new Error('Empty projects')
+    return data
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/projects`)
-    if (res.ok) {
-      const data = await res.json()
-      if (Array.isArray(data) && data.length > 0) {
-        const sorted = sortProjects(data)
-        projects.value = sorted.map((item, idx) => ({
-          ...item,
-          tech_stack: normalizeTechStack(item.tech_stack),
-          isDark: idx % 2 === 0,
-          demo_link: item.demo_link || ''
-        }))
-        return
-      }
+    let data
+    try {
+      data = await loadFromApi()
+    } catch (firstErr) {
+      // Free tier Render backend might be waking up (cold start); retry once
+      console.info('Retrying connection to backend (cold start wake-up)...')
+      await new Promise(r => setTimeout(r, 2200))
+      data = await loadFromApi()
     }
-    // Fallback if data is empty
-    projects.value = sortProjects(defaultProjects).map((item, idx) => ({
+
+    const sorted = sortProjects(data)
+    projects.value = sorted.map((item, idx) => ({
       ...item,
-      isDark: idx % 2 === 0
+      tech_stack: normalizeTechStack(item.tech_stack),
+      isDark: idx % 2 === 0,
+      demo_link: item.demo_link || ''
     }))
   } catch (err) {
-    console.info('Loaded curated portfolio projects (Backend offline or local cache active).')
-    projects.value = sortProjects(defaultProjects).map((item, idx) => ({
-      ...item,
-      isDark: idx % 2 === 0
-    }))
+    console.info('Backend unreachable or cold starting. Showing curated fallback.', err)
+    if (projects.value.length === 0) {
+      projects.value = sortProjects(defaultProjects).map((item, idx) => ({
+        ...item,
+        isDark: idx % 2 === 0
+      }))
+    }
   } finally {
     const elapsed = Date.now() - startTime
     const remaining = Math.max(0, 420 - elapsed)
