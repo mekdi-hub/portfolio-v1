@@ -141,8 +141,8 @@ const socials = computed(() => [
       <!-- Centered Huge Headline in the Middle -->
       <div class="headline-container">
         <h2 class="contact-headline">
-          <span class="headline-line">LET'S WORK</span>
-          <span class="headline-line">TOGETHER</span>
+          <span class="headline-line">{{ headlineLines[0] }}</span>
+          <span class="headline-line">{{ headlineLines[1] }}</span>
         </h2>
       </div>
 
