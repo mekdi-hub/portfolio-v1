@@ -22,7 +22,7 @@ class SettingController extends Controller
                 'about_description' => 'Your about description',
                 'skills_title' => 'My Skills',
                 'projects_title' => 'My Projects',
-                'contact_title' => 'Get In Touch'
+                'contact_title' => "Let's Work Together"
             ];
         }
         

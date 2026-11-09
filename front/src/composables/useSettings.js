@@ -20,13 +20,22 @@ export const DEFAULT_SETTINGS = {
 
 const STORAGE_KEY = 'portfolio_settings'
 
+const sanitizeSettings = (raw) => {
+  if (!raw || typeof raw !== 'object') return { ...DEFAULT_SETTINGS }
+  const result = { ...DEFAULT_SETTINGS, ...raw }
+  if (result.contact_title && result.contact_title.trim().toLowerCase() === 'get in touch') {
+    result.contact_title = "Let's Work Together"
+  }
+  return result
+}
+
 // Load initial state from localStorage if available, otherwise defaults
 const loadCachedSettings = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
       const parsed = JSON.parse(raw)
-      return { ...DEFAULT_SETTINGS, ...parsed }
+      return sanitizeSettings(parsed)
     }
   } catch (e) {
     console.warn('Failed to parse cached settings:', e)
@@ -44,7 +53,7 @@ if (typeof window !== 'undefined') {
     if (event.key === STORAGE_KEY && event.newValue) {
       try {
         const updated = JSON.parse(event.newValue)
-        settings.value = { ...settings.value, ...updated }
+        settings.value = sanitizeSettings({ ...settings.value, ...updated })
       } catch (e) {
         // ignore
       }
@@ -63,7 +72,7 @@ export function useSettings() {
       if (res.ok) {
         const data = await res.json()
         if (data && typeof data === 'object') {
-          settings.value = { ...settings.value, ...data }
+          settings.value = sanitizeSettings({ ...settings.value, ...data })
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(settings.value))
           } catch (e) {

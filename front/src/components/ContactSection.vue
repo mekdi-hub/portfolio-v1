@@ -11,10 +11,17 @@ const phoneLink = computed(() => (settings.value.contact_phone || '+251953419361
 const API_BASE = getApiBaseUrl()
 
 const headlineLines = computed(() => {
-  const raw = (settings.value.contact_title || "Let's Work Together").toUpperCase()
+  let title = settings.value.contact_title
+  if (!title || title.trim().toLowerCase() === 'get in touch') {
+    title = "Let's Work Together"
+  }
+  const raw = title.toUpperCase()
   const words = raw.split(/\s+/)
   if (words.length <= 2) {
     return [words[0] || "LET'S WORK", words[1] || "TOGETHER"]
+  }
+  if (raw === "LET'S WORK TOGETHER" || raw === "LETS WORK TOGETHER") {
+    return ["LET'S WORK", "TOGETHER"]
   }
   const mid = Math.ceil(words.length / 2)
   return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')]
