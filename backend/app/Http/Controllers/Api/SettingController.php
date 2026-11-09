@@ -19,7 +19,7 @@ class SettingController extends Controller
                 'hero_name' => 'Mekdelawit Habtamu',
                 'hero_subtitle' => 'Developer & System Builder',
                 'about_title' => 'About Me',
-                'about_description' => 'Full-Stack Developer passionate about crafting resilient, high-performance web applications and intuitive digital experiences.',
+                'about_description' => 'A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at Wollo University, focused on strong engineering principles and problem-solving. With a particular focus on Vue and Laravel, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.',
                 'skills_title' => 'Skills & Technologies',
                 'projects_title' => 'My Projects',
                 'contact_title' => "Let's Work Together"
@@ -34,6 +34,9 @@ class SettingController extends Controller
             }
             if (isset($settings['contact_title']) && strtolower(trim($settings['contact_title'])) === 'get in touch') {
                 $settings['contact_title'] = "Let's Work Together";
+            }
+            if (isset($settings['about_description'])) {
+                $settings['about_description'] = str_ireplace('React and Laravel', 'Vue and Laravel', $settings['about_description']);
             }
         }
         
