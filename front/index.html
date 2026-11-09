@@ -13,10 +13,17 @@
     <script>
       (function() {
         try {
+          if (!localStorage.getItem('portfolio_default_light_v1')) {
+            localStorage.removeItem('portfolio_theme');
+            localStorage.setItem('portfolio_default_light_v1', 'true');
+          }
           var saved = localStorage.getItem('portfolio_theme');
-          if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          if (saved === 'dark') {
             document.documentElement.classList.add('dark');
             document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
           }
         } catch (e) {}
       })();

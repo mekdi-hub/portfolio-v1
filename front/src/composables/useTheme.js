@@ -21,12 +21,17 @@ export function useTheme() {
   }
 
   const initTheme = () => {
+    // One-time migration to ensure clean transition to light mode as default
+    if (!localStorage.getItem('portfolio_default_light_v1')) {
+      localStorage.removeItem('portfolio_theme')
+      localStorage.setItem('portfolio_default_light_v1', 'true')
+    }
+
     const saved = localStorage.getItem('portfolio_theme')
-    if (saved) {
-      isDark.value = saved === 'dark'
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (saved === 'dark') {
       isDark.value = true
     } else {
+      // Default to light mode
       isDark.value = false
     }
     applyTheme()
