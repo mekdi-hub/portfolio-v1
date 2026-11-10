@@ -234,12 +234,12 @@ const loadFallbackProjects = () => {
       },
       {
         id: 3,
-        title: 'Eduage Ai',
-        description: 'AI-assisted university admission & scholarship matching platform powered by Qwen & Gemini agents.',
-        tech_stack: 'Laravel, Vue, PostgreSQL, AI Agents',
-        image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80',
-        demo_link: 'https://example.com/eduage',
-        github_link: 'https://github.com/example/eduage',
+        title: 'Gojo-Rentals',
+        description: 'Smart apartment, home, villa, condominium, studio finder — get everything related to houses.',
+        tech_stack: 'Laravel, Vue, PostgreSQL',
+        image: 'https://res.cloudinary.com/dvwzujlid/image/upload/v1791227853/portfolio/projects/xfyis9rcqpabbxeoziek.png',
+        demo_link: 'https://gojo-rentals-sales.vercel.app/',
+        github_link: 'https://github.com/mekdi-hub/Gojo-rentals-sales',
         order: 2,
         created_at: new Date().toISOString()
       }
@@ -335,6 +335,10 @@ const syncProjectsOrder = async (msg = 'Projects reordered successfully.') => {
   } catch (err) {
     console.warn('Settings order sync notice:', err)
   }
+
+  try {
+    window.dispatchEvent(new CustomEvent('portfolio-projects-reordered', { detail: idOrder }))
+  } catch (e) {}
 
   notify(msg, 'success')
   isReordering.value = false

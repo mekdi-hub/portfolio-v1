@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { getApiBaseUrl } from '../config/api'
 import { useSettings } from '../composables/useSettings'
 
@@ -16,10 +16,11 @@ const onImageLoad = (id) => {
 
 const defaultProjects = [
   {
-    id: 1,
+    id: 8,
     title: 'Gibi-Equb',
     description: 'this project is mainly built for ethiopian university students',
     tech_stack: ['Laravel', 'vue', 'mysql'],
+    image: 'https://res.cloudinary.com/dvwzujlid/image/upload/v1792096767/portfolio/projects/u63ksug2tbxgiohmzkn6.png',
     imageText: {
       tag: 'Trusted by students across Ethiopia',
       headline: 'Save Together, Win Together',
@@ -29,10 +30,11 @@ const defaultProjects = [
     demo_link: ''
   },
   {
-    id: 2,
+    id: 7,
     title: 'Lumina-Tutors',
     description: 'Digitalized tutorial giving web based Learning Management System',
     tech_stack: ['Laravel 12', 'Vue 3', 'Custom css', 'Mysql', 'RestApi'],
+    image: 'https://res.cloudinary.com/dvwzujlid/image/upload/v1785495059/portfolio/projects/bzbnwtb4oup4po7w4dvu.png',
     imageText: {
       tag: 'Personalized Learning',
       headline: 'Master Any Subject With Confidence',
@@ -42,17 +44,18 @@ const defaultProjects = [
     demo_link: 'https://lumina-tutor-lms.vercel.app/'
   },
   {
-    id: 3,
-    title: 'Eduage Ai',
-    description: 'Discover universities, match scholarships, check eligibility, and get visa guidance',
-    tech_stack: ['Laravel', 'Vue', 'Postgres', 'Qwen ai', 'Gemini ai'],
+    id: 5,
+    title: 'Gojo-Rentals',
+    description: 'Smart  apartment ,home,villa ,condominium ,studio, finder  you get everything related to houses',
+    tech_stack: ['Laravel', 'Vue', 'Postgres'],
+    image: 'https://res.cloudinary.com/dvwzujlid/image/upload/v1791227853/portfolio/projects/xfyis9rcqpabbxeoziek.png',
     imageText: {
-      tag: 'EduVoyage AI',
-      headline: 'Plan your entire study-abroad journey with AI agents',
-      subtext: 'Discover universities, match scholarships, check eligibility, and get visa guidance — all orchestrated by specialized Qwen-powered agents.'
+      tag: 'Find Your Dream Home',
+      headline: 'Find Your Dream Home in Ethiopia',
+      subtext: 'Discover verified luxury villas, modern apartments, and prime commercial spaces across Addis Ababa.'
     },
     isDark: true,
-    demo_link: ''
+    demo_link: 'https://gojo-rentals-sales.vercel.app/'
   }
 ]
 
@@ -162,9 +165,26 @@ const fetchPortfolioProjects = async (initial = false) => {
   }
 }
 
+watch(
+  () => settings.value?.projects_order,
+  (newOrder) => {
+    if (newOrder && projects.value.length > 0) {
+      projects.value = sortProjects(projects.value)
+    }
+  }
+)
+
 onMounted(() => {
   fetchPortfolioProjects(true)
   window.addEventListener('focus', () => fetchPortfolioProjects(false))
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'portfolio_projects_order') {
+      fetchPortfolioProjects(false)
+    }
+  })
+  window.addEventListener('portfolio-projects-reordered', () => {
+    fetchPortfolioProjects(false)
+  })
 })
 </script>
 
