@@ -269,9 +269,13 @@ const handleResize = () => {
   renderer.setSize(width, height)
 
   // Adjust mesh position depending on screen aspect ratio
-  if (width < 768) {
-    // Mobile: center or slight offset
-    mesh.position.set(0.6, 0.1, -0.6)
+  if (width < 480) {
+    // Small mobile: position framing the right-lower quadrant without covering the text
+    mesh.position.set(0.4, -0.15, -0.5)
+    mesh.scale.setScalar(0.82)
+  } else if (width < 768) {
+    // Mobile tablet: slight offset
+    mesh.position.set(0.55, 0.05, -0.6)
     mesh.scale.setScalar(0.9)
   } else if (width < 1200) {
     mesh.position.set(1.0, 0.05, 0)
@@ -301,6 +305,12 @@ const handleMouseMove = (e) => {
 
   mouse.prevX = e.clientX
   mouse.prevY = e.clientY
+}
+
+const handleTouchMove = (e) => {
+  if (!e.touches || e.touches.length === 0) return
+  const touch = e.touches[0]
+  handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY })
 }
 
 const clock = new THREE.Clock()
@@ -338,6 +348,8 @@ onMounted(() => {
   animate()
   window.addEventListener('resize', handleResize)
   window.addEventListener('mousemove', handleMouseMove, { passive: true })
+  window.addEventListener('touchstart', handleTouchMove, { passive: true })
+  window.addEventListener('touchmove', handleTouchMove, { passive: true })
 })
 
 onUnmounted(() => {
@@ -346,6 +358,8 @@ onUnmounted(() => {
   }
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('mousemove', handleMouseMove)
+  window.removeEventListener('touchstart', handleTouchMove)
+  window.removeEventListener('touchmove', handleTouchMove)
 
   if (renderer) {
     renderer.dispose()

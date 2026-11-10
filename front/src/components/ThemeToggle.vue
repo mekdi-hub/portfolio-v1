@@ -113,14 +113,40 @@ const { isDark, toggleTheme } = useTheme()
 
 @media (max-width: 768px) {
   .theme-toggle-btn {
-    top: 1.2rem;
-    right: 1.2rem;
+    top: max(1.2rem, env(safe-area-inset-top));
+    right: max(1.5rem, env(safe-area-inset-right));
     width: 40px;
     height: 40px;
   }
   .theme-svg {
     width: 18px;
     height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .theme-toggle-btn {
+    top: max(1rem, env(safe-area-inset-top));
+    right: max(1.25rem, env(safe-area-inset-right));
+    width: 38px;
+    height: 38px;
+  }
+  .theme-svg {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+@media (max-width: 360px) {
+  .theme-toggle-btn {
+    top: max(0.8rem, env(safe-area-inset-top));
+    right: 1rem;
+    width: 34px;
+    height: 34px;
+  }
+  .theme-svg {
+    width: 15px;
+    height: 15px;
   }
 }
 </style>

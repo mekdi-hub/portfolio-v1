@@ -119,8 +119,10 @@ const scrollToAbout = () => {
 <style scoped>
 .hero-container {
   position: relative;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: #f4f5f7;
   overflow: hidden;
   display: flex;
@@ -187,6 +189,7 @@ const scrollToAbout = () => {
   letter-spacing: 0.35em;
   color: #64748b;
   text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(244, 245, 247, 0.9);
 }
 
 /* Headline */
@@ -199,6 +202,7 @@ const scrollToAbout = () => {
   line-height: 1.05;
   letter-spacing: -0.03em;
   color: #0f172a;
+  text-shadow: 0 1px 16px rgba(244, 245, 247, 0.85);
 }
 
 .title-line {
@@ -310,32 +314,153 @@ const scrollToAbout = () => {
   }
 }
 
-/* Responsive adjustments */
+/* ========================================= */
+/* RESPONSIVE BREAKPOINTS                    */
+/* ========================================= */
+
+/* Tablet & medium screens */
 @media (max-width: 1024px) {
   .hero-header {
-    padding: 1.8rem 2rem 1rem 2rem;
+    padding: 1.8rem 2.5rem 1rem 2.5rem;
   }
   .hero-content {
-    padding: 0 2rem 2rem 2rem;
+    padding: 0 2.5rem 2.5rem 2.5rem;
+  }
+  .hero-title {
+    font-size: clamp(3rem, 6.5vw, 4.5rem);
   }
 }
 
+/* Smaller tablets & large mobile (<= 768px) */
 @media (max-width: 768px) {
   .hero-header {
-    padding: 1.2rem 1.2rem;
+    padding: max(1.2rem, env(safe-area-inset-top)) 1.5rem 0.8rem 1.5rem;
   }
   .hero-content {
-    padding: 0 1.2rem 2rem 1.2rem;
+    padding: 0 1.5rem max(2rem, env(safe-area-inset-bottom)) 1.5rem;
+  }
+  .hero-text-block {
+    gap: 1.4rem;
+    padding-top: 0.5rem;
+    max-width: 100%;
   }
   .hero-title {
-    font-size: 3rem;
+    font-size: clamp(2.35rem, 8vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
   }
   .author-name {
     font-size: 0.9rem;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.22em;
   }
   .hero-action-cluster {
     gap: 1.5rem;
+  }
+}
+
+/* Standard small mobile devices (iPhone, Pixel, Galaxy <= 480px) */
+@media (max-width: 480px) {
+  .hero-header {
+    padding: max(1rem, env(safe-area-inset-top)) 1.25rem 0.5rem 1.25rem;
+  }
+  .logo-svg {
+    width: 36px;
+    height: 36px;
+  }
+  .hero-content {
+    padding: 0 1.25rem max(2rem, env(safe-area-inset-bottom)) 1.25rem;
+    justify-content: flex-start;
+  }
+  .hero-text-block {
+    gap: 1.15rem;
+    padding-top: 0.35rem;
+    width: 100%;
+  }
+  .hero-author-tag {
+    margin-bottom: -0.15rem;
+  }
+  .author-name {
+    font-size: clamp(0.72rem, 3.2vw, 0.82rem);
+    letter-spacing: 0.15em;
+  }
+  .hero-title {
+    font-size: clamp(1.95rem, 8.2vw, 2.55rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+  .hero-action-cluster {
+    gap: 1.25rem;
+    margin-top: 0.2rem;
+    width: 100%;
+    align-items: center;
+  }
+  .download-cv-btn {
+    padding: 0.72rem 1.35rem;
+    font-size: 0.88rem;
+    min-height: 44px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  }
+  .mouse-pill {
+    width: 23px;
+    height: 38px;
+    padding-top: 5px;
+  }
+  .scroll-wheel {
+    width: 3.5px;
+    height: 7px;
+  }
+}
+
+/* Extra small devices (<= 360px: iPhone SE 1st gen, small Galaxy, folded screens) */
+@media (max-width: 360px) {
+  .hero-header {
+    padding: 0.8rem 1rem 0.35rem 1rem;
+  }
+  .logo-svg {
+    width: 32px;
+    height: 32px;
+  }
+  .hero-content {
+    padding: 0 1rem 1.6rem 1rem;
+  }
+  .hero-text-block {
+    gap: 0.95rem;
+  }
+  .author-name {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+  }
+  .hero-title {
+    font-size: 1.75rem;
+    line-height: 1.14;
+  }
+  .download-cv-btn {
+    padding: 0.65rem 1.15rem;
+    font-size: 0.82rem;
+  }
+  .hero-action-cluster {
+    gap: 1rem;
+  }
+}
+
+/* Short screens / landscape orientation on mobile */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero-container {
+    min-height: auto;
+    padding-bottom: 2rem;
+  }
+  .hero-header {
+    padding: 0.65rem 1.75rem 0.4rem 1.75rem;
+  }
+  .hero-content {
+    padding: 0 1.75rem 1.25rem 1.75rem;
+  }
+  .hero-text-block {
+    gap: 0.8rem;
+  }
+  .hero-title {
+    font-size: 2.1rem;
+    line-height: 1.08;
   }
 }
 
@@ -352,10 +477,12 @@ const scrollToAbout = () => {
 
 :global(.dark) .author-name {
   color: #94a3b8;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.85);
 }
 
 :global(.dark) .hero-title {
   color: #ffffff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8);
 }
 
 :global(.dark) .download-cv-btn {
