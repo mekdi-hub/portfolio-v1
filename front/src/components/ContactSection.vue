@@ -222,19 +222,9 @@ const socials = computed(() => [
           </div>
         </div>
 
-        <!-- Copyright Subtext with discreet Admin Portal Link -->
+        <!-- Copyright Subtext -->
         <div class="footer-credit">
-          <p>
-            &copy; 2026 Mekdelawit Habtamu. All rights reserved.
-            <span class="admin-credit-separator">•</span>
-            <a href="#admin" class="admin-portal-link" title="Open Admin Panel">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <span>Admin Portal</span>
-            </a>
-          </p>
+          <p>&copy; 2026 Mekdelawit Habtamu. All rights reserved.</p>
         </div>
       </div>
     </div>
@@ -476,24 +466,6 @@ const socials = computed(() => [
   text-align: center;
 }
 
-.admin-credit-separator {
-  margin: 0 0.6rem;
-  opacity: 0.4;
-}
-
-.admin-portal-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: #94a3b8;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.admin-portal-link:hover {
-  color: #06b6d4;
-}
-
 /* Message Modal */
 .contact-modal-backdrop {
   position: fixed;
@@ -690,14 +662,6 @@ const socials = computed(() => [
 :global(.dark) .footer-credit {
   border-top-color: rgba(255, 255, 255, 0.08);
   color: #64748b;
-}
-
-:global(.dark) .admin-portal-link {
-  color: #64748b;
-}
-
-:global(.dark) .admin-portal-link:hover {
-  color: #06b6d4;
 }
 
 :global(.dark) .contact-modal-window {
