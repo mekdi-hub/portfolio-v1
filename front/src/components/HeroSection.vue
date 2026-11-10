@@ -85,7 +85,7 @@ const scrollToAbout = () => {
           <span v-if="heroTitleLines[1]" class="title-line">{{ heroTitleLines[1] }}</span>
         </h1>
 
-        <!-- Action Cluster: Download CV Button + Scroll Indicator -->
+        <!-- Action Cluster: Download CV Button -->
         <div class="hero-action-cluster">
           <!-- Download CV Button -->
           <a
@@ -103,16 +103,18 @@ const scrollToAbout = () => {
             </span>
             <span class="btn-text">Download CV</span>
           </a>
-
-          <!-- Mouse Scroll Indicator -->
-          <div class="scroll-indicator" @click="scrollToAbout" title="Scroll to About Me">
-            <div class="mouse-pill">
-              <div class="scroll-wheel"></div>
-            </div>
-          </div>
         </div>
       </div>
     </main>
+
+    <!-- Bottom Center Scroll Indicator -->
+    <div class="hero-scroll-wrapper">
+      <div class="scroll-indicator" @click="scrollToAbout" title="Scroll to About Me" aria-label="Scroll to About Me">
+        <div class="mouse-pill">
+          <div class="scroll-wheel"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
