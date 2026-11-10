@@ -148,31 +148,41 @@ const sortProjectsArray = (list) => {
   if (!Array.isArray(list)) return []
   const cloned = [...list]
 
-  // Check if projects have an explicit .order attribute
-  const hasOrderProps = cloned.some(p => p.order !== undefined && p.order !== null)
-  if (hasOrderProps) {
+  // 1. Check saved custom order from database settings or localStorage
+  let savedOrder = []
+  try {
+    if (settings.value?.projects_order) {
+      savedOrder = typeof settings.value.projects_order === 'string'
+        ? JSON.parse(settings.value.projects_order)
+        : settings.value.projects_order
+    }
+  } catch (e) {}
+
+  if (!Array.isArray(savedOrder) || savedOrder.length === 0) {
+    try {
+      savedOrder = JSON.parse(localStorage.getItem('portfolio_projects_order') || '[]')
+    } catch (e) {}
+  }
+
+  if (Array.isArray(savedOrder) && savedOrder.length > 0) {
+    return cloned.sort((a, b) => {
+      const idxA = savedOrder.indexOf(a.id)
+      const idxB = savedOrder.indexOf(b.id)
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB
+      if (idxA !== -1) return -1
+      if (idxB !== -1) return 1
+      return 0
+    })
+  }
+
+  // 2. Check if projects have an explicit distinct order attribute
+  const hasDistinctOrder = cloned.some(p => p.order !== undefined && p.order !== null && p.order > 0)
+  if (hasDistinctOrder) {
     return cloned.sort((a, b) => {
       const ordA = a.order !== undefined && a.order !== null ? Number(a.order) : 9999
       const ordB = b.order !== undefined && b.order !== null ? Number(b.order) : 9999
       return ordA - ordB
     })
-  }
-
-  // Fallback to localStorage saved order if present
-  try {
-    const savedOrder = JSON.parse(localStorage.getItem('portfolio_projects_order') || '[]')
-    if (Array.isArray(savedOrder) && savedOrder.length > 0) {
-      cloned.sort((a, b) => {
-        const idxA = savedOrder.indexOf(a.id)
-        const idxB = savedOrder.indexOf(b.id)
-        if (idxA !== -1 && idxB !== -1) return idxA - idxB
-        if (idxA !== -1) return -1
-        if (idxB !== -1) return 1
-        return 0
-      })
-    }
-  } catch (e) {
-    // ignore
   }
 
   return cloned
@@ -280,20 +290,21 @@ const syncProjectsOrder = async (msg = 'Projects reordered successfully.') => {
     proj.order = idx
   })
 
+  const idOrder = projects.value.map(p => p.id)
+
   // 1. Immediately cache order sequence locally
   try {
-    const idOrder = projects.value.map(p => p.id)
     localStorage.setItem('portfolio_projects_order', JSON.stringify(idOrder))
   } catch (err) {
     console.warn('LocalStorage save error:', err)
   }
 
-  // 2. Synchronize order with Laravel API
+  // 2. Synchronize order with Laravel API /projects/reorder
   try {
     const payload = {
       orders: projects.value.map((p, idx) => ({ id: p.id, order: idx }))
     }
-    const res = await fetch(`${customApiUrl.value}/projects/reorder`, {
+    await fetch(`${customApiUrl.value}/projects/reorder`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -301,17 +312,32 @@ const syncProjectsOrder = async (msg = 'Projects reordered successfully.') => {
       },
       body: JSON.stringify(payload)
     })
+  } catch (err) {
+    console.warn('Backend /projects/reorder call notice:', err)
+  }
 
-    if (res.ok) {
-      notify(msg, 'success')
-    } else {
-      notify('Project sequence saved locally (backend pending).', 'info')
+  // 3. Persist order into settings table via /settings so it is permanently in database
+  try {
+    await fetch(`${customApiUrl.value}/settings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        projects_order: JSON.stringify(idOrder)
+      })
+    })
+    // Also update reactive settings
+    if (settings.value) {
+      settings.value.projects_order = JSON.stringify(idOrder)
     }
   } catch (err) {
-    notify('Project sequence saved locally (backend offline).', 'info')
-  } finally {
-    isReordering.value = false
+    console.warn('Settings order sync notice:', err)
   }
+
+  notify(msg, 'success')
+  isReordering.value = false
 }
 
 const openCreateProjectModal = () => {

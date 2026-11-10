@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS = {
   about_description: 'A dedicated software engineer specializing in robust and scalable web applications. My foundation was built at Wollo University, focused on strong engineering principles and problem-solving. With a particular focus on Vue and Laravel, I develop complete end-to-end solutions that balance performance, clean architecture, and intuitive user experiences.',
   skills_title: 'Skills & Technologies',
   projects_title: 'My Projects',
+  projects_order: '',
   contact_title: "Let's Work Together",
   contact_email: 'mekdimeki8@gmail.com',
   contact_phone: '+251 953 419 361',

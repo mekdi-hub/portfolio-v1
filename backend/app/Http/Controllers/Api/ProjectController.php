@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +22,24 @@ class ProjectController extends Controller
         } else {
             $projects = Project::latest()->get();
         }
+
+        // Apply saved custom project order sequence from database settings
+        $savedOrderRaw = Setting::get('projects_order');
+        if ($savedOrderRaw) {
+            $savedOrder = is_array($savedOrderRaw) ? $savedOrderRaw : json_decode($savedOrderRaw, true);
+            if (is_array($savedOrder) && !empty($savedOrder)) {
+                $projects = $projects->sortBy(function ($item) use ($savedOrder) {
+                    $idx = array_search($item->id, $savedOrder);
+                    return $idx !== false ? $idx : 9999;
+                })->values();
+            }
+        }
+
+        // Ensure every project object has sequential order index attached
+        $projects->each(function ($item, $idx) {
+            $item->order = $idx;
+        });
+
         return response()->json($projects);
     }
 
@@ -35,22 +54,40 @@ class ProjectController extends Controller
                 return response()->json(['error' => 'Invalid orders payload format'], 422);
             }
 
-            if (!Schema::hasColumn('projects', 'order')) {
-                return response()->json([
-                    'status' => 'acknowledged',
-                    'message' => 'Order column not yet in database; client-side order will be preserved.'
-                ]);
+            // 1. Permanently persist order sequence into database settings table
+            $idOrder = [];
+            foreach ($orders as $item) {
+                if (isset($item['id'])) {
+                    $idOrder[] = (int) $item['id'];
+                }
+            }
+            if (!empty($idOrder)) {
+                Setting::set('projects_order', json_encode($idOrder));
             }
 
-            foreach ($orders as $item) {
-                if (isset($item['id']) && isset($item['order'])) {
-                    Project::where('id', $item['id'])->update(['order' => (int) $item['order']]);
+            // 2. Try creating the 'order' column if not already present
+            if (!Schema::hasColumn('projects', 'order')) {
+                try {
+                    Schema::table('projects', function ($table) {
+                        $table->integer('order')->default(0)->nullable();
+                    });
+                } catch (\Exception $ex) {
+                    Log::info('Could not auto-add order column: ' . $ex->getMessage());
+                }
+            }
+
+            // 3. Update 'order' column on individual project rows if column exists
+            if (Schema::hasColumn('projects', 'order')) {
+                foreach ($orders as $item) {
+                    if (isset($item['id']) && isset($item['order'])) {
+                        Project::where('id', $item['id'])->update(['order' => (int) $item['order']]);
+                    }
                 }
             }
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Projects display order updated successfully.'
+                'message' => 'Projects display order updated successfully and permanently stored in database.'
             ]);
         } catch (\Exception $e) {
             Log::error('Projects reorder error: ' . $e->getMessage());

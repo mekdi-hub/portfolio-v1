@@ -69,32 +69,42 @@ const normalizeTechStack = (tech) => {
 const sortProjects = (list) => {
   if (!Array.isArray(list)) return []
   const cloned = [...list]
-  
-  // If items have explicit order property
-  const hasOrderProps = cloned.some(p => p.order !== undefined && p.order !== null)
-  if (hasOrderProps) {
+
+  // 1. Check saved custom order from database settings or localStorage
+  let savedOrder = []
+  try {
+    if (settings.value?.projects_order) {
+      savedOrder = typeof settings.value.projects_order === 'string'
+        ? JSON.parse(settings.value.projects_order)
+        : settings.value.projects_order
+    }
+  } catch (e) {}
+
+  if (!Array.isArray(savedOrder) || savedOrder.length === 0) {
+    try {
+      savedOrder = JSON.parse(localStorage.getItem('portfolio_projects_order') || '[]')
+    } catch (e) {}
+  }
+
+  if (Array.isArray(savedOrder) && savedOrder.length > 0) {
+    return cloned.sort((a, b) => {
+      const idxA = savedOrder.indexOf(a.id)
+      const idxB = savedOrder.indexOf(b.id)
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB
+      if (idxA !== -1) return -1
+      if (idxB !== -1) return 1
+      return 0
+    })
+  }
+
+  // 2. Fallback to explicit distinct order attribute if present
+  const hasDistinctOrder = cloned.some(p => p.order !== undefined && p.order !== null && p.order > 0)
+  if (hasDistinctOrder) {
     return cloned.sort((a, b) => {
       const ordA = a.order !== undefined && a.order !== null ? Number(a.order) : 9999
       const ordB = b.order !== undefined && b.order !== null ? Number(b.order) : 9999
       return ordA - ordB
     })
-  }
-
-  // Fallback to local storage custom sequence
-  try {
-    const savedOrder = JSON.parse(localStorage.getItem('portfolio_projects_order') || '[]')
-    if (Array.isArray(savedOrder) && savedOrder.length > 0) {
-      cloned.sort((a, b) => {
-        const idxA = savedOrder.indexOf(a.id)
-        const idxB = savedOrder.indexOf(b.id)
-        if (idxA !== -1 && idxB !== -1) return idxA - idxB
-        if (idxA !== -1) return -1
-        if (idxB !== -1) return 1
-        return 0
-      })
-    }
-  } catch (e) {
-    // ignore
   }
 
   return cloned
