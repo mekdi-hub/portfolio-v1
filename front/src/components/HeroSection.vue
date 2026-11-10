@@ -268,12 +268,26 @@ const scrollToAbout = () => {
   white-space: nowrap;
 }
 
+/* Bottom Center Scroll Indicator */
+.hero-scroll-wrapper {
+  position: absolute;
+  bottom: 2.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
 /* Scroll Pill Indicator */
 .scroll-indicator {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   cursor: pointer;
+  padding: 0.5rem;
 }
 
 .mouse-pill {
@@ -285,12 +299,13 @@ const scrollToAbout = () => {
   justify-content: center;
   padding-top: 6px;
   opacity: 0.75;
-  transition: opacity 0.3s ease, border-color 0.3s ease;
+  transition: opacity 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
 .mouse-pill:hover {
   opacity: 1;
   border-color: #0f172a;
+  transform: translateY(2px);
 }
 
 .scroll-wheel {
@@ -339,7 +354,10 @@ const scrollToAbout = () => {
     padding: max(1.2rem, env(safe-area-inset-top)) 1.5rem 0.8rem 1.5rem;
   }
   .hero-content {
-    padding: 0 1.5rem max(2rem, env(safe-area-inset-bottom)) 1.5rem;
+    padding: 0 1.5rem max(5rem, calc(env(safe-area-inset-bottom) + 4rem)) 1.5rem;
+  }
+  .hero-scroll-wrapper {
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
   }
   .hero-text-block {
     gap: 1.4rem;
@@ -370,8 +388,11 @@ const scrollToAbout = () => {
     height: 36px;
   }
   .hero-content {
-    padding: 0 1.25rem max(2rem, env(safe-area-inset-bottom)) 1.25rem;
+    padding: 0 1.25rem max(4.8rem, calc(env(safe-area-inset-bottom) + 3.8rem)) 1.25rem;
     justify-content: flex-start;
+  }
+  .hero-scroll-wrapper {
+    bottom: max(1.2rem, env(safe-area-inset-bottom));
   }
   .hero-text-block {
     gap: 1.15rem;
@@ -423,7 +444,10 @@ const scrollToAbout = () => {
     height: 32px;
   }
   .hero-content {
-    padding: 0 1rem 1.6rem 1rem;
+    padding: 0 1rem max(4.4rem, calc(env(safe-area-inset-bottom) + 3.5rem)) 1rem;
+  }
+  .hero-scroll-wrapper {
+    bottom: max(0.9rem, env(safe-area-inset-bottom));
   }
   .hero-text-block {
     gap: 0.95rem;
@@ -450,6 +474,9 @@ const scrollToAbout = () => {
   .hero-container {
     min-height: auto;
     padding-bottom: 2rem;
+  }
+  .hero-scroll-wrapper {
+    display: none;
   }
   .hero-header {
     padding: 0.65rem 1.75rem 0.4rem 1.75rem;
