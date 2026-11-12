@@ -391,6 +391,22 @@ const skills = [
   color: #0f172a;
 }
 
+:global(.is-revealed) .matrix-tile {
+  animation: tileCascadeIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.12s + var(--tile-index, 0) * 38ms);
+}
+
+@keyframes tileCascadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .matrix-tile:hover {
   border-color: #cbd5e1;
   transform: translateY(-2px);

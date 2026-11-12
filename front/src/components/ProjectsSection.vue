@@ -189,10 +189,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="projects" class="curtain-wrapper">
+  <div id="projects" class="curtain-wrapper scroll-reveal">
     <!-- Pinned Underlay: Shows 'My Projects' full screen in background -->
     <div class="curtain-underlay">
-      <div class="underlay-content">
+      <div class="underlay-content reveal-item delay-1">
         <h2 v-if="settings.projects_title" class="underlay-title">{{ settings.projects_title }}</h2>
         <div class="scroll-curtain-hint">
           <span class="hint-text">Scroll to reveal</span>
@@ -265,9 +265,10 @@ onMounted(() => {
           <!-- Real Loaded Project Cards -->
           <template v-else>
             <article
-              v-for="project in projects"
+              v-for="(project, index) in projects"
               :key="project.id"
               class="project-card fade-in-card"
+              :style="{ '--card-index': index }"
             >
               <!-- Mockup Window Box matching reference -->
               <div
