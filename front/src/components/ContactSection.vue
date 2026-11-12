@@ -150,9 +150,9 @@ const socials = computed(() => [
       aria-hidden="true"
     ></div>
 
-    <div class="contact-container">
+    <div class="contact-container scroll-reveal">
       <!-- Centered Huge Headline in the Middle -->
-      <div v-if="hasHeadline" class="headline-container">
+      <div v-if="hasHeadline" class="headline-container reveal-item delay-1">
         <h2 class="contact-headline">
           <span v-if="headlineLines[0]" class="headline-line">{{ headlineLines[0] }}</span>
           <span v-if="headlineLines[1]" class="headline-line">{{ headlineLines[1] }}</span>
@@ -162,12 +162,12 @@ const socials = computed(() => [
       <!-- Bottom Cluster: Divider + Details -->
       <div class="bottom-cluster">
         <!-- Horizontal Divider Line -->
-        <div class="contact-divider"></div>
+        <div class="contact-divider reveal-item delay-2"></div>
 
         <!-- Bottom Layout Row -->
         <div class="contact-bottom-row">
           <!-- Left: Socials -->
-          <div class="socials-column">
+          <div class="socials-column reveal-item delay-3">
             <span class="socials-label">• SOCIALS</span>
             <div class="socials-buttons-row">
               <a
@@ -184,7 +184,7 @@ const socials = computed(() => [
           </div>
 
           <!-- Right: Contact Pill Cards -->
-          <div class="contact-details-column">
+          <div class="contact-details-column reveal-item delay-3">
             <!-- Email Card -->
             <a v-if="email" :href="`mailto:${email}`" class="contact-pill-card">
               <span class="pill-icon email-icon">
@@ -223,7 +223,7 @@ const socials = computed(() => [
         </div>
 
         <!-- Copyright Subtext -->
-        <div class="footer-credit">
+        <div class="footer-credit reveal-item delay-4">
           <p>&copy; 2026 Mekdelawit Habtamu. All rights reserved.</p>
         </div>
       </div>

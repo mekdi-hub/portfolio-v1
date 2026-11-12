@@ -503,6 +503,22 @@ onMounted(() => {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+:global(.is-revealed) .project-card.fade-in-card {
+  animation: cardRiseIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.1s + var(--card-index, 0) * 75ms);
+}
+
+@keyframes cardRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .project-card:hover {
   transform: translateY(-8px);
 }
