@@ -51,7 +51,7 @@ const scrollToAbout = () => {
 </script>
 
 <template>
-  <div class="hero-container">
+  <section id="hero" class="hero-container">
     <!-- 3D Wind-Moving Bloom Background -->
     <WindBloom />
 
@@ -73,20 +73,20 @@ const scrollToAbout = () => {
 
     <!-- Main Content Grid -->
     <main class="hero-content">
-      <div class="hero-text-block">
+      <div class="hero-text-block scroll-reveal is-revealed">
         <!-- Subtitle / Name -->
-        <div v-if="heroAuthorName" class="hero-author-tag">
+        <div v-if="heroAuthorName" class="hero-author-tag reveal-item delay-1">
           <span class="author-name">{{ heroAuthorName }}</span>
         </div>
 
         <!-- Big Bold Title -->
-        <h1 v-if="hasHeroTitle" class="hero-title">
+        <h1 v-if="hasHeroTitle" class="hero-title reveal-item delay-2">
           <span v-if="heroTitleLines[0]" class="title-line">{{ heroTitleLines[0] }}</span>
           <span v-if="heroTitleLines[1]" class="title-line">{{ heroTitleLines[1] }}</span>
         </h1>
 
         <!-- Action Cluster: Download CV Button -->
-        <div class="hero-action-cluster">
+        <div class="hero-action-cluster reveal-item delay-3">
           <!-- Download CV Button -->
           <a
             href="/Mekdelawit_Habtamu_CV.pdf"
@@ -115,7 +115,7 @@ const scrollToAbout = () => {
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>
