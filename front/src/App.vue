@@ -2,7 +2,6 @@
 import { ref, defineAsyncComponent, onMounted, onUnmounted, nextTick } from 'vue'
 import SplashScreen from './components/SplashScreen.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
-import SectionNav from './components/SectionNav.vue'
 import HeroSection from './components/HeroSection.vue'
 import AboutSection from './components/AboutSection.vue'
 import SkillsSection from './components/SkillsSection.vue'
@@ -81,9 +80,6 @@ const handleNavigate = (view) => {
 
     <!-- Global Floating Theme Toggle (Dark / Light) -->
     <ThemeToggle />
-
-    <!-- Global Floating Section Navigation & Scroll Progress -->
-    <SectionNav v-if="currentView !== 'admin'" />
 
     <!-- Admin Dashboard View -->
     <AdminPanel
