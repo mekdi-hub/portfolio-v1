@@ -227,25 +227,28 @@ const scrollToAbout = () => {
   align-items: center;
   gap: 0.75rem;
   padding: 0.85rem 1.85rem;
-  background-color: #000000;
-  color: #ffffff;
+  background-color: transparent;
+  color: #0f172a;
   border-radius: 9999px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.96rem;
   font-weight: 600;
   text-decoration: none;
   letter-spacing: -0.01em;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1.5px solid #0f172a;
   cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .download-cv-btn:hover {
-  background-color: #1e293b;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  border-color: rgba(6, 182, 212, 0.4);
+  background-color: rgba(15, 23, 42, 0.06);
+  border-color: #0284c7;
+  color: #0284c7;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.15);
 }
 
 .download-cv-btn:active {
@@ -256,12 +259,13 @@ const scrollToAbout = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #22d3ee; /* Soft cyan accent matching wind bloom */
-  transition: transform 0.25s ease;
+  color: #0284c7;
+  transition: transform 0.25s ease, color 0.25s ease;
 }
 
 .download-cv-btn:hover .btn-icon {
   transform: translateY(2px);
+  color: #0284c7;
 }
 
 .btn-text {
@@ -515,15 +519,21 @@ const scrollToAbout = () => {
 }
 
 :global(.dark) .download-cv-btn {
-  background-color: #11131a;
-  border-color: rgba(6, 182, 212, 0.4);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 12px rgba(6, 182, 212, 0.15);
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(6, 182, 212, 0.65) !important;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.15) !important;
 }
 
 :global(.dark) .download-cv-btn:hover {
-  background-color: #181c26;
-  border-color: #06b6d4;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(6, 182, 212, 0.3);
+  background-color: rgba(6, 182, 212, 0.12) !important;
+  border-color: #22d3ee !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.45) !important;
+}
+
+:global(.dark) .download-cv-btn .btn-icon {
+  color: #22d3ee !important;
 }
 
 :global(.dark) .mouse-pill {

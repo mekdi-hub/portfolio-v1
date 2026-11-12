@@ -38,16 +38,17 @@ html.dark .logo-svg path {
 }
 
 html.dark .download-cv-btn {
-  background-color: #0d1117 !important;
-  border-color: rgba(6, 182, 212, 0.45) !important;
+  background-color: transparent !important;
+  border: 1.5px solid rgba(6, 182, 212, 0.65) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(6, 182, 212, 0.15) !important;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.15) !important;
 }
 
 html.dark .download-cv-btn:hover {
-  background-color: #161b22 !important;
-  border-color: #06b6d4 !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7), 0 0 16px rgba(6, 182, 212, 0.35) !important;
+  background-color: rgba(6, 182, 212, 0.12) !important;
+  border-color: #22d3ee !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.45) !important;
 }
 
 html.dark .mouse-pill {
