@@ -107,9 +107,9 @@ const skills = [
 
 <template>
   <section id="skills" class="skills-tech-section">
-    <div class="skills-wrapper">
+    <div class="skills-wrapper scroll-reveal">
       <!-- Top Section Header -->
-      <div class="skills-top-bar">
+      <div class="skills-top-bar reveal-item delay-1">
         <div v-if="settings.skills_title" class="skills-label">
           <span class="label-code">03 — {{ settings.skills_title.toUpperCase() }}</span>
         </div>
@@ -123,7 +123,7 @@ const skills = [
       </div>
 
       <!-- Tech Metadata Row -->
-      <div class="skills-meta-row">
+      <div class="skills-meta-row reveal-item delay-2">
         <span class="meta-status-dot"></span>
         <span class="meta-status-text">TABLE ONLINE</span>
         <span class="meta-sep">&nbsp;&nbsp;</span>
@@ -135,7 +135,7 @@ const skills = [
       <!-- Main Layout: Left Inspector Card + Right Matrix Grid -->
       <div class="skills-matrix-layout">
         <!-- Left: Inspector Panel -->
-        <div class="inspector-card">
+        <div class="inspector-card reveal-item delay-3">
           <!-- Technical Corner Accent -->
           <div class="corner-bracket"></div>
 
@@ -159,12 +159,13 @@ const skills = [
         </div>
 
         <!-- Right: 4x3 Interactive Tile Matrix -->
-        <div class="tiles-matrix">
+        <div class="tiles-matrix reveal-item delay-4">
           <div
             v-for="(skill, index) in skills"
             :key="skill.id"
             class="matrix-tile"
             :class="{ active: activeIndex === index }"
+            :style="{ '--tile-index': index }"
             @mouseenter="activeIndex = index"
             @click="activeIndex = index"
           >
