@@ -85,18 +85,18 @@ onMounted(() => {
 
 <template>
   <section id="about" class="about-section">
-    <div class="about-container">
+    <div class="about-container scroll-reveal">
       <!-- Section Title in Black -->
-      <h2 v-if="settings.about_title" class="about-title">{{ settings.about_title }}</h2>
+      <h2 v-if="settings.about_title" class="about-title reveal-item delay-1">{{ settings.about_title }}</h2>
 
       <!-- Introduction -->
-      <div v-if="displayName || settings.hero_subtitle" class="about-heading-block">
+      <div v-if="displayName || settings.hero_subtitle" class="about-heading-block reveal-item delay-2">
         <h3 v-if="displayName" class="about-greeting">Hello, I'm <span class="highlight-name">{{ displayName }}</span></h3>
         <p v-if="settings.hero_subtitle" class="about-role-tag">{{ settings.hero_subtitle }}</p>
       </div>
 
       <!-- Description Text in 2-Column Grid (Cardless) -->
-      <div v-if="aboutParagraphs.length > 0 && aboutParagraphs[0]" class="about-paragraphs-grid">
+      <div v-if="aboutParagraphs.length > 0 && aboutParagraphs[0]" class="about-paragraphs-grid reveal-item delay-3">
         <div class="grid-col lead-col">
           <p>{{ aboutParagraphs[0] }}</p>
         </div>
@@ -106,7 +106,7 @@ onMounted(() => {
       </div>
 
       <!-- Minimalist Cardless Stats -->
-      <div class="stats-row" ref="statsSection">
+      <div class="stats-row reveal-item delay-4" ref="statsSection">
         <div class="stat-item">
           <div class="stat-number">{{ counts.years }}+</div>
           <div class="stat-label">Years Experience</div>
