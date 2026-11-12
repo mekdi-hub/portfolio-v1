@@ -96,7 +96,6 @@ const handleNavigate = (view) => {
       <SkillsSection />
       <div class="section-ambient-divider" aria-hidden="true"></div>
       <ProjectsSection />
-      <div class="section-ambient-divider" aria-hidden="true"></div>
       <ContactSection @open-admin="handleNavigate('admin')" />
     </div>
   </div>

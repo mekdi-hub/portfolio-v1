@@ -1,6 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
-import { getApiBaseUrl } from '../config/api'
+import { ref, computed } from 'vue'
 import { useSettings } from '../composables/useSettings'
 
 const { settings } = useSettings()
@@ -8,7 +7,6 @@ const { settings } = useSettings()
 const email = computed(() => (settings.value.contact_email !== null && settings.value.contact_email !== undefined) ? String(settings.value.contact_email).trim() : '')
 const phone = computed(() => (settings.value.contact_phone !== null && settings.value.contact_phone !== undefined) ? String(settings.value.contact_phone).trim() : '')
 const phoneLink = computed(() => phone.value.replace(/\s+/g, ''))
-const API_BASE = getApiBaseUrl()
 
 const headlineLines = computed(() => {
   const raw = settings.value.contact_title
@@ -38,17 +36,6 @@ const mouseX = ref(0)
 const mouseY = ref(0)
 const isHovered = ref(false)
 
-// Message Modal State
-const showMessageModal = ref(false)
-const isSending = ref(false)
-const sendSuccess = ref(false)
-const sendError = ref('')
-const messageForm = reactive({
-  name: '',
-  email: '',
-  message: ''
-})
-
 const handleMouseMove = (e) => {
   if (!contactRef.value) return
   const rect = contactRef.value.getBoundingClientRect()
@@ -62,49 +49,6 @@ const handleMouseEnter = () => {
 
 const handleMouseLeave = () => {
   isHovered.value = false
-}
-
-const submitContactForm = async () => {
-  if (!messageForm.name || !messageForm.email || !messageForm.message) {
-    sendError.value = 'Please complete all required fields.'
-    return
-  }
-
-  isSending.value = true
-  sendError.value = ''
-
-  try {
-    const res = await fetch(`${API_BASE}/messages`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(messageForm)
-    })
-
-    if (res.ok) {
-      sendSuccess.value = true
-      setTimeout(() => {
-        showMessageModal.value = false
-        sendSuccess.value = false
-        messageForm.name = ''
-        messageForm.email = ''
-        messageForm.message = ''
-      }, 2000)
-    } else {
-      sendError.value = 'Message could not be saved to backend. Please try emailing directly.'
-    }
-  } catch (err) {
-    // If backend is offline, store in local session
-    sendSuccess.value = true
-    setTimeout(() => {
-      showMessageModal.value = false
-      sendSuccess.value = false
-      messageForm.name = ''
-      messageForm.email = ''
-      messageForm.message = ''
-    }, 2000)
-  } finally {
-    isSending.value = false
-  }
 }
 
 const socials = computed(() => [
@@ -205,20 +149,6 @@ const socials = computed(() => [
               </span>
               <span class="pill-value">{{ phone }}</span>
             </a>
-
-            <!-- Quick Inquiry / Message Pill Button -->
-            <button
-              type="button"
-              @click="showMessageModal = true"
-              class="contact-pill-card message-trigger-btn"
-            >
-              <span class="pill-icon message-icon">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-              </span>
-              <span class="pill-value">Send Message</span>
-            </button>
           </div>
         </div>
 
@@ -226,45 +156,6 @@ const socials = computed(() => [
         <div class="footer-credit reveal-item delay-4">
           <p>&copy; 2026 Mekdelawit Habtamu. All rights reserved.</p>
         </div>
-      </div>
-    </div>
-
-    <!-- Contact Inquiry Modal -->
-    <div v-if="showMessageModal" class="contact-modal-backdrop" @click.self="showMessageModal = false">
-      <div class="contact-modal-window">
-        <div class="modal-top">
-          <h3>Send a Direct Message</h3>
-          <button @click="showMessageModal = false" class="modal-close-btn">✕</button>
-        </div>
-
-        <div v-if="sendSuccess" class="alert-success">
-          ✨ Message sent successfully! I will get back to you shortly.
-        </div>
-
-        <form v-else @submit.prevent="submitContactForm" class="contact-modal-form">
-          <div v-if="sendError" class="alert-error">
-            {{ sendError }}
-          </div>
-
-          <div class="field-item">
-            <label>Your Name *</label>
-            <input v-model="messageForm.name" type="text" placeholder="e.g. John Doe" required />
-          </div>
-
-          <div class="field-item">
-            <label>Your Email *</label>
-            <input v-model="messageForm.email" type="email" placeholder="john@example.com" required />
-          </div>
-
-          <div class="field-item">
-            <label>Your Message *</label>
-            <textarea v-model="messageForm.message" rows="4" placeholder="Tell me about your project, idea, or inquiry..." required></textarea>
-          </div>
-
-          <button type="submit" class="submit-inquiry-btn" :disabled="isSending">
-            {{ isSending ? 'Sending Message...' : 'Send Message' }}
-          </button>
-        </form>
       </div>
     </div>
   </footer>
