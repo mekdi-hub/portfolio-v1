@@ -89,10 +89,11 @@ const scrollToAbout = () => {
         <div class="hero-action-cluster reveal-item delay-3">
           <!-- Download CV Button -->
           <a
-            href="/Mekdelawit_Habtamu_CV.pdf"
-            download="Mekdelawit_Habtamu_CV.pdf"
+            href="/Resume%20(1).pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             class="download-cv-btn"
-            title="Download Mekdelawit Habtamu's Curriculum Vitae"
+            title="View & Download Mekdelawit Habtamu's CV"
           >
             <span class="btn-icon">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
