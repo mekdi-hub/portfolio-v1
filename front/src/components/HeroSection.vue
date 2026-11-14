@@ -126,7 +126,7 @@ const scrollToAbout = () => {
   max-width: 100vw;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #f4f5f7;
+  background-color: #f2f2f2;
   overflow: hidden;
   display: flex;
   flex-direction: column;
