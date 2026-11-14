@@ -166,13 +166,14 @@ const socials = computed(() => [
 .contact-section {
   position: relative;
   width: 100%;
-  min-height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #ffffff; /* Clear White */
-  padding: 3rem 2.5rem 1.25rem 2.5rem;
+  padding: 3.5rem 2.5rem 1.5rem 2.5rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   overflow: hidden;
 }
 
@@ -198,18 +199,22 @@ const socials = computed(() => [
   z-index: 2;
   max-width: 1240px;
   width: 100%;
+  height: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
 }
 
 /* Centered Headline */
 .headline-container {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1.5rem 0 2rem 0;
+  padding: 2rem 0;
 }
 
 .contact-headline {
@@ -357,12 +362,12 @@ const socials = computed(() => [
 /* Responsive */
 @media (max-width: 900px) {
   .contact-section {
-    height: auto;
-    min-height: auto;
-    padding: 2.5rem 1.25rem 1.25rem 1.25rem;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 3rem 1.25rem 1.5rem 1.25rem;
   }
   .headline-container {
-    padding: 1rem 0 1.5rem 0;
+    padding: 1.5rem 0 2rem 0;
   }
   .contact-bottom-row {
     flex-direction: column;
