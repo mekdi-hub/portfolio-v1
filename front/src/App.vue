@@ -107,6 +107,7 @@ const handleNavigate = (view) => {
   min-height: 100vh;
   position: relative;
   background-color: #f4f5f7;
+  overflow-x: clip;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -118,5 +119,6 @@ const handleNavigate = (view) => {
 .portfolio-view {
   width: 100%;
   min-height: 100vh;
+  overflow-x: clip;
 }
 </style>

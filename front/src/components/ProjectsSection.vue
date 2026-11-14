@@ -189,10 +189,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="projects" class="curtain-wrapper scroll-reveal">
+  <div id="projects" class="curtain-wrapper">
     <!-- Pinned Underlay: Shows 'My Projects' full screen in background -->
     <div class="curtain-underlay">
-      <div class="underlay-content reveal-item delay-1">
+      <div class="underlay-content">
         <h2 v-if="settings.projects_title" class="underlay-title">{{ settings.projects_title }}</h2>
         <div class="scroll-curtain-hint">
           <span class="hint-text">Scroll to reveal</span>
@@ -374,14 +374,20 @@ onMounted(() => {
   position: relative;
   width: 100%;
   background-color: #f4f5f7;
+  transform: none !important;
+  filter: none !important;
+  will-change: auto !important;
 }
 
 /* 1. Underlay: Sticky full-screen view containing 'My Projects' */
 .curtain-underlay {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -464,8 +470,8 @@ onMounted(() => {
   width: 100%;
   background-color: #ffffff;
   border-radius: 44px 44px 0 0;
-  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.08), 0 -4px 16px rgba(0, 0, 0, 0.03);
-  padding: 2rem 3rem 8rem 3rem;
+  box-shadow: 0 -30px 60px rgba(0, 0, 0, 0.1), 0 -4px 16px rgba(0, 0, 0, 0.04);
+  padding: 2.5rem 3rem 8rem 3rem;
   border-top: 1px solid rgba(226, 232, 240, 0.9);
 }
 
