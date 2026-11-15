@@ -126,7 +126,7 @@ const scrollToAbout = () => {
   max-width: 100vw;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #ffffff;
+  background-color: #f4f5f7;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -507,10 +507,6 @@ const scrollToAbout = () => {
 
 :global(.dark) .logo-svg path {
   stroke: #ffffff;
-}
-
-:global(.dark) .hero-container {
-  background-color: #000000 !important;
 }
 
 :global(.dark) .author-name {

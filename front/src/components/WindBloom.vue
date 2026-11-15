@@ -90,43 +90,41 @@ varying vec3 vViewPosition;
 varying vec3 vWorldPosition;
 varying vec3 vLocalPosition;
 varying float vDisplacement;
-varying float vPetalFactor;
 
 void main() {
   vNormal = normalize(normalMatrix * normal);
   vec3 n = normalize(position);
 
-  // 1. Multi-scale organic billowing petal folds matching reference video
-  // Broad sweeping lobes
-  float n1 = snoise(n * 2.1 + vec3(0.0, 0.0, uTime * 0.14));
-  // Mid-frequency undulating petal waves
-  float n2 = snoise(n * 4.4 + vec3(uTime * 0.16, 0.0, uTime * 0.1));
-  // Fine harmonic ripples along petal crests
-  float n3 = snoise(n * 8.6 + vec3(0.0, uTime * 0.22, 0.0));
+  // 1. Sharp organic bloom spikes formation
+  float n1 = snoise(n * 2.6 + vec3(0.0, 0.0, uTime * 0.12));
+  float n2 = snoise(n * 5.8 + vec3(uTime * 0.15, 0.0, 0.0));
+  float n3 = snoise(n * 11.0 + vec3(0.0, uTime * 0.25, 0.0));
 
-  // Organic soft folds: smooth combination with gentle crests
-  float lobeShape = n1 * 0.85 + n2 * 0.42 + n3 * 0.16;
-  float petalFolds = pow(max(0.0, lobeShape + 0.35), 1.45) * 1.35;
+  // Ridged noise creates sharp petal/spike crests
+  float ridge = 1.0 - abs(n1);
+  float spikes = pow(ridge, 2.0) * 1.45 + pow(max(0.0, n2), 2.0) * 0.85 + n3 * 0.15;
 
-  // 2. Wind wave dynamics: continuous fluid breeze from right to center
-  vec3 windDir = normalize(vec3(-0.9, 0.25, 0.2));
+  // 2. Wind simulation: Wind gusts blowing from right to left & oscillating
+  vec3 windDir = normalize(vec3(-0.95, 0.28, 0.15));
   float windWaveCoord = dot(position, windDir);
 
-  float windSway = sin(windWaveCoord * 2.8 - uTime * 2.4) * 0.22;
-  float windRipples = sin(windWaveCoord * 5.6 - uTime * 4.0) * 0.10;
-  float softFlutter = snoise(position * 3.6 - windDir * (uTime * 3.2)) * 0.18;
+  // Strong rolling wind waves
+  float windGust1 = sin(windWaveCoord * 3.0 - uTime * 3.0) * 0.28;
+  float windGust2 = sin(windWaveCoord * 6.5 - uTime * 4.8) * 0.14;
 
-  // 3. Interactive mouse wind deflection
-  float mouseDist = length(position.xy - uMouse * 2.0);
-  float mouseGust = exp(-mouseDist * 1.1) * (uMouseSpeed * 0.45 + 0.08);
+  // High-frequency tip flutter like wind blowing through soft foliage/spikes
+  float tipFlutter = snoise(position * 4.2 - windDir * (uTime * 4.0)) * 0.22 * (spikes * 0.7);
 
-  float totalDisplacement = petalFolds + (windSway + windRipples + softFlutter);
-  vec3 windDeflection = windDir * (windSway * 0.35 + softFlutter * 0.25 + mouseGust);
+  // Interactive mouse wind gust
+  float mouseDist = length(position.xy - uMouse * 1.8);
+  float mouseWind = exp(-mouseDist * 1.1) * (uMouseSpeed * 0.35 + 0.05);
+
+  float totalDisplacement = spikes + (windGust1 + windGust2 + tipFlutter);
+  vec3 windDeflection = windDir * (windGust1 * 0.4 + tipFlutter * 0.35 + mouseWind);
 
   vec3 displacedPosition = position + n * totalDisplacement + windDeflection;
   vLocalPosition = displacedPosition;
   vDisplacement = totalDisplacement;
-  vPetalFactor = petalFolds;
 
   vec4 worldPos = modelMatrix * vec4(displacedPosition, 1.0);
   vWorldPosition = worldPos.xyz;
@@ -141,14 +139,11 @@ void main() {
 const fragmentShader = `
 uniform float uTime;
 uniform vec3 uBgColor;
-uniform float uIsDark;
-
 varying vec3 vNormal;
 varying vec3 vViewPosition;
 varying vec3 vWorldPosition;
 varying vec3 vLocalPosition;
 varying float vDisplacement;
-varying float vPetalFactor;
 
 void main() {
   // Screen-space derivatives produce faceted, organic crystalline petals
@@ -156,59 +151,43 @@ void main() {
   vec3 fdy = dFdy(vWorldPosition);
   vec3 facetNormal = normalize(cross(fdx, fdy));
 
-  // Blend facet normal and smooth normal for silky organic texture
-  vec3 normal = normalize(mix(vNormal, facetNormal, 0.52));
+  // Blend facet normal and smooth normal
+  vec3 normal = normalize(mix(vNormal, facetNormal, 0.6));
   vec3 viewDir = normalize(vViewPosition);
 
-  // Soft high-key lighting matching reference video
-  vec3 lightDir1 = normalize(vec3(0.7, 0.9, 1.1));
-  vec3 lightDir2 = normalize(vec3(-0.7, -0.4, 0.6));
+  // Lighting directions
+  vec3 lightDir1 = normalize(vec3(0.6, 0.8, 1.2));
+  vec3 lightDir2 = normalize(vec3(-0.8, -0.3, 0.4));
 
   float diff1 = max(dot(normal, lightDir1), 0.0);
-  float diff2 = max(dot(normal, lightDir2), 0.0) * 0.45;
+  float diff2 = max(dot(normal, lightDir2), 0.0) * 0.35;
 
-  // High-key ambient light so shadows remain luminous and radiant (never muddy)
-  float totalLight = 0.52 + diff1 * 0.58 + diff2 * 0.28;
+  // Rim / Fresnel lighting highlighting spike tips
+  float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.2);
 
-  // Ethereal Fresnel rim lighting on petal tips and edges
-  float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.4);
+  // Colors matching the image exactly:
+  // Luminous white-cyan core
+  vec3 colorCore = vec3(0.85, 0.99, 1.0);
+  // Bright electric cyan / aquamarine
+  vec3 colorBright = vec3(0.08, 0.96, 0.92);
+  // Vibrant turquoise / mint green
+  vec3 colorMid = vec3(0.05, 0.84, 0.76);
+  // Deep emerald / oceanic shadow
+  vec3 colorShadow = vec3(0.02, 0.54, 0.58);
 
-  // Subsurface translucency glow on back-lit ridges
-  float sss = pow(clamp(dot(viewDir, -lightDir1) + 0.4, 0.0, 1.0), 2.2) * 0.4;
+  // Color gradient based on displacement
+  float h = clamp(vDisplacement / 2.2, 0.0, 1.0);
+  vec3 baseColor = mix(colorShadow, colorMid, smoothstep(0.0, 0.45, h));
+  baseColor = mix(baseColor, colorBright, smoothstep(0.4, 0.85, h));
+  baseColor = mix(baseColor, colorCore, smoothstep(0.8, 1.0, h) * 0.75);
 
-  // Exact color palette sampled from reference video:
-  // Radiant white-cyan highlights
-  vec3 colorWhitePeak = vec3(1.0, 1.0, 1.0);
-  // Soft ice-cyan tips
-  vec3 colorIceCyan   = vec3(0.72, 0.97, 1.0);
-  // Vibrant electric cyan / aquamarine core
-  vec3 colorCyan      = vec3(0.04, 0.92, 0.96);
-  // Bright turquoise / seafoam mint
-  vec3 colorTurquoise = vec3(0.12, 0.86, 0.84);
-  // Deep oceanic teal shadow
-  vec3 colorTealDepth = vec3(0.03, 0.62, 0.70);
+  // Combine lighting
+  vec3 finalColor = baseColor * (diff1 * 0.75 + diff2 + 0.35) + vec3(0.95, 1.0, 1.0) * fresnel * 0.45;
 
-  // Height and curvature factor
-  float h = clamp(vDisplacement / 2.3, 0.0, 1.0);
-
-  vec3 baseColor = mix(colorTealDepth, colorTurquoise, smoothstep(0.0, 0.38, h));
-  baseColor = mix(baseColor, colorCyan, smoothstep(0.35, 0.72, h));
-  baseColor = mix(baseColor, colorIceCyan, smoothstep(0.68, 0.92, h));
-  baseColor = mix(baseColor, colorWhitePeak, smoothstep(0.88, 1.0, h) * 0.85);
-
-  // Add lighting, fresnel sheen, and subsurface glow
-  vec3 litColor = baseColor * totalLight;
-  litColor += colorWhitePeak * (fresnel * 0.55 + sss * 0.4);
-
-  // Dark mode adjustment: intensify neon electric cyan glow
-  if (uIsDark > 0.5) {
-    litColor = mix(litColor, colorCyan * 1.25 + colorIceCyan * fresnel, 0.28);
-  }
-
-  // Soft edge dissolving: outer perimeter dissolves seamlessly into background
+  // Feather outer spikes softly into dynamic background (Pitch-black #000000 in dark mode, light grey in light mode)
   float dist = length(vLocalPosition);
-  float edgeFade = smoothstep(3.2, 1.4, dist);
-  vec3 finalColor = mix(uBgColor, litColor, edgeFade);
+  float edgeFade = smoothstep(2.8, 1.3, dist);
+  finalColor = mix(uBgColor, finalColor, edgeFade);
 
   gl_FragColor = vec4(finalColor, 1.0);
 }
@@ -237,17 +216,16 @@ const initThree = () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   canvasContainer.value.appendChild(renderer.domElement)
 
-  // Geometry: High-density Icosahedron for fine organic billowing petals
-  const geometry = new THREE.IcosahedronGeometry(1.68, 80)
+  // Geometry: High-density Icosahedron for fine organic spikes
+  const geometry = new THREE.IcosahedronGeometry(1.45, 64)
 
-  // Uniforms with dynamic background color (Pure white #ffffff in light mode, Pure black #000000 in dark mode)
-  const initialBg = isDark.value ? new THREE.Vector3(0.0, 0.0, 0.0) : new THREE.Vector3(1.0, 1.0, 1.0)
+  // Uniforms with dynamic background color (Pure black #000000 in dark mode)
+  const initialBg = isDark.value ? new THREE.Vector3(0.0, 0.0, 0.0) : new THREE.Vector3(0.957, 0.961, 0.969)
   uniforms = {
     uTime: { value: 0 },
     uMouse: { value: new THREE.Vector2(0, 0) },
     uMouseSpeed: { value: 0 },
-    uBgColor: { value: initialBg },
-    uIsDark: { value: isDark.value ? 1.0 : 0.0 }
+    uBgColor: { value: initialBg }
   }
 
   // React to theme changes in real-time
@@ -255,10 +233,8 @@ const initThree = () => {
     if (uniforms && uniforms.uBgColor) {
       if (val) {
         uniforms.uBgColor.value.set(0.0, 0.0, 0.0)
-        uniforms.uIsDark.value = 1.0
       } else {
-        uniforms.uBgColor.value.set(1.0, 1.0, 1.0)
-        uniforms.uIsDark.value = 0.0
+        uniforms.uBgColor.value.set(0.957, 0.961, 0.969)
       }
     }
   })
@@ -274,9 +250,9 @@ const initThree = () => {
   // Mesh
   mesh = new THREE.Mesh(geometry, material)
   
-  // Position framed prominently in the right half of the screen matching video
-  mesh.position.set(1.35, 0.05, 0)
-  mesh.rotation.z = 0.22
+  // Position slightly to the right side of the screen as shown in reference design
+  mesh.position.set(1.3, 0.05, 0)
+  mesh.rotation.z = 0.25
   scene.add(mesh)
 
   // Handle responsive resize
@@ -284,7 +260,7 @@ const initThree = () => {
 }
 
 const handleResize = () => {
-  if (!canvasContainer.value || !renderer || !camera || !mesh) return
+  if (!canvasContainer.value || !renderer || !camera) return
   const width = canvasContainer.value.clientWidth
   const height = canvasContainer.value.clientHeight
 
@@ -294,20 +270,20 @@ const handleResize = () => {
 
   // Adjust mesh position depending on screen aspect ratio
   if (width < 480) {
-    // Small mobile: framed nicely on the right side without overlapping text
-    mesh.position.set(0.48, -0.1, -0.4)
-    mesh.scale.setScalar(0.92)
+    // Small mobile: position framing the right-lower quadrant without covering the text
+    mesh.position.set(0.4, -0.15, -0.5)
+    mesh.scale.setScalar(0.82)
   } else if (width < 768) {
-    // Tablet: balanced right positioning
-    mesh.position.set(0.75, 0.0, -0.3)
-    mesh.scale.setScalar(1.05)
+    // Mobile tablet: slight offset
+    mesh.position.set(0.55, 0.05, -0.6)
+    mesh.scale.setScalar(0.9)
   } else if (width < 1200) {
-    mesh.position.set(1.15, 0.05, 0)
-    mesh.scale.setScalar(1.18)
+    mesh.position.set(1.0, 0.05, 0)
+    mesh.scale.setScalar(1.0)
   } else {
-    // Desktop: expansive full-height bloom framing the right half
-    mesh.position.set(1.42, 0.05, 0)
-    mesh.scale.setScalar(1.32)
+    // Desktop: positioned nicely to the right
+    mesh.position.set(1.4, 0.05, 0)
+    mesh.scale.setScalar(1.15)
   }
 }
 
@@ -356,10 +332,10 @@ const animate = () => {
   }
 
   if (mesh) {
-    // Fluid organic sway and floating tilt matching video wind motion
-    mesh.rotation.y = elapsedTime * 0.07 + mouse.x * 0.22
-    mesh.rotation.x = 0.08 + Math.sin(elapsedTime * 0.45) * 0.05 - mouse.y * 0.18
-    mesh.rotation.z = 0.22 + Math.sin(elapsedTime * 0.28) * 0.04
+    // Gentle rotation & floating tilt influenced by wind
+    mesh.rotation.y = elapsedTime * 0.08 + mouse.x * 0.25
+    mesh.rotation.x = 0.1 + Math.sin(elapsedTime * 0.5) * 0.05 - mouse.y * 0.2
+    mesh.rotation.z = 0.25 + Math.sin(elapsedTime * 0.3) * 0.04
   }
 
   if (renderer && scene && camera) {
@@ -415,3 +391,4 @@ onUnmounted(() => {
   overflow: hidden;
 }
 </style>
+
