@@ -1,355 +1,253 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import * as THREE from 'three'
 import { useTheme } from '../composables/useTheme'
 
 const { isDark } = useTheme()
-const canvasContainer = ref(null)
 
-let scene, camera, renderer, mesh, animationFrameId
-let mouse = { x: 0, y: 0, targetX: 0, targetY: 0, speed: 0, prevX: 0, prevY: 0 }
-let uniforms
+const containerRef = ref(null)
+const canvasRef = ref(null)
 
-// Simplex Noise GLSL Functions
-const noiseGLSL = `
-vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 permute(vec4 x) { return mod289(((x * 34.0) + 10.0) * x); }
-vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-
-float snoise(vec3 v) {
-  const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-
-  vec3 i  = floor(v + dot(v, C.yyy));
-  vec3 x0 = v - i + dot(i, C.xxx);
-
-  vec3 g = step(x0.yzx, x0.xyz);
-  vec3 l = 1.0 - g;
-  vec3 i1 = min(g.xyz, l.zxy);
-  vec3 i2 = max(g.xyz, l.zxy);
-
-  vec3 x1 = x0 - i1 + C.xxx;
-  vec3 x2 = x0 - i2 + C.yyy;
-  vec3 x3 = x0 - D.yyy;
-
-  i = mod289(i);
-  vec4 p = permute(permute(permute(
-             i.z + vec4(0.0, i1.z, i2.z, 1.0))
-           + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-           + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-
-  float n_ = 0.142857142857;
-  vec3 ns = n_ * D.wyz - D.xzx;
-
-  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-
-  vec4 x_ = floor(j * ns.z);
-  vec4 y_ = floor(j - 7.0 * x_);
-
-  vec4 x = x_ * ns.x + ns.yyyy;
-  vec4 y = y_ * ns.x + ns.yyyy;
-  vec4 h = 1.0 - abs(x) - abs(y);
-
-  vec4 b0 = vec4(x.xy, y.xy);
-  vec4 b1 = vec4(x.zw, y.zw);
-
-  vec4 s0 = floor(b0) * 2.0 + 1.0;
-  vec4 s1 = floor(b1) * 2.0 + 1.0;
-  vec4 sh = -step(h, vec4(0.0));
-
-  vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
-  vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
-
-  vec3 p0 = vec3(a0.xy, h.x);
-  vec3 p1 = vec3(a0.zw, h.y);
-  vec3 p2 = vec3(a1.xy, h.z);
-  vec3 p3 = vec3(a1.zw, h.w);
-
-  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-  p0 *= norm.x;
-  p1 *= norm.y;
-  p2 *= norm.z;
-  p3 *= norm.w;
-
-  vec4 m = max(0.5 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-  m = m * m;
-  return 105.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+// Motion & Interactive State
+const mouse = {
+  x: 0,
+  y: 0,
+  targetX: 0,
+  targetY: 0,
+  speed: 0,
+  prevX: 0,
+  prevY: 0
 }
-`
 
-const vertexShader = `
-${noiseGLSL}
+const sculptureTransform = ref('')
+const auraTransform = ref('')
+const causticTransform = ref('')
 
-uniform float uTime;
-uniform vec2 uMouse;
-uniform float uMouseSpeed;
+let animationFrameId = null
+let startTime = Date.now()
 
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-varying vec3 vWorldPosition;
-varying vec3 vLocalPosition;
-varying float vDisplacement;
+// Floating Crystal Shards System
+let ctx = null
+let canvasW = 0
+let canvasH = 0
+let shards = []
 
-void main() {
-  vNormal = normalize(normalMatrix * normal);
-  vec3 n = normalize(position);
+const PALETTE = [
+  '#00D6D2', // Electric turquoise
+  '#00E5F0', // Bright cyan
+  '#62E5DF', // Aqua
+  '#28B9B5', // Soft teal
+  '#C8F7F4'  // Pale icy cyan
+]
 
-  // 1. Sharp organic bloom spikes formation
-  float n1 = snoise(n * 2.6 + vec3(0.0, 0.0, uTime * 0.12));
-  float n2 = snoise(n * 5.8 + vec3(uTime * 0.15, 0.0, 0.0));
-  float n3 = snoise(n * 11.0 + vec3(0.0, uTime * 0.25, 0.0));
+function createShard() {
+  const isRightSide = Math.random() < 0.85
+  const x = isRightSide
+    ? canvasW * (0.45 + Math.random() * 0.6)
+    : canvasW * (0.35 + Math.random() * 0.7)
+  const y = Math.random() * canvasH
 
-  // Ridged noise creates sharp petal/spike crests
-  float ridge = 1.0 - abs(n1);
-  float spikes = pow(ridge, 2.0) * 1.45 + pow(max(0.0, n2), 2.0) * 0.85 + n3 * 0.15;
-
-  // 2. Wind simulation: Wind gusts blowing from right to left & oscillating
-  vec3 windDir = normalize(vec3(-0.95, 0.28, 0.15));
-  float windWaveCoord = dot(position, windDir);
-
-  // Strong rolling wind waves
-  float windGust1 = sin(windWaveCoord * 3.0 - uTime * 3.0) * 0.28;
-  float windGust2 = sin(windWaveCoord * 6.5 - uTime * 4.8) * 0.14;
-
-  // High-frequency tip flutter like wind blowing through soft foliage/spikes
-  float tipFlutter = snoise(position * 4.2 - windDir * (uTime * 4.0)) * 0.22 * (spikes * 0.7);
-
-  // Interactive mouse wind gust
-  float mouseDist = length(position.xy - uMouse * 1.8);
-  float mouseWind = exp(-mouseDist * 1.1) * (uMouseSpeed * 0.35 + 0.05);
-
-  float totalDisplacement = spikes + (windGust1 + windGust2 + tipFlutter);
-  vec3 windDeflection = windDir * (windGust1 * 0.4 + tipFlutter * 0.35 + mouseWind);
-
-  vec3 displacedPosition = position + n * totalDisplacement + windDeflection;
-  vLocalPosition = displacedPosition;
-  vDisplacement = totalDisplacement;
-
-  vec4 worldPos = modelMatrix * vec4(displacedPosition, 1.0);
-  vWorldPosition = worldPos.xyz;
-
-  vec4 mvPosition = viewMatrix * worldPos;
-  vViewPosition = -mvPosition.xyz;
-
-  gl_Position = projectionMatrix * mvPosition;
-}
-`
-
-const fragmentShader = `
-uniform float uTime;
-uniform vec3 uBgColor;
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-varying vec3 vWorldPosition;
-varying vec3 vLocalPosition;
-varying float vDisplacement;
-
-void main() {
-  // Screen-space derivatives produce faceted, organic crystalline petals
-  vec3 fdx = dFdx(vWorldPosition);
-  vec3 fdy = dFdy(vWorldPosition);
-  vec3 facetNormal = normalize(cross(fdx, fdy));
-
-  // Blend facet normal and smooth normal
-  vec3 normal = normalize(mix(vNormal, facetNormal, 0.6));
-  vec3 viewDir = normalize(vViewPosition);
-
-  // Lighting directions
-  vec3 lightDir1 = normalize(vec3(0.6, 0.8, 1.2));
-  vec3 lightDir2 = normalize(vec3(-0.8, -0.3, 0.4));
-
-  float diff1 = max(dot(normal, lightDir1), 0.0);
-  float diff2 = max(dot(normal, lightDir2), 0.0) * 0.35;
-
-  // Rim / Fresnel lighting highlighting spike tips
-  float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.2);
-
-  // Colors matching the image exactly:
-  // Luminous white-cyan core
-  vec3 colorCore = vec3(0.85, 0.99, 1.0);
-  // Bright electric cyan / aquamarine
-  vec3 colorBright = vec3(0.08, 0.96, 0.92);
-  // Vibrant turquoise / mint green
-  vec3 colorMid = vec3(0.05, 0.84, 0.76);
-  // Deep emerald / oceanic shadow
-  vec3 colorShadow = vec3(0.02, 0.54, 0.58);
-
-  // Color gradient based on displacement
-  float h = clamp(vDisplacement / 2.2, 0.0, 1.0);
-  vec3 baseColor = mix(colorShadow, colorMid, smoothstep(0.0, 0.45, h));
-  baseColor = mix(baseColor, colorBright, smoothstep(0.4, 0.85, h));
-  baseColor = mix(baseColor, colorCore, smoothstep(0.8, 1.0, h) * 0.75);
-
-  // Combine lighting
-  vec3 finalColor = baseColor * (diff1 * 0.75 + diff2 + 0.35) + vec3(0.95, 1.0, 1.0) * fresnel * 0.45;
-
-  // Feather outer spikes softly into dynamic background (Pitch-black #000000 in dark mode, light grey in light mode)
-  float dist = length(vLocalPosition);
-  float edgeFade = smoothstep(2.8, 1.3, dist);
-  finalColor = mix(uBgColor, finalColor, edgeFade);
-
-  gl_FragColor = vec4(finalColor, 1.0);
-}
-`
-
-const initThree = () => {
-  if (!canvasContainer.value) return
-
-  const width = canvasContainer.value.clientWidth
-  const height = canvasContainer.value.clientHeight
-
-  // Scene
-  scene = new THREE.Scene()
-
-  // Camera
-  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100)
-  camera.position.set(0, 0, 5.2)
-
-  // Renderer
-  renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    powerPreference: 'high-performance'
-  })
-  renderer.setSize(width, height)
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  canvasContainer.value.appendChild(renderer.domElement)
-
-  // Geometry: High-density Icosahedron for fine organic spikes
-  const geometry = new THREE.IcosahedronGeometry(1.45, 64)
-
-  // Uniforms with dynamic background color (Pure black #000000 in dark mode)
-  const initialBg = isDark.value ? new THREE.Vector3(0.0, 0.0, 0.0) : new THREE.Vector3(0.957, 0.961, 0.969)
-  uniforms = {
-    uTime: { value: 0 },
-    uMouse: { value: new THREE.Vector2(0, 0) },
-    uMouseSpeed: { value: 0 },
-    uBgColor: { value: initialBg }
+  // Number of polygon vertices (3 to 5)
+  const numVerts = Math.floor(Math.random() * 3) + 3
+  const baseSize = 8 + Math.random() * 26
+  const vertices = []
+  for (let i = 0; i < numVerts; i++) {
+    const angle = (i / numVerts) * Math.PI * 2 + (Math.random() - 0.5) * 0.45
+    const r = baseSize * (0.6 + Math.random() * 0.8)
+    vertices.push({ x: Math.cos(angle) * r, y: Math.sin(angle) * r })
   }
 
-  // React to theme changes in real-time
-  watch(isDark, (val) => {
-    if (uniforms && uniforms.uBgColor) {
-      if (val) {
-        uniforms.uBgColor.value.set(0.0, 0.0, 0.0)
-      } else {
-        uniforms.uBgColor.value.set(0.957, 0.961, 0.969)
-      }
-    }
-  })
+  return {
+    x,
+    y,
+    baseX: x,
+    baseY: y,
+    z: 0.35 + Math.random() * 1.1, // 3D depth layer
+    vertices,
+    size: baseSize,
+    rot: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.018,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: -0.18 - Math.random() * 0.35, // slow upward float
+    color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
+    alpha: 0.15 + Math.random() * 0.45,
+    pulseOffset: Math.random() * Math.PI * 2
+  }
+}
 
-  // Material
-  const material = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    uniforms,
-    side: THREE.DoubleSide
-  })
+function initShards() {
+  shards = []
+  const count = window.innerWidth < 768 ? 16 : 32
+  for (let i = 0; i < count; i++) {
+    shards.push(createShard())
+  }
+}
 
-  // Mesh
-  mesh = new THREE.Mesh(geometry, material)
+function handleResize() {
+  if (!canvasRef.value || !containerRef.value) return
+  canvasW = containerRef.value.clientWidth
+  canvasH = containerRef.value.clientHeight
+  const dpr = Math.min(window.devicePixelRatio || 1, 2)
+  canvasRef.value.width = canvasW * dpr
+  canvasRef.value.height = canvasH * dpr
+  if (ctx) {
+    ctx.scale(dpr, dpr)
+  }
+  initShards()
+}
+
+function handleMouseMove(e) {
+  if (!containerRef.value) return
+  const rect = containerRef.value.getBoundingClientRect()
   
-  // Position slightly to the right side of the screen as shown in reference design
-  mesh.position.set(1.3, 0.05, 0)
-  mesh.rotation.z = 0.25
-  scene.add(mesh)
-
-  // Handle responsive resize
-  handleResize()
-}
-
-const handleResize = () => {
-  if (!canvasContainer.value || !renderer || !camera) return
-  const width = canvasContainer.value.clientWidth
-  const height = canvasContainer.value.clientHeight
-
-  camera.aspect = width / height
-  camera.updateProjectionMatrix()
-  renderer.setSize(width, height)
-
-  // Adjust mesh position depending on screen aspect ratio
-  if (width < 480) {
-    // Small mobile: position framing the right-lower quadrant without covering the text
-    mesh.position.set(0.4, -0.15, -0.5)
-    mesh.scale.setScalar(0.82)
-  } else if (width < 768) {
-    // Mobile tablet: slight offset
-    mesh.position.set(0.55, 0.05, -0.6)
-    mesh.scale.setScalar(0.9)
-  } else if (width < 1200) {
-    mesh.position.set(1.0, 0.05, 0)
-    mesh.scale.setScalar(1.0)
-  } else {
-    // Desktop: positioned nicely to the right
-    mesh.position.set(1.4, 0.05, 0)
-    mesh.scale.setScalar(1.15)
-  }
-}
-
-const handleMouseMove = (e) => {
-  const rect = canvasContainer.value?.getBoundingClientRect()
-  if (!rect) return
-
   // Normalized mouse coords (-1 to 1)
   const normX = ((e.clientX - rect.left) / rect.width) * 2 - 1
-  const normY = -(((e.clientY - rect.top) / rect.height) * 2 - 1)
+  const normY = ((e.clientY - rect.top) / rect.height) * 2 - 1
 
-  mouse.targetX = normX
-  mouse.targetY = normY
+  mouse.targetX = Math.max(-1, Math.min(1, normX))
+  mouse.targetY = Math.max(-1, Math.min(1, normY))
 
   const dx = e.clientX - mouse.prevX
   const dy = e.clientY - mouse.prevY
   const speed = Math.sqrt(dx * dx + dy * dy)
-  mouse.speed = Math.min(speed * 0.015, 1.0)
+  mouse.speed = Math.min(speed * 0.02, 1.0)
 
   mouse.prevX = e.clientX
   mouse.prevY = e.clientY
 }
 
-const handleTouchMove = (e) => {
+function handleTouchMove(e) {
   if (!e.touches || e.touches.length === 0) return
   const touch = e.touches[0]
   handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY })
 }
 
-const clock = new THREE.Clock()
-
-const animate = () => {
-  animationFrameId = requestAnimationFrame(animate)
-
-  const elapsedTime = clock.getElapsedTime()
-
-  // Smooth mouse interpolation
-  mouse.x += (mouse.targetX - mouse.x) * 0.06
-  mouse.y += (mouse.targetY - mouse.y) * 0.06
-  mouse.speed *= 0.94 // decay speed
-
-  if (uniforms) {
-    uniforms.uTime.value = elapsedTime
-    uniforms.uMouse.value.set(mouse.x, mouse.y)
-    uniforms.uMouseSpeed.value = mouse.speed
-  }
-
-  if (mesh) {
-    // Gentle rotation & floating tilt influenced by wind
-    mesh.rotation.y = elapsedTime * 0.08 + mouse.x * 0.25
-    mesh.rotation.x = 0.1 + Math.sin(elapsedTime * 0.5) * 0.05 - mouse.y * 0.2
-    mesh.rotation.z = 0.25 + Math.sin(elapsedTime * 0.3) * 0.04
-  }
-
-  if (renderer && scene && camera) {
-    renderer.render(scene, camera)
+function handleOrientation(e) {
+  if (e.gamma !== null && e.beta !== null) {
+    mouse.targetX = Math.max(-1, Math.min(1, e.gamma / 25))
+    mouse.targetY = Math.max(-1, Math.min(1, (e.beta - 40) / 25))
   }
 }
 
+function updateMotion(time) {
+  const t = (time - startTime) * 0.001
+
+  // Smooth lerp easing for mouse (0.05 factor)
+  mouse.x += (mouse.targetX - mouse.x) * 0.05
+  mouse.y += (mouse.targetY - mouse.y) * 0.05
+  mouse.speed *= 0.94
+
+  // Multi-frequency organic breathing & floating oscillation
+  const floatY = Math.sin(t * 0.75) * 12 + Math.cos(t * 1.3) * 4
+  const floatX = Math.cos(t * 0.55) * 8
+  const rotZ = Math.sin(t * 0.6) * 1.5
+  const scale = 1.0 + Math.sin(t * 0.4) * 0.015
+
+  // 3D Parallax Tilt (centered around 72% 50% on the right side)
+  const rotY = mouse.x * 8.5 + floatX * 0.15
+  const rotX = -mouse.y * 7.5 + floatY * 0.12
+  const transX = -mouse.x * 22 + floatX
+  const transY = -mouse.y * 18 + floatY
+
+  sculptureTransform.value = `perspective(1400px) translate3d(${transX.toFixed(2)}px, ${transY.toFixed(2)}px, 0) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(${rotZ.toFixed(2)}deg) scale(${scale.toFixed(3)})`
+
+  // Volumetric Aura dynamic pulsation
+  const auraPulse = 0.85 + Math.sin(t * 0.8) * 0.15
+  const auraX = transX * 0.6
+  const auraY = transY * 0.6
+  auraTransform.value = `translate3d(${auraX.toFixed(2)}px, ${auraY.toFixed(2)}px, 0) scale(${auraPulse.toFixed(3)})`
+
+  // Caustic light sweep shift
+  const causticShiftX = (mouse.x * 35 + Math.sin(t * 0.9) * 25).toFixed(1)
+  const causticShiftY = (mouse.y * 30 + Math.cos(t * 0.7) * 20).toFixed(1)
+  causticTransform.value = `translate3d(${causticShiftX}px, ${causticShiftY}px, 0)`
+}
+
+function renderCanvas(time) {
+  if (!ctx || canvasW === 0 || canvasH === 0) return
+  const t = (time - startTime) * 0.001
+
+  ctx.clearRect(0, 0, canvasW, canvasH)
+
+  for (let i = 0; i < shards.length; i++) {
+    const s = shards[i]
+
+    // Update position
+    s.y += s.vy
+    s.x += s.vx + mouse.speed * (mouse.targetX - mouse.x) * 1.5 * s.z
+    s.rot += s.rotSpeed
+
+    // Wrap around boundaries
+    if (s.y < -60) {
+      s.y = canvasH + 40
+      s.x = canvasW * (0.45 + Math.random() * 0.6)
+    }
+    if (s.x > canvasW + 60) s.x = canvasW * 0.45
+    if (s.x < canvasW * 0.35) s.x = canvasW * 0.95
+
+    // Depth parallax coordinates
+    const renderX = s.x - mouse.x * 35 * s.z
+    const renderY = s.y - mouse.y * 28 * s.z
+
+    // Strict fade-out towards left 45% (keeps left side clean and open)
+    let leftFade = 1.0
+    const leftThreshold = canvasW * 0.48
+    const fadeStart = canvasW * 0.35
+    if (renderX < leftThreshold) {
+      leftFade = Math.max(0, (renderX - fadeStart) / (leftThreshold - fadeStart))
+    }
+    if (leftFade <= 0.01) continue
+
+    const currentAlpha = s.alpha * leftFade * (0.8 + Math.sin(t * 1.8 + s.pulseOffset) * 0.2)
+
+    ctx.save()
+    ctx.translate(renderX, renderY)
+    ctx.rotate(s.rot)
+    ctx.scale(s.z, s.z)
+
+    // Draw translucent faceted shard
+    ctx.beginPath()
+    ctx.moveTo(s.vertices[0].x, s.vertices[0].y)
+    for (let v = 1; v < s.vertices.length; v++) {
+      ctx.lineTo(s.vertices[v].x, s.vertices[v].y)
+    }
+    ctx.closePath()
+
+    // Glass Shard Fill
+    ctx.fillStyle = s.color
+    ctx.globalAlpha = currentAlpha
+    ctx.fill()
+
+    // Refractive Highlight Edge
+    ctx.lineWidth = 1.2
+    ctx.strokeStyle = isDark.value ? '#C8F7F4' : '#FFFFFF'
+    ctx.globalAlpha = Math.min(1.0, currentAlpha * 1.5)
+    ctx.stroke()
+
+    ctx.restore()
+  }
+}
+
+function animateLoop() {
+  const now = Date.now()
+  updateMotion(now)
+  renderCanvas(now)
+  animationFrameId = requestAnimationFrame(animateLoop)
+}
+
 onMounted(() => {
-  initThree()
-  animate()
-  window.addEventListener('resize', handleResize)
+  if (canvasRef.value) {
+    ctx = canvasRef.value.getContext('2d')
+    handleResize()
+  }
+
+  animateLoop()
+
+  window.addEventListener('resize', handleResize, { passive: true })
   window.addEventListener('mousemove', handleMouseMove, { passive: true })
-  window.addEventListener('touchstart', handleTouchMove, { passive: true })
   window.addEventListener('touchmove', handleTouchMove, { passive: true })
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', handleOrientation, { passive: true })
+  }
 })
 
 onUnmounted(() => {
@@ -358,29 +256,54 @@ onUnmounted(() => {
   }
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('mousemove', handleMouseMove)
-  window.removeEventListener('touchstart', handleTouchMove)
   window.removeEventListener('touchmove', handleTouchMove)
-
-  if (renderer) {
-    renderer.dispose()
-    if (renderer.domElement && renderer.domElement.parentNode) {
-      renderer.domElement.parentNode.removeChild(renderer.domElement)
-    }
-  }
-
-  if (mesh) {
-    mesh.geometry.dispose()
-    mesh.material.dispose()
+  if (window.DeviceOrientationEvent) {
+    window.removeEventListener('deviceorientation', handleOrientation)
   }
 })
 </script>
 
 <template>
-  <div ref="canvasContainer" class="wind-bloom-canvas"></div>
+  <div ref="containerRef" class="hero-motion-stage">
+    <!-- Ambient Base Warm Off-White / Dark Backdrop -->
+    <div class="stage-backdrop" :class="{ 'is-dark': isDark }"></div>
+
+    <!-- 3D Crystalline Sculpture Layer (Right 55%) -->
+    <div class="sculpture-3d-scene">
+      <!-- Volumetric Luminous Aura Behind Crystal -->
+      <div
+        class="volumetric-aura"
+        :class="{ 'is-dark': isDark }"
+        :style="{ transform: auraTransform }"
+      ></div>
+
+      <!-- Moving 3D Crystalline Artwork Container -->
+      <div class="sculpture-wrapper" :style="{ transform: sculptureTransform }">
+        <img
+          :src="isDark ? '/hero-bg-dark.jpg' : '/hero-bg.jpg'"
+          alt="3D Crystalline Glass Sculpture"
+          class="sculpture-image"
+          :class="{ 'is-dark': isDark }"
+          draggable="false"
+        />
+
+        <!-- Dynamic Traveling Caustic Light Refraction -->
+        <div
+          class="caustic-sweep"
+          :class="{ 'is-dark': isDark }"
+          :style="{ transform: causticTransform }"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Floating 3D Crystal Shards & Refractive Light Dust -->
+    <canvas ref="canvasRef" class="shards-canvas"></canvas>
+  </div>
 </template>
 
 <style scoped>
-.wind-bloom-canvas {
+/* Motion Stage Container */
+.hero-motion-stage {
   position: absolute;
   top: 0;
   left: 0;
@@ -390,5 +313,159 @@ onUnmounted(() => {
   pointer-events: none;
   overflow: hidden;
 }
-</style>
 
+/* Warm Off-White Base (#F7F7F5) */
+.stage-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: #F7F7F5;
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.stage-backdrop.is-dark {
+  background-color: #000000;
+}
+
+/* 3D Scene Host */
+.sculpture-3d-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+
+/* Volumetric Cyan/Turquoise Light Aura */
+.volumetric-aura {
+  position: absolute;
+  top: 15%;
+  right: -5%;
+  width: 65vw;
+  height: 75vh;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 60% 50%,
+    rgba(0, 229, 240, 0.28) 0%,
+    rgba(0, 214, 210, 0.18) 35%,
+    rgba(40, 185, 181, 0.08) 60%,
+    transparent 80%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+.volumetric-aura.is-dark {
+  background: radial-gradient(
+    circle at 60% 50%,
+    rgba(0, 229, 240, 0.42) 0%,
+    rgba(0, 214, 210, 0.25) 35%,
+    rgba(98, 229, 223, 0.12) 65%,
+    transparent 85%
+  );
+  filter: blur(80px);
+}
+
+/* 3D Moving Sculpture Container */
+.sculpture-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  /* Pivot around the sculpture's core on the right 55% */
+  transform-origin: 75% 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* The High-Resolution 3D Crystalline Artwork */
+.sculpture-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* Smooth left-edge fade into the warm off-white background */
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.25) 18%, rgba(0, 0, 0, 0.85) 32%, black 45%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.25) 18%, rgba(0, 0, 0, 0.85) 32%, black 45%);
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.sculpture-image.is-dark {
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.3) 18%, rgba(0, 0, 0, 0.9) 30%, black 45%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.3) 18%, rgba(0, 0, 0, 0.9) 30%, black 45%);
+  filter: drop-shadow(0 0 35px rgba(0, 229, 240, 0.3));
+}
+
+/* Dynamic Caustic Refraction Light Sweep */
+.caustic-sweep {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at 65% 45%,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(98, 229, 223, 0.2) 25%,
+    rgba(0, 214, 210, 0.08) 50%,
+    transparent 75%
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.caustic-sweep.is-dark {
+  mix-blend-mode: color-dodge;
+  background: radial-gradient(
+    ellipse at 65% 45%,
+    rgba(200, 247, 244, 0.4) 0%,
+    rgba(0, 229, 240, 0.25) 25%,
+    rgba(0, 214, 210, 0.1) 50%,
+    transparent 75%
+  );
+}
+
+/* Floating 3D Crystal Shards Canvas */
+.shards-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .sculpture-wrapper {
+    transform-origin: 85% 60%;
+  }
+  .sculpture-image {
+    object-position: 80% center;
+    opacity: 0.85;
+  }
+}
+
+@media (max-width: 600px) {
+  .sculpture-image {
+    object-position: 90% center;
+    opacity: 0.65;
+  }
+  .volumetric-aura {
+    width: 90vw;
+    height: 60vh;
+  }
+}
+</style>
